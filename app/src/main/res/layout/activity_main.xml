@@ -20,26 +20,36 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="209dp"
+        android:layout_marginBottom="38dp"
         android:text="הרשמה"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="209dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="@+id/button2"
+        app:layout_constraintStart_toStartOf="@+id/button2"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="41dp"
         android:text="התחברות"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="307dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintEnd_toEndOf="@+id/button3"
+        app:layout_constraintStart_toStartOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="250dp"
-        android:layout_height="60dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="263dp"
         android:text="אודות"
-        tools:layout_editor_absoluteX="85dp"
-        tools:layout_editor_absoluteY="408dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

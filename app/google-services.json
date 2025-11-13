@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1061689308337",
+    "firebase_url": "https://iddofirebase-f4a86-default-rtdb.firebaseio.com",
+    "project_id": "iddofirebase-f4a86",
+    "storage_bucket": "iddofirebase-f4a86.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061689308337:android:6c6c847f08475971b35e90",
+        "android_client_info": {
+          "package_name": "com.example.iddoivanfinalproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeWJbJ2O3XPGN_zUEznRD9x-5jBjcFJfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
