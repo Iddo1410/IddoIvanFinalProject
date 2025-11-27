@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.example.iddoivanfinalproject.model.Cart;
 import com.example.iddoivanfinalproject.model.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +42,9 @@ import java.util.function.UnaryOperator;
                 FOODS_PATH = "foods",
                 CARTS_PATH = "carts";
 
-        /// callback interface for database operations
+
+
+            /// callback interface for database operations
         /// @param <T> the type of the object to return
         /// @see DatabaseCallback#onCompleted(Object)
         /// @see DatabaseCallback#onFailed(Exception)
@@ -184,6 +187,7 @@ import java.util.function.UnaryOperator;
         /// @param function the function to apply to the current value of the data
         /// @param callback the callback to call when the operation is completed
         /// @see DatabaseReference#runTransaction(Transaction.Handler)
+
         private <T> void runTransaction(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull UnaryOperator<T> function, @NotNull final DatabaseCallback<T> callback) {
             readData(path).runTransaction(new Transaction.Handler() {
                 @NonNull
@@ -223,7 +227,7 @@ import java.util.function.UnaryOperator;
         /// @return a new id for the user
         /// @see #generateNewId(String)
         /// @see User
-        public String generateUserId() {
+        public  String generateUserId() {
             return generateNewId(USERS_PATH);
         }
 
@@ -234,18 +238,50 @@ import java.util.function.UnaryOperator;
         ///            if the operation fails, the callback will receive an exception
         /// @see DatabaseCallback
         /// @see User
-        public void createNewUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
-            writeData(USERS_PATH + "/" + user.getId(), user, callback);
-        }
-
-        /// get a user from the database
-        /// @param uid the id of the user to get
+        /// create a new user in the database and in FirebaseAuth
+        /// @param user the user object to create
         /// @param callback the callback to call when the operation is completed
-        ///               the callback will receive the user object
-        ///             if the operation fails, the callback will receive an exception
+        ///              the callback will receive void
+        ///            if the operation fails, the callback will receive an exception
         /// @see DatabaseCallback
         /// @see User
-        public void getUser(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
+        /// create a new user in the database
+        /// @param user the user object to create (without the id, null)
+        /// @param callback the callback to call when the operation is completed
+        ///              the callback will receive new user id
+        ///            if the operation fails, the callback will receive an exception
+        /// @see DatabaseCallback
+        /// @see User
+        public void createNewUser(@NotNull final User user,
+                                  @Nullable final DatabaseCallback<String> callback) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("TAG", "createUserWithEmail:success");
+                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            user.setId(uid);
+                            writeData(USERS_PATH + "/" + uid, user, new DatabaseCallback<Void>() {
+                                @Override
+                                public void onCompleted(Void v) {
+                                    if (callback != null) callback.onCompleted(uid);
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+                                    if (callback != null) callback.onFailed(e);
+                                }
+                            });
+                        } else {
+                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
+                            if (callback != null)
+                                callback.onFailed(task.getException());
+                        }
+                    });
+        }
+
+
+            public void getUser(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
             getData(USERS_PATH + "/" + uid, User.class, callback);
         }
 

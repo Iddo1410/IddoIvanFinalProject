@@ -1,6 +1,8 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +23,19 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+    }
+    public void onClick (View v){
+        if(v.getId()==R.id.btnSignup){
+            Intent intent= new Intent(MainActivity.this, SignupActivity.class);
+            startActivity(intent);
+        }
+    }
+    public void onLogin (View v){
+        if(v.getId()==R.id.btnLogin){
+            Intent intent= new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(intent);
+        }
     }
 }

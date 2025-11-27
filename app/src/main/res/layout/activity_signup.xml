@@ -17,8 +17,8 @@
         android:hint="First Name"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/lname"
-        app:layout_constraintStart_toStartOf="@+id/textView10"
-        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+        app:layout_constraintStart_toStartOf="@+id/tvEnterDetails"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterDetails" />
 
     <EditText
         android:id="@+id/lname"
@@ -69,26 +69,40 @@
         app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/tvEnterDetails"
         android:layout_width="338dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="15dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="418dp"
         android:text="הכנס פרטים"
         android:textSize="50dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/fname"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btnSignup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
-        tools:layout_editor_absoluteX="156dp"
-        tools:layout_editor_absoluteY="500dp" />
+        android:layout_marginBottom="53dp"
+        android:text="הירשם"
+        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvEnterDetails" />
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="111dp"
+        android:text="כבר רשום? לחץ כאן"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnSignup"
+        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

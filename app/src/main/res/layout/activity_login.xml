@@ -10,8 +10,59 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="206dp"
-        android:layout_height="173dp"
-        app:srcCompat="@drawable/welcome"
-        tools:layout_editor_absoluteX="102dp"
-        tools:layout_editor_absoluteY="-8dp" />
+        android:layout_height="0dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/etEmailLogin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/welcome" />
+
+    <EditText
+        android:id="@+id/etEmailLogin"
+        android:layout_width="214dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="46dp"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toTopOf="@+id/etPasswordLogin"
+        app:layout_constraintEnd_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <EditText
+        android:id="@+id/etPasswordLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="87dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintEnd_toEndOf="@+id/etEmailLogin"
+        app:layout_constraintTop_toBottomOf="@+id/etEmailLogin" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="188dp"
+        android:layout_height="43dp"
+        android:layout_marginBottom="52dp"
+        android:text="התחבר"
+        app:layout_constraintBottom_toTopOf="@+id/tvSignup"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPasswordLogin" />
+
+    <TextView
+        android:id="@+id/tvSignup"
+        android:layout_width="159dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="192dp"
+        android:text="עדיין לא רשום? הירשם"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 </androidx.constraintlayout.widget.ConstraintLayout>
