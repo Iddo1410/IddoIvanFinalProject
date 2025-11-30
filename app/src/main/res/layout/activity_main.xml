@@ -7,16 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- רקע -->
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_width="401dp"
+        android:layout_height="49dp"
+        android:gravity="center"
+        android:text="השוואת מוצרי חשמל"
+        android:textColor="@color/black"
+        android:textSize="40dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.425"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.143" />
+        app:layout_constraintVertical_bias="0.137" />
 
     <Button
         android:id="@+id/btnSignup"
@@ -25,7 +41,10 @@
         android:layout_marginTop="209dp"
         android:layout_marginBottom="38dp"
         android:text="הרשמה"
+        android:background="@color/cardview_dark_background"
         android:onClick="onClick"
+        android:backgroundTint="#82B1FF"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="@+id/btnLogin"
         app:layout_constraintStart_toStartOf="@+id/btnLogin"
@@ -37,7 +56,11 @@
         android:layout_height="0dp"
         android:layout_marginBottom="41dp"
         android:text="התחברות"
+        android:textStyle="bold"
+
+        android:background="@color/cardview_dark_background"
         android:onClick="onLogin"
+        android:backgroundTint="#82B1FF"
         app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="@+id/button3"
         app:layout_constraintStart_toStartOf="@+id/button3"
@@ -49,6 +72,9 @@
         android:layout_height="0dp"
         android:layout_marginBottom="263dp"
         android:text="אודות"
+        android:textStyle="bold"
+        android:backgroundTint="#82B1FF"
+        android:background="@color/cardview_dark_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

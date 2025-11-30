@@ -1,6 +1,8 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,8 +37,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText etEmail, etPassword;
     private Button btnLogin;
     private TextView tvRegister;
+    String email2,pass2;
     private FirebaseAuth mAuth;
     private DataBaseService.DatabaseService dataBaseService;
+    public static final String MyPREFERENCES="MyPrefs";
+    SharedPreferences sharedPreferences;
 
 
 
@@ -53,13 +58,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
 
         /// get the views
+        sharedPreferences=getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         dataBaseService=DataBaseService.DatabaseService.getInstance();
         mAuth=FirebaseAuth.getInstance();
         etEmail = findViewById(R.id.etEmailLogin);
         etPassword = findViewById(R.id.etPasswordLogin);
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvSignup);
-
+        email2=sharedPreferences.getString("email","");
+        pass2=sharedPreferences.getString("password","");
+        etEmail.setText(email2);
+        etPassword.setText(pass2);
         /// set the click listener
         btnLogin.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
@@ -73,6 +82,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             /// get the email and password entered by the user
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString("email", email);
+            editor.putString("password", password);
+
+            editor.commit();
 
             /// log the email and password
             Log.d(TAG, "onClick: Email: " + email);

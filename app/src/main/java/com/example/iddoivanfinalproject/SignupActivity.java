@@ -1,7 +1,9 @@
 package com.example.iddoivanfinalproject;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -31,10 +33,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private static final String TAG = "RegisterActivity";
 
     private EditText etEmail, etPassword, etFName, etLName, etPhone;
+    String email,password;
     private Button btnRegister;
     private TextView tvLogin;
 
     private DataBaseService.DatabaseService dataBaseService;
+    public static final String MyPREFERENCES="MyPrefs";
+    SharedPreferences sharedPreferences;
 
 
     @SuppressLint("MissingInflatedId")
@@ -63,6 +68,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         /// set the click listener
         btnRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
+        sharedPreferences=getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
     }
 
     @Override
@@ -122,6 +128,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onCompleted(String uid) {
                 Log.d(TAG, "createUserInDatabase: User created successfully");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putString("email", email);
+                editor.putString("password", password);
+
+                editor.commit();
 
                 Intent mainIntent = new Intent(SignupActivity.this, MainActivity.class);
                 mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
