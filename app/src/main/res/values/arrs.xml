@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="typeArr">
+        <item>מכונות כביסה</item><item>מקררים</item>
+        <item>תנורי built-in</item>
+        <item>מדיחי כלים</item>
+        <item>מייבשי כביסה</item>
+        <item>קומקומים חשמליים</item>
+        <item>מיקרוגלים</item>
+        <item>טלוויזיות</item>
+        <item>שואבי אבק</item>
+        <item>מאווררים</item>
+        <item>מזגנים</item>
+        <item>בלנדרים</item>
+        <item>מיקסרים</item>
+        <item>מכשירי תספורת</item>
+        <item>מגהצים</item>
+
+
+
+    </string-array>
+
+    <string-array name="yearArr">
+        <item>2020</item>
+        <item>2021</item>
+        <item>2022</item>
+        <item>2023</item>
+        <item>2024</item>
+        <item>2025</item>
+    </string-array>
+
+
+</resources>
