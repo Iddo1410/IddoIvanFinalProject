@@ -29,5 +29,24 @@
         <item>2025</item>
     </string-array>
 
+    <string-array name="brandArr">
+        <item>Samsung</item>
+        <item>LG</item>
+        <item>Bosch</item>
+        <item>Siemens</item>
+        <item>Whirlpool</item>
+        <item>Electrolux</item>
+        <item>Miele</item>
+        <item>Dyson</item>
+        <item>Panasonic</item>
+        <item>Philips</item>
+        <item>Toshiba</item>
+        <item>Haier</item>
+        <item>Sharp</item>
+        <item>Kenwood</item>
+        <item>Kitchenaid</item>
+
+    </string-array>
+
 
 </resources>

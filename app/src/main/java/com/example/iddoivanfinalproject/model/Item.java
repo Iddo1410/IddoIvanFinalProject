@@ -9,19 +9,15 @@ public class Item {
     private double price;
     private String year;
     private String details;
-    private double height;
-    private double width;
-    private double depth;
-    private double volume;
+
 
     private String pic;
 
-    public Item(String id, String name, String type, String brand, String model, double price, String year, String details, String pic) {
+    public Item(String id, String name, String type, String brand, double price, String year, String details, String pic) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.brand = brand;
-        this.model = model;
         this.price = price;
         this.year = year;
         this.details = details;
@@ -60,13 +56,6 @@ public class Item {
         this.brand = brand;
     }
 
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
 
     public double getPrice() {
         return price;
@@ -107,7 +96,6 @@ public class Item {
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
                 ", price=" + price +
                 ", year='" + year + '\'' +
                 ", details='" + details + '\'' +

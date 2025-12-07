@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.iddoivanfinalproject.model.Cart;
+import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -371,8 +372,21 @@ import java.util.function.UnaryOperator;
             });
         }
 
+            /// create a new item in the database
+            /// @param item the item object to create
+            /// @param callback the callback to call when the operation is completed
+            ///              the callback will receive void
+            ///             if the operation fails, the callback will receive an exception
+            /// @return void
+            /// @see DatabaseCallback
 
-        // endregion User Section
+            public void createNewItem(@NotNull final Item item, @Nullable final DatabaseCallback<Void> callback) {
+                writeData("items/" + item.getId(), item, callback);
+            }
+
+
+
+            // endregion User Section
 
         // region food section
 

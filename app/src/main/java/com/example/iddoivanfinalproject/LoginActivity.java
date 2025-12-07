@@ -163,7 +163,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             public void onCompleted(User user) {
                                 Log.d(TAG, "Login success, user: " + user.getId());
 
-                                Intent homepageIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent homepageIntent = new Intent(LoginActivity.this, Additemtostore.class);
                                 homepageIntent.putExtra("USER_ID", user.getId());
                                 homepageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(homepageIntent);
