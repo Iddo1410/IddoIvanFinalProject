@@ -7,4 +7,81 @@
     android:layout_height="match_parent"
     tools:context=".AdminPage">
 
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/images__1_"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnAddItem"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="44dp"
+        android:background="#FF9E80"
+        android:text="הוספת מוצר"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnHistory"
+        app:layout_constraintEnd_toEndOf="@+id/btnHistory"
+        app:layout_constraintStart_toStartOf="@+id/btnHistory"
+        app:layout_constraintTop_toBottomOf="@+id/tvHi" />
+
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="122dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="40dp"
+        android:background="#FF9E80"
+        android:text="היסטורית רכישות"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnUsers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddItem" />
+
+    <Button
+        android:id="@+id/btnUsers"
+        android:layout_width="126dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="36dp"
+        android:background="#FF9E80"
+        android:text="משתמשים"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnHistory" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="221dp"
+        android:background="#FF9E80"
+        android:text="התנתקות"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnUsers"
+        app:layout_constraintStart_toStartOf="@+id/btnUsers"
+        app:layout_constraintTop_toBottomOf="@+id/btnUsers" />
+
+    <TextView
+        android:id="@+id/tvHi"
+        android:layout_width="96dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginBottom="96dp"
+        android:text="היי"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddItem"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
