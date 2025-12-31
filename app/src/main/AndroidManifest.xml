@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
+            android:name=".Userdetails"
+            android:exported="false" />
+        <activity
             android:name=".UsersPage"
             android:exported="false" />
         <activity
