@@ -2,51 +2,33 @@ package com.example.iddoivanfinalproject;
 
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.example.iddoivanfinalproject.model.User;
-import com.example.iddoivanfinalproject.services.DataBaseService;
 
 public class Userdetails extends AppCompatActivity {
 
-    TextView tvUserDetails;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userdetails);
 
-        tvUserDetails = findViewById(R.id.tvUserDetails);
+        TextView tvDetails = findViewById(R.id.tvUserDetails);
 
+        String fname = getIntent().getStringExtra("fname");
+        String lname = getIntent().getStringExtra("lname");
         String email = getIntent().getStringExtra("email");
-        String password=getIntent().getStringExtra(("password"));
+        String password=getIntent().getStringExtra("password");
+        String phnumber=getIntent().getStringExtra("phnumber");
 
-        DataBaseService.DatabaseService.getInstance()
-                .getUserByEmailAndPassword(email, password, new DataBaseService.DatabaseCallback<User>() {
-                    @Override
-                    public void onCompleted(User user) {
-                        tvUserDetails.setText(
-                                "שם פרטי: " + user.getFname() + "\n" +
-                                        "שם משפחה: " + user.getLname() + "\n" +
-                                        "אימייל: " + user.getEmail() + "\n" +
-                                        "טלפון: " + user.getPhoneNumber()+ "\n" +
-                                        "שם משפחה: " + user.getPassword()
-
-                        );
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-                        Toast.makeText(Userdetails.this,
-                                "שגיאה בטעינת פרטים",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+        tvDetails.setText(
+                "שם פרטי: " + fname + "\n" +
+                        "שם משפחה: " + lname + "\n" +
+                        "אימייל: " + email + "\n" +
+                        "סיסמה: " + password+ "\n" +
+                        "מספר טלפון: " + phnumber
+        );
     }
 }
+
+

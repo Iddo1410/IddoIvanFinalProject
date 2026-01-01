@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ViewUtils;
 import androidx.core.graphics.Insets;
@@ -77,6 +78,13 @@ public class AdminPage extends AppCompatActivity {
     public void onAdd (View v){
         if(v.getId()==R.id.btnAddItem){
             Intent intent= new Intent(AdminPage.this, Additemtostore.class);
+            startActivity(intent);
+        }
+    }
+    public void onShop (View v){
+        if (v.getId()==R.id.btnShop)
+        {
+            Intent intent=new Intent(AdminPage.this, Items.class);
             startActivity(intent);
         }
     }

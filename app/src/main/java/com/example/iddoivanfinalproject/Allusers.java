@@ -1,5 +1,6 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -36,13 +37,12 @@ public class Allusers extends AppCompatActivity {
         lvUsers.setOnItemClickListener((parent, view, position, id) -> {
             User selectedUser = usersList.get(position);
 
-            Toast.makeText(
-                    Allusers.this,
-                    "שם פרטי: " + selectedUser.getFname() + "\n" +
-                            "שם משפחה: " + selectedUser.getLname() + "\n" +
-                            "אימייל: " + selectedUser.getEmail(),
-                    Toast.LENGTH_LONG
-            ).show();
+            Intent intent = new Intent(Allusers.this, Userdetails.class);
+            intent.putExtra("fname", selectedUser.getFname());
+            intent.putExtra("lname", selectedUser.getLname());
+            intent.putExtra("email", selectedUser.getEmail());
+
+            startActivity(intent);
         });
 
 
