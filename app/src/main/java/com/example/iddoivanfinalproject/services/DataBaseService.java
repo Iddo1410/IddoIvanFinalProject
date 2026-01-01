@@ -451,8 +451,13 @@ import java.util.function.UnaryOperator;
             });
         }
 
+            public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
+                getDataList("items", Item.class, callback);
+            }
 
-        /// generate a new id for a new cart in the database
+
+
+            /// generate a new id for a new cart in the database
         /// @return a new id for the cart
         /// @see #generateNewId(String)
         /// @see Cart

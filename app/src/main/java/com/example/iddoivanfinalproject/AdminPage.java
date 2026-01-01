@@ -82,7 +82,7 @@ public class AdminPage extends AppCompatActivity {
         }
     }
     public void onShop (View v){
-        if (v.getId()==R.id.btnShop)
+        if (v.getId()==R.id.button)
         {
             Intent intent=new Intent(AdminPage.this, Items.class);
             startActivity(intent);

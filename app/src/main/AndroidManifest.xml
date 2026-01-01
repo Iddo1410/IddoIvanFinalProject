@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
-            android:name=".items"
+            android:name=".Items"
             android:exported="false" />
         <activity
-            android:name=".itemrow"
+            android:name=".Itemrow"
             android:exported="false" />
         <activity
             android:name=".Userdetails"
