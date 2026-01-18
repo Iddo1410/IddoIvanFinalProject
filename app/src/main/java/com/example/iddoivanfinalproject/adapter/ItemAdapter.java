@@ -13,12 +13,13 @@ import com.example.iddoivanfinalproject.model.Item;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
-    private ArrayList<Item> items;
+    private List<Item> items;
 
-    public ItemAdapter(ArrayList<Item> items) {
+    public ItemAdapter(List<Item> items) {
         this.items = items;
     }
 
