@@ -24,6 +24,10 @@ public class Item {
         this.pic = pic;
     }
 
+
+    public Item() {
+    }
+
     public String getId() {
         return id;
     }

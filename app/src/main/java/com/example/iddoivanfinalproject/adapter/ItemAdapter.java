@@ -3,12 +3,14 @@ package com.example.iddoivanfinalproject.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.iddoivanfinalproject.R;
 import com.example.iddoivanfinalproject.model.Item;
+import com.example.iddoivanfinalproject.utils.ImageUtil;
 
 import org.jspecify.annotations.NonNull;
 
@@ -37,6 +39,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.tvName.setText(item.getName());
         holder.tvDesc.setText(item.getDetails());
         holder.tvPrice.setText(String.valueOf(item.getPrice()));
+        if(item.getPic()!=null) {
+            holder.ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
+        }
     }
 
     @Override
@@ -47,11 +52,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvDesc, tvPrice;
 
+        ImageView ivPic;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvDesc = itemView.findViewById(R.id.tvDesc);
             tvPrice = itemView.findViewById(R.id.tvPrice);
+            ivPic=itemView.findViewById(R.id.ivitemPic);
         }
     }
 }
