@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="typeArr">
-        <item>מכונות כביסה</item><item>מקררים</item>
-        <item>תנורי built-in</item>
-        <item>מדיחי כלים</item>
-        <item>מייבשי כביסה</item>
-        <item>קומקומים חשמליים</item>
-        <item>מיקרוגלים</item>
-        <item>טלוויזיות</item>
-        <item>שואבי אבק</item>
-        <item>מאווררים</item>
-        <item>מזגנים</item>
-        <item>בלנדרים</item>
-        <item>מיקסרים</item>
-        <item>מכשירי תספורת</item>
-        <item>מגהצים</item>
+        <item>מכונת כביסה</item>
+        <item>מקרר</item>
+        <item>טלפון</item>
+        <item>תנור</item>
+        <item>מדיח כלים</item>
+        <item>מייבש כביסה</item>
+        <item>קומקוo חשמלי</item>
+        <item>מיקרוגל</item>
+        <item>טלוויזיה</item>
+        <item>שואב אבק</item>
+        <item>מאוורר</item>
+        <item>מזגן</item>
+        <item>בלנדר</item>
+        <item>מיקסר</item>
+        <item>מכשיר תספורת</item>
+        <item>מגהץ</item>
 
 
 
@@ -30,6 +32,7 @@
     </string-array>
 
     <string-array name="brandArr">
+        <item>Apple</item>
         <item>Samsung</item>
         <item>LG</item>
         <item>Bosch</item>

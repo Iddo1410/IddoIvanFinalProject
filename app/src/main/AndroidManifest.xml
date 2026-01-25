@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
+            android:name=".Itemdetails"
+            android:exported="false" />
+        <activity
+            android:name=".UpdateUserDetails"
+            android:exported="false" />
+        <activity
             android:name=".Items"
             android:exported="false" />
         <activity

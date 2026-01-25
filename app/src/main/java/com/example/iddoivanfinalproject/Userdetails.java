@@ -1,6 +1,9 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -8,27 +11,77 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Userdetails extends AppCompatActivity {
 
+    TextView tvDetails;
+    Button btnUpdate;
+
+    SharedPreferences sp;
+
+    String fname, lname, email, phnumber;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userdetails);
 
-        TextView tvDetails = findViewById(R.id.tvUserDetails);
+        tvDetails = findViewById(R.id.tvUserDetails);
+        btnUpdate = findViewById(R.id.btnUpdate);
 
-        String fname = getIntent().getStringExtra("fname");
-        String lname = getIntent().getStringExtra("lname");
-        String email = getIntent().getStringExtra("email");
-        String password=getIntent().getStringExtra("password");
-        String phnumber=getIntent().getStringExtra("phnumber");
+        // SharedPreferences
+        sp = getSharedPreferences("user_data", MODE_PRIVATE);
 
+        // קבלת נתונים – קודם מ־SharedPreferences ואם אין אז מה־Intent
+        Intent intent = getIntent();
+
+        fname = sp.getString("fname", intent.getStringExtra("fname"));
+        lname = sp.getString("lname", intent.getStringExtra("lname"));
+        email = sp.getString("email", intent.getStringExtra("email"));
+        phnumber = sp.getString("phnumber", intent.getStringExtra("phnumber"));
+
+        updateText();
+
+        btnUpdate.setOnClickListener(v -> {
+            Intent i = new Intent(Userdetails.this, UpdateUserDetails.class);
+            i.putExtra("fname", fname);
+            i.putExtra("lname", lname);
+            i.putExtra("email", email);
+            i.putExtra("phnumber", phnumber);
+
+            startActivityForResult(i, 1);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+
+            fname = data.getStringExtra("fname");
+            lname = data.getStringExtra("lname");
+            email = data.getStringExtra("email");
+            phnumber = data.getStringExtra("phnumber");
+
+            // שמירה קבועה
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("fname", fname);
+            editor.putString("lname", lname);
+            editor.putString("email", email);
+            editor.putString("phnumber", phnumber);
+            editor.apply();
+
+            updateText();
+        }
+    }
+
+    private void updateText() {
         tvDetails.setText(
                 "שם פרטי: " + fname + "\n" +
                         "שם משפחה: " + lname + "\n" +
                         "אימייל: " + email + "\n" +
-                        "סיסמה: " + password+ "\n" +
                         "מספר טלפון: " + phnumber
         );
     }
 }
+
 
 
