@@ -454,6 +454,11 @@ import java.util.function.UnaryOperator;
             public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
                 getDataList("items", Item.class, callback);
             }
+            public void getItemById(@NotNull final String itemId,
+                                    @NotNull final DatabaseCallback<Item> callback) {
+                getData("items/" + itemId, Item.class, callback);
+            }
+
 
 
 

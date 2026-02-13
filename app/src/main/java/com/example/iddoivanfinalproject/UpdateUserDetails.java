@@ -30,14 +30,14 @@ public class UpdateUserDetails extends AppCompatActivity {
         etFname.setText(intent.getStringExtra("fname"));
         etLname.setText(intent.getStringExtra("lname"));
         etEmail.setText(intent.getStringExtra("email"));
-        etPhone.setText(intent.getStringExtra("phnumber"));
+        etPhone.setText(intent.getStringExtra("phoneNumber"));
 
         btnSave.setOnClickListener(v -> {
             Intent resultIntent = new Intent();
             resultIntent.putExtra("fname", etFname.getText().toString());
             resultIntent.putExtra("lname", etLname.getText().toString());
             resultIntent.putExtra("email", etEmail.getText().toString());
-            resultIntent.putExtra("phnumber", etPhone.getText().toString());
+            resultIntent.putExtra("phoneNumber", etPhone.getText().toString());
 
             setResult(RESULT_OK, resultIntent);
             finish(); // חזרה למסך הקודם

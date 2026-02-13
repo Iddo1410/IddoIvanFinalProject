@@ -24,11 +24,11 @@ public class Itemdetails extends AppCompatActivity {
 
         String itemId = getIntent().getStringExtra("ITEM_ID");
         if (itemId != null) {
-            databaseService.getAllItems(itemId, new DataBaseService.DatabaseCallback<Item>() {
+            databaseService.getItemById(itemId, new DataBaseService.DatabaseCallback<Item>() {
                 @Override
                 public void onCompleted(Item item) {
                     tvName.setText(item.getName());
-                    tvDescription.setText(item());
+                    tvDescription.setText(item.getDetails());
                     tvPrice.setText(String.valueOf(item.getPrice()));
                 }
 
@@ -37,6 +37,7 @@ public class Itemdetails extends AppCompatActivity {
                     tvName.setText("Error loading item");
                 }
             });
+
         }
     }
 }

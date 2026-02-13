@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
+            android:name=".Additemtostore"
+            android:exported="false" />
+        <activity
             android:name=".Itemdetails"
             android:exported="false" />
         <activity
@@ -43,9 +46,6 @@
             android:exported="false" />
         <activity
             android:name=".EditProfil"
-            android:exported="false" />
-        <activity
-            android:name=".Additemtostore"
             android:exported="false" />
         <activity
             android:name=".SignupActivity"

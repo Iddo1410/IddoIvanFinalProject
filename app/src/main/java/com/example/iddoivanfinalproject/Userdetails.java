@@ -16,7 +16,7 @@ public class Userdetails extends AppCompatActivity {
 
     SharedPreferences sp;
 
-    String fname, lname, email, phnumber;
+    String fname, lname, email, phoneNumber;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +35,7 @@ public class Userdetails extends AppCompatActivity {
         fname = sp.getString("fname", intent.getStringExtra("fname"));
         lname = sp.getString("lname", intent.getStringExtra("lname"));
         email = sp.getString("email", intent.getStringExtra("email"));
-        phnumber = sp.getString("phnumber", intent.getStringExtra("phnumber"));
+        phoneNumber = sp.getString("phoneNumber", intent.getStringExtra("phoneNumber"));
 
         updateText();
 
@@ -44,7 +44,7 @@ public class Userdetails extends AppCompatActivity {
             i.putExtra("fname", fname);
             i.putExtra("lname", lname);
             i.putExtra("email", email);
-            i.putExtra("phnumber", phnumber);
+            i.putExtra("phoneNumber", phoneNumber);
 
             startActivityForResult(i, 1);
         });
@@ -59,14 +59,14 @@ public class Userdetails extends AppCompatActivity {
             fname = data.getStringExtra("fname");
             lname = data.getStringExtra("lname");
             email = data.getStringExtra("email");
-            phnumber = data.getStringExtra("phnumber");
+            phoneNumber = data.getStringExtra("phnumber");
 
             // שמירה קבועה
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("fname", fname);
             editor.putString("lname", lname);
             editor.putString("email", email);
-            editor.putString("phnumber", phnumber);
+            editor.putString("phnumber", phoneNumber);
             editor.apply();
 
             updateText();
@@ -78,7 +78,7 @@ public class Userdetails extends AppCompatActivity {
                 "שם פרטי: " + fname + "\n" +
                         "שם משפחה: " + lname + "\n" +
                         "אימייל: " + email + "\n" +
-                        "מספר טלפון: " + phnumber
+                        "מספר טלפון: " + phoneNumber
         );
     }
 }
