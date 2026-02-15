@@ -12,8 +12,7 @@ import com.example.iddoivanfinalproject.R;
 import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.utils.ImageUtil;
 
-import org.jspecify.annotations.NonNull;
-
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,9 +38,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.tvName.setText(item.getName());
         holder.tvDesc.setText(item.getDetails());
         holder.tvPrice.setText(String.valueOf(item.getPrice()));
-        if(item.getPic()!=null) {
+        if(item.getPic() != null) {
             holder.ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
         }
+
+        // --- הקוד שצריך להוסיף ---
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), com.example.iddoivanfinalproject.Itemdetails.class);
+            intent.putExtra("ITEM_ID", item.getId()); // העברת ה-ID של הפריט למסך הבא
+            v.getContext().startActivity(intent);
+        });
+        // -------------------------
     }
 
     @Override
@@ -62,5 +69,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             ivPic=itemView.findViewById(R.id.ivitemPic);
         }
     }
+
 }
 

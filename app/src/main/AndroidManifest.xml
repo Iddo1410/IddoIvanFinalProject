@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
+            android:name=".Cartrow"
+            android:exported="false" />
+        <activity
+            android:name=".Cart"
+            android:exported="false" />
+        <activity
             android:name=".Additemtostore"
             android:exported="false" />
         <activity

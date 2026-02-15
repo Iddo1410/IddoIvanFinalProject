@@ -46,6 +46,14 @@ public class Items extends AppCompatActivity {
                 Log.e("ItemsPage", "Failed to load items", e);
             }
         });
+        // למעלה תוכל להוסיף את המשתנה של הכפתור, או פשוט לחבר אותו ישירות:
+        android.widget.Button btnGoToCart = findViewById(R.id.btnGoToCart);
+
+// הגדרת הלחיצה על הכפתור
+        btnGoToCart.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(Items.this, CartActivity.class);
+            startActivity(intent);
+        });
     }
 }
 

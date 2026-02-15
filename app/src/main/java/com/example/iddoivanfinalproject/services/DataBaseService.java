@@ -452,7 +452,22 @@ import java.util.function.UnaryOperator;
         }
 
             public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
-                getDataList("items", Item.class, callback);
+                readData("items").get().addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        callback.onFailed(task.getException());
+                        return;
+                    }
+                    List<Item> itemList = new ArrayList<>();
+                    task.getResult().getChildren().forEach(dataSnapshot -> {
+                        Item item = dataSnapshot.getValue(Item.class);
+                        if (item != null) {
+                            // לוקח את המפתח מהפיירבייס ושומר אותו בתור ה-ID של הפריט
+                            item.setId(dataSnapshot.getKey());
+                            itemList.add(item);
+                        }
+                    });
+                    callback.onCompleted(itemList);
+                });
             }
             public void getItemById(@NotNull final String itemId,
                                     @NotNull final DatabaseCallback<Item> callback) {

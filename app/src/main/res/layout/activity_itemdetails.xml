@@ -1,34 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F9FA"
+    android:layoutDirection="rtl"
     tools:context=".Itemdetails">
 
+    <ImageView
+        android:id="@+id/ivPic"
+        android:layout_width="418dp"
+        android:layout_height="231dp"
+        android:background="#F8F1D0"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/images" />
+
+    <View
+        android:layout_width="424dp"
+        android:layout_height="578dp"
+        android:layout_marginTop="-20dp"
+        android:background="#F8F1D0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivPic" />
 
     <TextView
         android:id="@+id/tvName"
-        android:layout_width="104dp"
-        android:layout_height="37dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="37dp"
-        tools:layout_editor_absoluteY="81dp" />
-
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="105dp"
-        android:layout_height="48dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="37dp"
-        tools:layout_editor_absoluteY="139dp" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:textColor="#212121"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivPic"
+        tools:text="שם הפריט" />
 
     <TextView
         android:id="@+id/tvPrice"
-        android:layout_width="108dp"
-        android:layout_height="46dp"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="37dp"
-        tools:layout_editor_absoluteY="210dp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#9D6868"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvName"
+        tools:text="150.0" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:lineSpacingExtra="6dp"
+        android:textColor="#616161"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@id/tvName"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvPrice"
+        tools:text="כאן יופיע התיאור המלא של הפריט. העיצוב תומך בטקסט ארוך שיירד שורה באופן אוטומטי." />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
