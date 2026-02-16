@@ -62,12 +62,15 @@ import java.util.function.UnaryOperator;
       public static class DatabaseService {
         private static DatabaseService instance;
 
+
+
         /// the reference to the database
         /// @see DatabaseReference
         /// @see FirebaseDatabase#getReference()
         private final DatabaseReference databaseReference;
+            private FirebaseAuth mAuth;
 
-        /// use getInstance() to get an instance of this class
+            /// use getInstance() to get an instance of this class
         /// @see DatabaseService#getInstance()
         private DatabaseService() {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -83,6 +86,13 @@ import java.util.function.UnaryOperator;
             }
             return instance;
         }
+            public void addToCart(Cart cartItem, DatabaseCallback<Void> callback) {
+             String uid = mAuth.getCurrentUser().getUid();
+                // יצירת מפתח ייחודי לכל פריט בעגלה של המשתמש
+                databaseReference.child("carts").child(uid).push().setValue(cartItem)
+                        .addOnSuccessListener(aVoid -> callback.onCompleted(null))
+                        .addOnFailureListener(e -> callback.onFailed(e));
+            }
 
 
         // region private generic methods
@@ -473,6 +483,8 @@ import java.util.function.UnaryOperator;
                                     @NotNull final DatabaseCallback<Item> callback) {
                 getData("items/" + itemId, Item.class, callback);
             }
+
+
 
 
 
