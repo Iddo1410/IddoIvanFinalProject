@@ -15,7 +15,7 @@ import com.example.iddoivanfinalproject.utils.ImageUtil;
 
 public class Itemdetails extends AppCompatActivity {
 
-    private TextView tvName, tvDescription, tvPrice;
+    private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear;
     private ImageView ivPic;
     private DataBaseService.DatabaseService databaseService;
 
@@ -28,6 +28,9 @@ public class Itemdetails extends AppCompatActivity {
         tvName = findViewById(R.id.tvName);
         tvDescription = findViewById(R.id.tvDescription);
         tvPrice = findViewById(R.id.tvPrice);
+        tvBrand=findViewById(R.id.tvBrand);
+        tvType=findViewById(R.id.tvType);
+        tvYear=findViewById(R.id.tvYear);
         ivPic = findViewById(R.id.ivPic);
 
         databaseService = DataBaseService.DatabaseService.getInstance();
@@ -48,39 +51,21 @@ public class Itemdetails extends AppCompatActivity {
                     tvName.setText(item.getName());
                     tvDescription.setText(item.getDetails());
                     tvPrice.setText(String.valueOf(item.getPrice()));
+                    tvBrand.setText("Brand: " + item.getBrand());
+                    tvType.setText("Type: "+item.getType());
+                    tvYear.setText("Year: " +String.valueOf((item.getYear())));
                     if (item.getPic() != null && !item.getPic().isEmpty()) {
-                        ImageUtil.convertFrom64base(item.getPic(), ivPic);
-                    }
-
-                    // טיפול בכפתור הוספה לעגלה
-                    Button btnAddToCart = findViewById(R.id.btnAddToCart);
-                    if (btnAddToCart != null) {
-                        btnAddToCart.setOnClickListener(v -> {
-                            // יצירת אובייקט עגלה
-                            Cart cartItem = new Cart(item.getName(), item.getPrice(), 1, itemId);
-
-                            // שמירה ב-Database
-                            databaseService.addToCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
-                                @Override
-                                public void onCompleted(Void unused) {
-                                    Toast.makeText(Itemdetails.this, "נוסף לעגלה!", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onFailed(Exception e) {
-                                    Toast.makeText(Itemdetails.this, "שגיאה בהוספה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        });
+                        ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
                     }
                 }
 
-                @Override
-                public void onFailed(Exception e) {
-                    // חובה לממש כדי למנוע שגיאת קומפילציה
-                    Toast.makeText(Itemdetails.this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show();
-                }
-            }); // סגירה נכונה של ה-getItemById
+
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        tvName.setText("Error loading item");
+                    }
+                });
+            }
         }
     }
-}

@@ -5,7 +5,6 @@ public class Item {
     private String name;
     private String type;
     private String brand;
-    private String model;
     private double price;
     private String year;
     private String details;

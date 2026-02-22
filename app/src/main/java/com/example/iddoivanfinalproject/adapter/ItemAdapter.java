@@ -18,12 +18,19 @@ import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
-    private List<Item> items;
-
-    public ItemAdapter(List<Item> items) {
-        this.items = items;
+    public interface OnItemClickListener {
+        void onClick(Item item);
+        void onLongClick(Item item);
     }
 
+    private List<Item> items;
+
+    private OnItemClickListener listener;
+
+    public ItemAdapter(List<Item> items, OnItemClickListener listener) {
+        this.items = items;
+        this.listener = listener;
+    }
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,6 +48,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         if(item.getPic() != null) {
             holder.ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
         }
+        // Click
+        holder.itemView.setOnClickListener(v ->
+                listener.onClick(item)
+        );
+
+        // Long Click
+        holder.itemView.setOnLongClickListener(v -> {
+            listener.onLongClick(item);
+            return true;
+        });
 
         // --- הקוד שצריך להוסיף ---
         holder.itemView.setOnClickListener(v -> {

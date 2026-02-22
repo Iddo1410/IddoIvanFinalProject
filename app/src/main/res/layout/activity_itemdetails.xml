@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
+    android:background="#F8F1D0"
     android:layoutDirection="rtl"
     tools:context=".Itemdetails">
 
@@ -13,7 +13,10 @@
         android:id="@+id/ivPic"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="11dp"
         android:background="#F8F1D0"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/tvName"
@@ -23,12 +26,14 @@
         tools:src="@drawable/images" />
 
     <View
-        android:layout_width="424dp"
-        android:layout_height="578dp"
-        android:layout_marginTop="182dp"
+        android:id="@+id/view5"
+        android:layout_width="423dp"
+        android:layout_height="0dp"
         android:background="#F8F1D0"
-        app:layout_constraintStart_toStartOf="@+id/ivPic"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPic"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tvName"
@@ -36,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="19dp"
         android:textColor="#212121"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -50,27 +55,29 @@
         android:id="@+id/tvPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="23dp"
+        android:layout_marginStart="300dp"
+        android:layout_marginBottom="33dp"
         android:textColor="#9D6868"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tvDescription"
-        app:layout_constraintEnd_toEndOf="@+id/tvName"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvName"
         tools:text="150.0" />
 
     <TextView
         android:id="@+id/tvDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="104dp"
+        android:layout_width="327dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="41dp"
+        android:layout_marginEnd="41dp"
+        android:layout_marginBottom="36dp"
         android:lineSpacingExtra="6dp"
         android:textColor="#616161"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddToCart"
+        app:layout_constraintBottom_toTopOf="@+id/tvBrand"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPrice"
         tools:text="כאן יופיע התיאור המלא של הפריט. העיצוב תומך בטקסט ארוך שיירד שורה באופן אוטומטי." />
@@ -79,11 +86,64 @@
         android:id="@+id/btnAddToCart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="159dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp"
+        android:text="הוספה לעגלה"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/cbCompare"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvYear" />
+
+    <TextView
+        android:id="@+id/tvBrand"
+        android:layout_width="86dp"
+        android:layout_height="17dp"
+        android:layout_marginStart="308dp"
+        android:layout_marginBottom="10dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvType"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_width="85dp"
+        android:layout_height="17dp"
+        android:layout_marginBottom="13dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvYear"
+        app:layout_constraintStart_toStartOf="@+id/tvBrand"
+        app:layout_constraintTop_toBottomOf="@+id/tvBrand" />
+
+    <TextView
+        android:id="@+id/tvYear"
+        android:layout_width="85dp"
+        android:layout_height="19dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddToCart"
+        app:layout_constraintStart_toStartOf="@+id/tvType"
+        app:layout_constraintTop_toBottomOf="@+id/tvType" />
+
+    <CheckBox
+        android:id="@+id/cbCompare"
+        android:layout_width="163dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="165dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="97dp"
+        android:text="הוספה להשוואה"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btnAddToCart"
+        app:layout_constraintStart_toStartOf="@+id/view5"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddToCart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

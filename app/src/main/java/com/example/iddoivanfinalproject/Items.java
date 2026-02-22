@@ -1,5 +1,6 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.Nullable;
@@ -22,6 +23,8 @@ public class Items extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private DataBaseService.DatabaseService databaseService;
+    ArrayList<Item> itemArrayList=new ArrayList<>();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,28 +35,44 @@ public class Items extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseService = DataBaseService.DatabaseService.getInstance();
+        adapter = new ItemAdapter(itemArrayList, new ItemAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(Item item) {
+
+                Intent go=new Intent(Items.this, Itemdetails.class);
+                go.putExtra("ITEM_ID",item.getId());
+                startActivity(go);
+
+
+
+
+            }
+
+            @Override
+            public void onLongClick(Item item) {
+
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
 
         // קרא את כל הפריטים מהמסד
         databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() {
             @Override
             public void onCompleted(List<Item> items) {
-                adapter = new ItemAdapter(items);
-                recyclerView.setAdapter(adapter);
+
+                itemArrayList.addAll(items);
+
+                adapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onFailed(Exception e) {
                 Log.e("ItemsPage", "Failed to load items", e);
             }
         });
-        // למעלה תוכל להוסיף את המשתנה של הכפתור, או פשוט לחבר אותו ישירות:
-        android.widget.Button btnGoToCart = findViewById(R.id.btnGoToCart);
 
-// הגדרת הלחיצה על הכפתור
-        btnGoToCart.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(Items.this, CartActivity.class);
-            startActivity(intent);
-        });
     }
 }
 

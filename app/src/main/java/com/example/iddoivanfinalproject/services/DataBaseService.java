@@ -40,7 +40,7 @@ import java.util.function.UnaryOperator;
         /// paths for different data types in the database
         /// @see DatabaseService#readData(String)
         private static final String USERS_PATH = "users",
-                FOODS_PATH = "foods",
+                ITEM_PATH = "items",
                 CARTS_PATH = "carts";
 
 
@@ -482,6 +482,10 @@ import java.util.function.UnaryOperator;
             public void getItemById(@NotNull final String itemId,
                                     @NotNull final DatabaseCallback<Item> callback) {
                 getData("items/" + itemId, Item.class, callback);
+            }
+            public void getItem(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
+                getData(ITEM_PATH + "/" + itemId, Item.class, callback);
+
             }
 
 
