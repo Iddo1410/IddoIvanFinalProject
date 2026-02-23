@@ -148,7 +148,7 @@ public class Additemtostore extends AppCompatActivity {
                 }
 
                 /// generate a new id for the item
-                String id = DataBaseService.DatabaseService.getInstance().generateUserId();
+                String id=databaseService.generateItemId();
 
 
                 Item newItem = new Item(id, itemName, itemType, itemBrand, price, itemYear, itemDetails, imageBase64);

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.iddoivanfinalproject.model.Cart;
+import com.example.iddoivanfinalproject.model.Compareitem;
 import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.model.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +42,8 @@ import java.util.function.UnaryOperator;
         /// @see DatabaseService#readData(String)
         private static final String USERS_PATH = "users",
                 ITEM_PATH = "items",
+
+            COMPARE_PATH = "compare",
                 CARTS_PATH = "carts";
 
 
@@ -238,9 +241,9 @@ import java.util.function.UnaryOperator;
         /// @return a new id for the user
         /// @see #generateNewId(String)
         /// @see User
-        public  String generateUserId() {
-            return generateNewId(USERS_PATH);
-        }
+      //  public  String generateUserId() {
+   //         return generateNewId(USERS_PATH);
+   //     }
 
         /// create a new user in the database
         /// @param user the user object to create
@@ -396,6 +399,10 @@ import java.util.function.UnaryOperator;
 
 
 
+            public String generateItemId() {
+                return generateNewId(ITEM_PATH);
+            }
+
             // endregion User Section
 
         // region food section
@@ -510,6 +517,63 @@ import java.util.function.UnaryOperator;
 
         // endregion cart section
 
+            /// create a new item in the database
+            /// @param compareitem the item object to create
+            /// @param callback the callback to call when the operation is completed
+            ///              the callback will receive void
+            ///             if the operation fails, the callback will receive an exception
+            /// @return void
+            /// @see DatabaseCallback
 
-    }
+            public void createNewCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                String userid=mAuth.getCurrentUser().getUid();
+
+
+                writeData(
+
+                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getId(), compareitem, callback);
+            }
+
+
+            public void UpdateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                String userid=mAuth.getCurrentUser().getUid();
+
+
+                writeData(
+
+                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getId(), compareitem, callback);
+            }
+
+            /// generate a new id for a new cart in the database
+            /// @return a new id for the cart
+            /// @see #generateNewId(String)
+            /// @see Cart
+            public String generateCompareId() {
+                return generateNewId(COMPARE_PATH);
+            }
+
+            public void getCompareByType(@NotNull final String type,
+                                    @NotNull final DatabaseCallback<Compareitem> callback) {
+
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                String userid=mAuth.getCurrentUser().getUid();
+
+                readData(COMPARE_PATH+"/" +userid).orderByChild("type").equalTo(type).get()
+                        .addOnCompleteListener(task -> {
+                            if (!task.isSuccessful()) {
+                                Log.e(TAG, "Error getting data", task.getException());
+                                callback.onFailed(task.getException());
+                                return;
+                            }
+                            Compareitem compareitem = task.getResult().getValue(Compareitem.class);
+                            callback.onCompleted(compareitem);
+                        });
+
+
+            }
+
+
+        }
 }
