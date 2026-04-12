@@ -7,34 +7,70 @@
     android:layout_height="match_parent"
     tools:context=".UsersPage">
 
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="506dp"
+        android:layout_height="927dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/images__1_"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/tvHiUser"
         android:layout_width="105dp"
-        android:layout_height="34dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="134dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginBottom="80dp"
         android:text="היי "
         android:textSize="20dp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="134dp"
-        tools:layout_editor_absoluteY="96dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btnShop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnShop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="27dp"
+
+        android:layout_marginBottom="62dp"
+        android:background="#73E2EF"
         android:text="לחנות"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="304dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btnCompare"
+        app:layout_constraintStart_toStartOf="@+id/tvHiUser"
+        app:layout_constraintTop_toBottomOf="@+id/tvHiUser" />
+
+    <Button
+        android:id="@+id/btnCompare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="71dp"
+
+        android:background="#73E2EF"
+        android:text="השוואות"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogoutUser"
+        app:layout_constraintStart_toStartOf="@+id/btnShop"
+        app:layout_constraintTop_toBottomOf="@+id/btnShop" />
 
     <Button
         android:id="@+id/btnLogoutUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+
+        android:layout_marginBottom="243dp"
+        android:background="#73E2EF"
         android:text="התנתקות"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="440dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnCompare"
+        app:layout_constraintTop_toBottomOf="@+id/btnCompare" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -532,18 +532,23 @@ import java.util.function.UnaryOperator;
 
                 writeData(
 
-                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getId(), compareitem, callback);
+                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getType(), compareitem, callback);
             }
 
 
-            public void UpdateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+            public void updateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 String userid=mAuth.getCurrentUser().getUid();
 
 
                 writeData(
 
-                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getId(), compareitem, callback);
+                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getType(), compareitem, callback);
+
+
+
+
+
             }
 
             /// generate a new id for a new cart in the database
@@ -560,17 +565,8 @@ import java.util.function.UnaryOperator;
                 FirebaseAuth mAuth = FirebaseAuth.getInstance();
                 String userid=mAuth.getCurrentUser().getUid();
 
-                readData(COMPARE_PATH+"/" +userid).orderByChild("type").equalTo(type).get()
-                        .addOnCompleteListener(task -> {
-                            if (!task.isSuccessful()) {
-                                Log.e(TAG, "Error getting data", task.getException());
-                                callback.onFailed(task.getException());
-                                return;
-                            }
-                            Compareitem compareitem = task.getResult().getValue(Compareitem.class);
-                            callback.onCompleted(compareitem);
-                        });
 
+                        getData(COMPARE_PATH+"/" +userid+"/"+type, Compareitem.class, callback);
 
             }
 

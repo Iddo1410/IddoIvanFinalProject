@@ -8,15 +8,17 @@ public class User {
     private String email;
     private String phoneNumber;
     private String password;
+    private boolean isAdmin;
 
 
-    public User(String id, String fname, String lname, String email, String phoneNumber, String password) {
+    public User(String id, String fname, String lname, String email, String phoneNumber, String password, boolean isAdmin) {
         this.id = id;
         this.fname = fname;
         this.lname = lname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.password = password;
+        this.isAdmin=isAdmin;
     }
 
     public User() {
@@ -70,13 +72,24 @@ public class User {
         this.id = id;
     }
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "fname='" + fname + '\'' +
+                "id='" + id + '\'' +
+                ", fname='" + fname + '\'' +
                 ", lname='" + lname + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                ", isAdmin=" + isAdmin +
                 '}';
     }
 }

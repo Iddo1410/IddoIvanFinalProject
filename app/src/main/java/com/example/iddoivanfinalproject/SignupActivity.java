@@ -110,7 +110,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
 
         /// create a new user object
-        User user = new User("jkjk", fname, lname, email,phone, password);
+        User user = new User("jkjk", fname, lname, email,phone, password, false);
 
 
 

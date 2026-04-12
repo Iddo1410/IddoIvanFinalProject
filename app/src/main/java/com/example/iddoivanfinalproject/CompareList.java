@@ -4,20 +4,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageButton; // הוספנו ייבוא ל-ImageButton
-import androidx.annotation.Nullable;
+
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.iddoivanfinalproject.adapter.ItemAdapter;
+import com.example.iddoivanfinalproject.model.Compareitem;
 import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.services.DataBaseService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Items extends AppCompatActivity {
+public class CompareList extends AppCompatActivity {
+
 
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
@@ -26,32 +31,32 @@ public class Items extends AppCompatActivity {
     ArrayList<Item> itemArrayList = new ArrayList<>();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_items);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_compare_list);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
 
         // אתחול רכיבי ה-UI
-        recyclerView = findViewById(R.id.rvItems);
-        btnGoToCart = findViewById(R.id.btnGoToCart); // וודא שה-ID הזה קיים ב-XML שלך
+        recyclerView = findViewById(R.id.rvCompare);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseService = DataBaseService.DatabaseService.getInstance();
 
         // הגדרת לחיצה על כפתור העגלה
-        if (btnGoToCart != null) {
-            btnGoToCart.setOnClickListener(v -> {
-                // מעבר לדף העגלה (CartActivity / Userdetails - תלוי איך קראת לו)
-                // אני מניח שקראת לו Userdetails או CartActivity
-                Intent intent = new Intent(Items.this, Userdetails.class);
-                startActivity(intent);
-            });
-        }
+
+
 
         adapter = new ItemAdapter(itemArrayList, new ItemAdapter.OnItemClickListener() {
             @Override
             public void onClick(Item item) {
-                Intent go = new Intent(Items.this, Itemdetails.class);
+                Intent go = new Intent(CompareList.this, Itemdetails.class);
                 go.putExtra("ITEM_ID", item.getId());
                 startActivity(go);
             }
@@ -65,21 +70,23 @@ public class Items extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         // טעינת המוצרים מהמסד
-        databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() {
+        databaseService.getCompareByType("טלפון", new DataBaseService.DatabaseCallback<Compareitem>() {
             @Override
-            public void onCompleted(List<Item> items) {
-                if (items != null) {
-                    itemArrayList.clear();
-                    itemArrayList.addAll(items);
+            public void onCompleted(Compareitem compareitem) {
+                if (compareitem.getItemArrayList() != null) {
+
+                    itemArrayList.addAll(compareitem.getItemArrayList());
                     adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
             public void onFailed(Exception e) {
-                Log.e("ItemsPage", "Failed to load items", e);
+                //Log.e("ItemsPage", "Failed to load items", e);
             }
         });
+
+
+
     }
 }
-
