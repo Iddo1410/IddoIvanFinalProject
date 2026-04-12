@@ -28,15 +28,15 @@ public class Items extends AppCompatActivity {
     private Button btnGoToCart;
     private Spinner spTypeFilter;
 
-    private ArrayList<Item> allItemsList = new ArrayList<>(); // כל המוצרים מהמסד
-    private ArrayList<Item> filteredList = new ArrayList<>(); // המוצרים להצגה לאחר סינון
+    private ArrayList<Item> allItemsList = new ArrayList<>();
+    private ArrayList<Item> filteredList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
 
-        // אתחול רכיבי UI
+        // אתחול רכיבים
         recyclerView = findViewById(R.id.rvItems);
         btnGoToCart = findViewById(R.id.btnGoToCart);
         spTypeFilter = findViewById(R.id.spTypeFilter);
@@ -44,46 +44,40 @@ public class Items extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        // הגדרת האדפטר עם הרשימה המסוננת
-// הגדרת האדפטר עם הרשימה ועם המאזין ללחיצות (Listener)
+        // הגדרת האדפטר
         adapter = new ItemAdapter(filteredList, new ItemAdapter.OnItemClickListener() {
             @Override
             public void onClick(Item item) {
-                // מה קורה כשלוחצים על מוצר (מעבר לדף פרטים)
                 Intent go = new Intent(Items.this, Itemdetails.class);
                 go.putExtra("ITEM_ID", item.getId());
                 startActivity(go);
             }
 
             @Override
-            public void onLongClick(Item item) {
-                // מה קורה בלחיצה ארוכה (אפשר להשאיר ריק)
-            }
-        });        recyclerView.setAdapter(adapter);
+            public void onLongClick(Item item) { }
+        });
+        recyclerView.setAdapter(adapter);
 
-        // הגדרת הספינר עם הנתונים מ-arrs.xml
         setupSpinner();
 
-        // מעבר לעגלה
+        // --- התיקון למעבר לעגלה ---
         if (btnGoToCart != null) {
             btnGoToCart.setOnClickListener(v -> {
-                Intent intent = new Intent(Items.this, Userdetails.class);
+                // מעבר למחלקה CartActivity (צריך ליצור אותה למטה)
+                Intent intent = new Intent(Items.this, CartActivity.class);
                 startActivity(intent);
             });
         }
 
-        // טעינת המוצרים מהמסד
         loadItemsFromDatabase();
     }
 
     private void setupSpinner() {
-        // שימוש במערך typeArr הקיים ב-res/values/arrs.xml
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.typeArr, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spTypeFilter.setAdapter(spinnerAdapter);
 
-        // האזנה לשינויים בספינר
         spTypeFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -92,9 +86,7 @@ public class Items extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // ללא שינוי
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
 
@@ -105,8 +97,9 @@ public class Items extends AppCompatActivity {
                 if (items != null) {
                     allItemsList.clear();
                     allItemsList.addAll(items);
-                    // הצגה ראשונית לפי הבחירה הנוכחית בספינר
-                    filterItems(spTypeFilter.getSelectedItem().toString());
+                    if (spTypeFilter.getSelectedItem() != null) {
+                        filterItems(spTypeFilter.getSelectedItem().toString());
+                    }
                 }
             }
 
@@ -120,7 +113,6 @@ public class Items extends AppCompatActivity {
     private void filterItems(String type) {
         filteredList.clear();
         for (Item item : allItemsList) {
-            // אם סוג המוצר מתאים לבחירה בספינר
             if (item.getType() != null && item.getType().equals(type)) {
                 filteredList.add(item);
             }

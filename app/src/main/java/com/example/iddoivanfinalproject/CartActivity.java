@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.iddoivanfinalproject.adapter.CartAdapter;
 import com.example.iddoivanfinalproject.model.Cart;
 import com.example.iddoivanfinalproject.services.DataBaseService;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -25,25 +26,30 @@ public class CartActivity extends AppCompatActivity {
 
         rvCart = findViewById(R.id.rvCart);
         rvCart.setLayoutManager(new LinearLayoutManager(this));
-
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        // משיכת הפריטים שנמצאים בעגלה מהפיירבייס
-        databaseService.getCartList(new DataBaseService.DatabaseCallback<List<Cart>>() {
-            @Override
-            public void onCompleted(List<Cart> carts) {
-                if (carts != null && !carts.isEmpty()) {
-                    adapter = new CartAdapter(carts);
-                    rvCart.setAdapter(adapter);
-                } else {
-                    Toast.makeText(CartActivity.this, "העגלה ריקה", Toast.LENGTH_SHORT).show();
-                }
-            }
+        // קבלת המשתמש המחובר
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
-            @Override
-            public void onFailed(Exception e) {
-                Toast.makeText(CartActivity.this, "שגיאה בטעינת העגלה", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (currentUserId != null) {
+            databaseService.getCartList(currentUserId, new DataBaseService.DatabaseCallback<List<Cart>>() {
+                @Override
+                public void onCompleted(List<Cart> carts) {
+                    if (carts != null && !carts.isEmpty()) {
+                        adapter = new CartAdapter(carts);
+                        rvCart.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(CartActivity.this, "העגלה שלך ריקה", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailed(Exception e) {
+                    Toast.makeText(CartActivity.this, "שגיאה בטעינה", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "עליך להתחבר", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

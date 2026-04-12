@@ -5,12 +5,15 @@ public class Cart {
     private double price;
     private int quantity;
     private String id;
-
-    public Cart(String name, double price, int quantity, String id) {
+    private String userId;
+    public Cart() {
+    }
+    public Cart(String name, double price, int quantity, String id, String userId) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.id=id;
+        this.userId=userId;
     }
 
     public String getName() {
@@ -47,6 +50,14 @@ public class Cart {
         this.id = id;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public String toString() {
         return "Cart{" +
@@ -54,6 +65,7 @@ public class Cart {
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

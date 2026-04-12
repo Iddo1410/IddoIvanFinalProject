@@ -1,6 +1,5 @@
 package com.example.iddoivanfinalproject.services;
 
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,87 +24,37 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
+public class DataBaseService {
+    private static final String TAG = "DatabaseService";
 
-    /// a service to interact with the Firebase Realtime Database.
-    /// this class is a singleton, use getInstance() to get an instance of this class
-    /// @see #getInstance()
-    /// @see FirebaseDatabase
-    ///
-
-
-        /// tag for logging
-        /// @see Log
-        public class DataBaseService {
-        private static final String TAG = "DatabaseService";
-
-        /// paths for different data types in the database
-        /// @see DatabaseService#readData(String)
-        private static final String USERS_PATH = "users",
-                ITEM_PATH = "items",
-
+    private static final String USERS_PATH = "users",
+            ITEM_PATH = "items",
             COMPARE_PATH = "compare",
-                CARTS_PATH = "carts";
+            CARTS_PATH = "carts";
 
+    public interface DatabaseCallback<T> {
+        public void onCompleted(T object);
+        public void onFailed(Exception e);
+    }
 
-
-            /// callback interface for database operations
-        /// @param <T> the type of the object to return
-        /// @see DatabaseCallback#onCompleted(Object)
-        /// @see DatabaseCallback#onFailed(Exception)
-        public interface DatabaseCallback<T> {
-            /// called when the operation is completed successfully
-            public void onCompleted(T object);
-
-            /// called when the operation fails with an exception
-            public void onFailed(Exception e);
-        }
-
-        /// the instance of this class
-        /// @see #getInstance()
-      public static class DatabaseService {
+    public static class DatabaseService {
         private static DatabaseService instance;
-
-
-
-        /// the reference to the database
-        /// @see DatabaseReference
-        /// @see FirebaseDatabase#getReference()
         private final DatabaseReference databaseReference;
-            private FirebaseAuth mAuth;
 
-            /// use getInstance() to get an instance of this class
-        /// @see DatabaseService#getInstance()
         private DatabaseService() {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             databaseReference = firebaseDatabase.getReference();
         }
 
-        /// get an instance of this class
-        /// @return an instance of this class
-        /// @see DatabaseService
         public static DatabaseService getInstance() {
             if (instance == null) {
                 instance = new DatabaseService();
             }
             return instance;
         }
-            public void addToCart(Cart cartItem, DatabaseCallback<Void> callback) {
-             String uid = mAuth.getCurrentUser().getUid();
-                // יצירת מפתח ייחודי לכל פריט בעגלה של המשתמש
-                databaseReference.child("carts").child(uid).push().setValue(cartItem)
-                        .addOnSuccessListener(aVoid -> callback.onCompleted(null))
-                        .addOnFailureListener(e -> callback.onFailed(e));
-            }
-
 
         // region private generic methods
-        // to write and read data from the database
 
-        /// write data to the database at a specific path
-        /// @param path the path to write the data to
-        /// @param data the data to write (can be any object, but must be serializable, i.e. must have a default constructor and all fields must have getters and setters)
-        /// @param callback the callback to call when the operation is completed
-        /// @see DatabaseCallback
         private void writeData(@NotNull final String path, @NotNull final Object data, final @Nullable DatabaseCallback<Void> callback) {
             readData(path).setValue(data, (error, ref) -> {
                 if (error != null) {
@@ -118,10 +67,6 @@ import java.util.function.UnaryOperator;
             });
         }
 
-        /// remove data from the database at a specific path
-        /// @param path the path to remove the data from
-        /// @param callback the callback to call when the operation is completed
-        /// @see DatabaseCallback
         private void deleteData(@NotNull final String path, @Nullable final DatabaseCallback<Void> callback) {
             readData(path).removeValue((error, ref) -> {
                 if (error != null) {
@@ -134,22 +79,10 @@ import java.util.function.UnaryOperator;
             });
         }
 
-        /// read data from the database at a specific path
-        /// @param path the path to read the data from
-        /// @return a DatabaseReference object to read the data from
-        /// @see DatabaseReference
-
         private DatabaseReference readData(@NotNull final String path) {
             return databaseReference.child(path);
         }
 
-
-        /// get data from the database at a specific path
-        /// @param path the path to get the data from
-        /// @param clazz the class of the object to return
-        /// @param callback the callback to call when the operation is completed
-        /// @see DatabaseCallback
-        /// @see Class
         private <T> void getData(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull final DatabaseCallback<T> callback) {
             readData(path).get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
@@ -162,10 +95,6 @@ import java.util.function.UnaryOperator;
             });
         }
 
-        /// get a list of data from the database at a specific path
-        /// @param path the path to get the data from
-        /// @param clazz the class of the objects to return
-        /// @param callback the callback to call when the operation is completed
         private <T> void getDataList(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull final DatabaseCallback<List<T>> callback) {
             readData(path).get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
@@ -183,24 +112,9 @@ import java.util.function.UnaryOperator;
             });
         }
 
-        /// generate a new id for a new object in the database
-        /// @param path the path to generate the id for
-        /// @return a new id for the object
-        /// @see String
-        /// @see DatabaseReference#push()
-
         private String generateNewId(@NotNull final String path) {
             return databaseReference.child(path).push().getKey();
         }
-
-
-        /// run a transaction on the data at a specific path </br>
-        /// good for incrementing a value or modifying an object in the database
-        /// @param path the path to run the transaction on
-        /// @param clazz the class of the object to return
-        /// @param function the function to apply to the current value of the data
-        /// @param callback the callback to call when the operation is completed
-        /// @see DatabaseReference#runTransaction(Transaction.Handler)
 
         private <T> void runTransaction(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull UnaryOperator<T> function, @NotNull final DatabaseCallback<T> callback) {
             readData(path).runTransaction(new Transaction.Handler() {
@@ -228,44 +142,11 @@ import java.util.function.UnaryOperator;
                     callback.onCompleted(result);
                 }
             });
-
         }
 
-        // endregion of private methods for reading and writing data
-
-        // public methods to interact with the database
+        // endregion of private methods
 
         // region User Section
-
-        /// generate a new id for a new user in the database
-        /// @return a new id for the user
-        /// @see #generateNewId(String)
-        /// @see User
-      //  public  String generateUserId() {
-   //         return generateNewId(USERS_PATH);
-   //     }
-
-        /// create a new user in the database
-        /// @param user the user object to create
-        /// @param callback the callback to call when the operation is completed
-        ///              the callback will receive void
-        ///            if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see User
-        /// create a new user in the database and in FirebaseAuth
-        /// @param user the user object to create
-        /// @param callback the callback to call when the operation is completed
-        ///              the callback will receive void
-        ///            if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see User
-        /// create a new user in the database
-        /// @param user the user object to create (without the id, null)
-        /// @param callback the callback to call when the operation is completed
-        ///              the callback will receive new user id
-        ///            if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see User
         public void createNewUser(@NotNull final User user,
                                   @Nullable final DatabaseCallback<String> callback) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -294,37 +175,18 @@ import java.util.function.UnaryOperator;
                     });
         }
 
-
-            public void getUser(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
+        public void getUser(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
             getData(USERS_PATH + "/" + uid, User.class, callback);
         }
 
-        /// get all the users from the database
-        /// @param callback the callback to call when the operation is completed
-        ///              the callback will receive a list of user objects
-        ///            if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see List
-        /// @see User
         public void getUserList(@NotNull final DatabaseCallback<List<User>> callback) {
             getDataList(USERS_PATH, User.class, callback);
         }
 
-        /// delete a user from the database
-        /// @param uid the user id to delete
-        /// @param callback the callback to call when the operation is completed
         public void deleteUser(@NotNull final String uid, @Nullable final DatabaseCallback<Void> callback) {
             deleteData(USERS_PATH + "/" + uid, callback);
         }
 
-        /// get a user by email and password
-        /// @param email the email of the user
-        /// @param password the password of the user
-        /// @param callback the callback to call when the operation is completed
-        ///            the callback will receive the user object
-        ///          if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see User
         public void getUserByEmailAndPassword(@NotNull final String email, @NotNull final String password, @NotNull final DatabaseCallback<User> callback) {
             readData(USERS_PATH).orderByChild("email").equalTo(email).get()
                     .addOnCompleteListener(task -> {
@@ -346,14 +208,10 @@ import java.util.function.UnaryOperator;
 
                             callback.onCompleted(user);
                             return;
-
                         }
                     });
         }
 
-        /// check if an email already exists in the database
-        /// @param email the email to check
-        /// @param callback the callback to call when the operation is completed
         public void checkIfEmailExists(@NotNull final String email, @NotNull final DatabaseCallback<Boolean> callback) {
             readData(USERS_PATH).orderByChild("email").equalTo(email).get()
                     .addOnCompleteListener(task -> {
@@ -385,191 +243,96 @@ import java.util.function.UnaryOperator;
             });
         }
 
-            /// create a new item in the database
-            /// @param item the item object to create
-            /// @param callback the callback to call when the operation is completed
-            ///              the callback will receive void
-            ///             if the operation fails, the callback will receive an exception
-            /// @return void
-            /// @see DatabaseCallback
+        public void createNewItem(@NotNull final Item item, @Nullable final DatabaseCallback<Void> callback) {
+            writeData("items/" + item.getId(), item, callback);
+        }
 
-            public void createNewItem(@NotNull final Item item, @Nullable final DatabaseCallback<Void> callback) {
-                writeData("items/" + item.getId(), item, callback);
-            }
-
-
-
-            public String generateItemId() {
-                return generateNewId(ITEM_PATH);
-            }
-
-            // endregion User Section
-
-        // region food section
-
-        /// create a new food in the database
-        /// @param food the food object to create
-        /// @param callback the callback to call when the operation is completed
-        ///              the callback will receive void
-        ///             if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see Food
-
-
-        // endregion food section
+        public String generateItemId() {
+            return generateNewId(ITEM_PATH);
+        }
+        // endregion User Section
 
         // region cart section
 
-        /// create a new cart in the database
-        /// @param cart the cart object to create
-        /// @param callback the callback to call when the operation is completed
-        ///               the callback will receive void
-        ///              if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see Cart
+        // --- התיקון: הפונקציה שומרת את העגלה תחת מזהה המשתמש ---
         public void createNewCart(@NotNull final Cart cart, @Nullable final DatabaseCallback<Void> callback) {
-            writeData(CARTS_PATH + "/" + cart.getId(), cart, callback);
+            if (cart.getUserId() == null || cart.getUserId().isEmpty()) {
+                if(callback != null) callback.onFailed(new Exception("User ID is missing in Cart"));
+                return;
+            }
+            // הנתיב עכשיו הוא: carts / מזהה_המשתמש / מזהה_המוצר_בעגלה
+            writeData(CARTS_PATH + "/" + cart.getUserId() + "/" + cart.getId(), cart, callback);
         }
 
-        /// get a cart from the database
-        /// @param cartId the id of the cart to get
-        /// @param callback the callback to call when the operation is completed
-        ///                the callback will receive the cart object
-        ///               if the operation fails, the callback will receive an exception
-        /// @see DatabaseCallback
-        /// @see Cart
-        public void getCart(@NotNull final String cartId, @NotNull final DatabaseCallback<Cart> callback) {
-            getData(CARTS_PATH + "/" + cartId, Cart.class, callback);
+        // --- התיקון: הפונקציה מושכת רק את העגלה של המשתמש הספציפי ---
+        public void getCartList(String userId, @NotNull final DatabaseCallback<List<Cart>> callback) {
+            getDataList(CARTS_PATH + "/" + userId, Cart.class, callback);
         }
 
-        /// get all the carts from the database
-        /// @param callback the callback to call when the operation is completed
-        ///               the callback will receive a list of cart objects
-        ///
-        public void getCartList(@NotNull final DatabaseCallback<List<Cart>> callback) {
-            getDataList(CARTS_PATH, Cart.class, callback);
-        }
-
-        /// get all the carts of a specific user from the database
-        /// @param uid the id of the user to get the carts for
-        /// @param callback the callback to call when the operation is completed
-        public void getUserCartList(@NotNull String uid, @NotNull final DatabaseCallback<List<Cart>> callback) {
-            getCartList(new DatabaseCallback<>() {
-                @Override
-                public void onCompleted(List<Cart> carts) {
-                    carts.removeIf(cart -> !Objects.equals(cart.getId(), uid));
-                    callback.onCompleted(carts);
+        public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
+            readData("items").get().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    callback.onFailed(task.getException());
+                    return;
                 }
-
-                @Override
-                public void onFailed(Exception e) {
-                    callback.onFailed(e);
-                }
+                List<Item> itemList = new ArrayList<>();
+                task.getResult().getChildren().forEach(dataSnapshot -> {
+                    Item item = dataSnapshot.getValue(Item.class);
+                    if (item != null) {
+                        item.setId(dataSnapshot.getKey());
+                        itemList.add(item);
+                    }
+                });
+                callback.onCompleted(itemList);
             });
         }
 
-            public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
-                readData("items").get().addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        callback.onFailed(task.getException());
-                        return;
-                    }
-                    List<Item> itemList = new ArrayList<>();
-                    task.getResult().getChildren().forEach(dataSnapshot -> {
-                        Item item = dataSnapshot.getValue(Item.class);
-                        if (item != null) {
-                            // לוקח את המפתח מהפיירבייס ושומר אותו בתור ה-ID של הפריט
-                            item.setId(dataSnapshot.getKey());
-                            itemList.add(item);
-                        }
-                    });
-                    callback.onCompleted(itemList);
-                });
-            }
-            public void getItemById(@NotNull final String itemId,
-                                    @NotNull final DatabaseCallback<Item> callback) {
-                getData("items/" + itemId, Item.class, callback);
-            }
-            public void getItem(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
-                getData(ITEM_PATH + "/" + itemId, Item.class, callback);
+        public void getItemById(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
+            getData("items/" + itemId, Item.class, callback);
+        }
 
-            }
+        public void getItem(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
+            getData(ITEM_PATH + "/" + itemId, Item.class, callback);
+        }
 
-
-
-
-
-
-            /// generate a new id for a new cart in the database
-        /// @return a new id for the cart
-        /// @see #generateNewId(String)
-        /// @see Cart
         public String generateCartId() {
             return generateNewId(CARTS_PATH);
         }
 
-        /// delete a cart from the database
-        /// @param cartId the id of the cart to delete
-        /// @param callback the callback to call when the operation is completed
-        public void deleteCart(@NotNull final String cartId, @Nullable final DatabaseCallback<Void> callback) {
-            deleteData(CARTS_PATH + "/" + cartId, callback);
+        // --- התיקון: מחיקת פריט מהעגלה לפי משתמש ---
+        public void deleteCartItem(@NotNull final String userId, @NotNull final String cartId, @Nullable final DatabaseCallback<Void> callback) {
+            deleteData(CARTS_PATH + "/" + userId + "/" + cartId, callback);
         }
-
         // endregion cart section
 
-            /// create a new item in the database
-            /// @param compareitem the item object to create
-            /// @param callback the callback to call when the operation is completed
-            ///              the callback will receive void
-            ///             if the operation fails, the callback will receive an exception
-            /// @return void
-            /// @see DatabaseCallback
-
-            public void createNewCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                String userid=mAuth.getCurrentUser().getUid();
-
-
-                writeData(
-
-                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getType(), compareitem, callback);
+        // region Compare section
+        public void createNewCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            if(mAuth.getCurrentUser() != null) {
+                String userid = mAuth.getCurrentUser().getUid();
+                writeData(COMPARE_PATH + "/" + userid + "/" + compareitem.getType(), compareitem, callback);
             }
-
-
-            public void updateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                String userid=mAuth.getCurrentUser().getUid();
-
-
-                writeData(
-
-                        COMPARE_PATH+"/" +userid+"/"+ compareitem.getType(), compareitem, callback);
-
-
-
-
-
-            }
-
-            /// generate a new id for a new cart in the database
-            /// @return a new id for the cart
-            /// @see #generateNewId(String)
-            /// @see Cart
-            public String generateCompareId() {
-                return generateNewId(COMPARE_PATH);
-            }
-
-            public void getCompareByType(@NotNull final String type,
-                                    @NotNull final DatabaseCallback<Compareitem> callback) {
-
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                String userid=mAuth.getCurrentUser().getUid();
-
-
-                        getData(COMPARE_PATH+"/" +userid+"/"+type, Compareitem.class, callback);
-
-            }
-
-
         }
+
+        public void updateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            if(mAuth.getCurrentUser() != null) {
+                String userid = mAuth.getCurrentUser().getUid();
+                writeData(COMPARE_PATH + "/" + userid + "/" + compareitem.getType(), compareitem, callback);
+            }
+        }
+
+        public String generateCompareId() {
+            return generateNewId(COMPARE_PATH);
+        }
+
+        public void getCompareByType(@NotNull final String type, @NotNull final DatabaseCallback<Compareitem> callback) {
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+            if(mAuth.getCurrentUser() != null) {
+                String userid = mAuth.getCurrentUser().getUid();
+                getData(COMPARE_PATH + "/" + userid + "/" + type, Compareitem.class, callback);
+            }
+        }
+        // endregion Compare section
+    }
 }
