@@ -67,7 +67,6 @@ public class UsersPage extends AppCompatActivity {
         // לחיצה על כפתור השוואה - התיקון כאן
         if (btnCompare != null) {
             btnCompare.setOnClickListener(v -> {
-                // וודא שיצרת Activity כזה! אם לא, שנה את השם ל-Userdetails או Activity קיים אחר
                 try {
                     Intent intent = new Intent(UsersPage.this, CompareList.class);
                     startActivity(intent);

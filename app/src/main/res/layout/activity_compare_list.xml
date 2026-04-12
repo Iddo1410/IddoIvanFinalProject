@@ -8,48 +8,42 @@
     tools:context=".CompareList">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="TextView"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="בחר סוג מוצר להשוואה:"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/spinnerCategory"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="47dp"
-        android:layout_marginBottom="3dp"
-        android:text="TextView"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="9dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/rvCompare"
-        app:layout_constraintStart_toStartOf="@+id/rvCompare" />
-
-    <TextView
-        android:id="@+id/tvCompareType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="28dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="@+id/rvCompare"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
-
         android:id="@+id/rvCompare"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvCompareType" />
-
+        app:layout_constraintTop_toBottomOf="@+id/spinnerCategory" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

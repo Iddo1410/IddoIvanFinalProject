@@ -19,8 +19,6 @@ import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.services.DataBaseService;
 import com.example.iddoivanfinalproject.utils.ImageUtil;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class Itemdetails extends AppCompatActivity {
 
     private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear;
     private ImageView ivPic;
-    private Button btnBack, btnAddToCart;
+    private Button btnBack, btnAddToCart, btnGoToCompare;
     private CheckBox cbCompare;
     private DataBaseService.DatabaseService databaseService;
 
@@ -38,7 +36,7 @@ public class Itemdetails extends AppCompatActivity {
     DateTimeFormatter formatter;
     LocalDate date;
     String formattedDate;
-    private String itemId=null;
+    private String itemId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,7 @@ public class Itemdetails extends AppCompatActivity {
         initViews();
 
         // קבלת ה-ID מה-Intent
-       itemId = getIntent().getStringExtra("ITEM_ID");
+        itemId = getIntent().getStringExtra("ITEM_ID");
 
         if (itemId != null) {
             databaseService.getItemById(itemId, new DataBaseService.DatabaseCallback<Item>() {
@@ -77,31 +75,35 @@ public class Itemdetails extends AppCompatActivity {
                         ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
                     }
 
-
-
+                    // משיכת רשימת ההשוואה
                     databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() {
                         @Override
                         public void onCompleted(Compareitem compareitemDB) {
                             if (compareitemDB != null) {
                                 compareitem = compareitemDB;
-
-
+                                if (compareitem.getItemArrayList() != null) {
+                                    for (Item existingItem : compareitem.getItemArrayList()) {
+                                        if (existingItem.getId().equals(currentItem.getId())) {
+                                            cbCompare.setOnCheckedChangeListener(null);
+                                            cbCompare.setChecked(true);
+                                            setCheckboxListener();
+                                            break;
+                                        }
+                                    }
+                                }
                             } else {
                                 compareitem = new Compareitem();
                                 compareitem.setId(databaseService.generateCompareId());
-
-
                             }
-
                         }
+
                         @Override
                         public void onFailed(Exception e) {
-
                             compareitem = new Compareitem();
                             compareitem.setId(databaseService.generateCompareId());
                         }
-                        });
-                    }
+                    });
+                }
 
                 @Override
                 public void onFailed(Exception e) {
@@ -123,83 +125,105 @@ public class Itemdetails extends AppCompatActivity {
         cbCompare = findViewById(R.id.cbCompare);
         ivPic = findViewById(R.id.ivPic);
 
+        // אתחול כפתור המעבר להשוואה
+        btnGoToCompare = findViewById(R.id.btnGoToCompare);
+
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        // --- הוספת מוצר לעגלה ---
+        // לחיצה על כפתור מעבר לדף ההשוואות
+        if (btnGoToCompare != null) {
+            btnGoToCompare.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Itemdetails.this, CompareList.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // הוספה לעגלה
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentItem != null) {
-                    // יצירת מזהה ייחודי לשורת העגלה
                     String cartId = databaseService.generateCartId();
-
-                    // יצירת אובייקט Cart לפי הבנאי שלך: שם, מחיר, כמות, ID
-                    Cart cartItem = new Cart(
-                            currentItem.getName(),
-                            currentItem.getPrice(),
-                            1, // כמות ברירת מחדל
-                            cartId
-                    );
-
-                    // שמירה במסד הנתונים
+                    Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId);
                     databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
                         @Override
                         public void onCompleted(Void object) {
                             Toast.makeText(Itemdetails.this, "המוצר נוסף לעגלה!", Toast.LENGTH_SHORT).show();
                         }
-
                         @Override
                         public void onFailed(Exception e) {
-                            Toast.makeText(Itemdetails.this, "שגיאה בהוספה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Itemdetails.this, "שגיאה בהוספה", Toast.LENGTH_SHORT).show();
                         }
                     });
-                } else {
-                    Toast.makeText(Itemdetails.this, "טוען נתונים, נא להמתין...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // לוגיקת צ'קבוקס השוואה
+        setCheckboxListener();
+    }
+
+    private void setCheckboxListener() {
         cbCompare.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(@NonNull CompoundButton compoundButton, boolean checked) {
-                if (checked && currentItem != null) {
-                    // הקוד המקורי שלך להשוואה
+                if (currentItem == null) return;
 
-                   compareitem.setType(currentItem.getType());
+                if (compareitem.getItemArrayList() == null) {
+                    compareitem.setItemArrayList(new ArrayList<>());
+                }
 
-                    compareitem.setDate(formattedDate);
-
-                    if (compareitem.getItemArrayList() == null) {
-                        compareitem.setItemArrayList(new ArrayList<>());
+                if (checked) {
+                    boolean isAlreadyInList = false;
+                    for (Item item : compareitem.getItemArrayList()) {
+                        if (item.getId().equals(currentItem.getId())) {
+                            isAlreadyInList = true;
+                            break;
+                        }
                     }
-                    compareitem.getItemArrayList().add(currentItem);
-                    // כאן חסרה מתודה createNewCompareList ב-Service שלך, וודא שהיא קיימת
 
+                    if (!isAlreadyInList) {
+                        compareitem.setType(currentItem.getType());
+                        compareitem.setDate(formattedDate);
+                        compareitem.getItemArrayList().add(currentItem);
 
+                        databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "המוצר נוסף להשוואה", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onFailed(Exception e) { }
+                        });
+                    }
+                } else {
+                    Item itemToRemove = null;
+                    for (Item item : compareitem.getItemArrayList()) {
+                        if (item.getId().equals(currentItem.getId())) {
+                            itemToRemove = item;
+                            break;
+                        }
+                    }
 
-                         databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
-                             @Override
-                             public void onCompleted(Void object) {
-
-                             }
-
-                             @Override
-                             public void onFailed(Exception e) {
-
-                             }
-                         });
-                     }
-
-
-
-
-        }
+                    if (itemToRemove != null) {
+                        compareitem.getItemArrayList().remove(itemToRemove);
+                        databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "המוצר הוסר מההשוואה", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onFailed(Exception e) { }
+                        });
+                    }
+                }
+            }
         });
     }
 
     public void onBack(View view) {
-        Intent intent = new Intent(Itemdetails.this, Items.class);
-        startActivity(intent);
+        finish(); // סגירת הדף הנוכחי וחזרה אחורה
     }
 }

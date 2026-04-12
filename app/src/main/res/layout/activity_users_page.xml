@@ -36,7 +36,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="27dp"
-
         android:layout_marginBottom="62dp"
         android:background="#73E2EF"
         android:text="לחנות"
@@ -50,7 +49,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="71dp"
-
         android:background="#73E2EF"
         android:text="השוואות"
         android:textStyle="bold"
@@ -63,7 +61,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
-
         android:layout_marginBottom="243dp"
         android:background="#73E2EF"
         android:text="התנתקות"

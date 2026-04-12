@@ -15,7 +15,7 @@
         android:layout_height="895dp"
         android:scaleType="centerCrop"
         android:src="@drawable/background"
-        app:layout_constraintStart_toStartOf="@+id/btnSignup"
+        app:layout_constraintStart_toStartOf="@+id/btnLogin"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -24,13 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="122dp"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="65dp"
+        android:layout_marginBottom="66dp"
         android:gravity="center"
         android:text="השוואת מוצרי חשמל"
         android:textColor="@color/black"
         android:textSize="40dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnSignup"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,35 +38,34 @@
         android:id="@+id/btnSignup"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="27dp"
         android:background="@color/cardview_dark_background"
         android:backgroundTint="#313A8E"
         android:onClick="onClick"
         android:text="הרשמה"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvHome" />
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="26dp"
+        android:layout_marginBottom="12dp"
         android:background="@color/cardview_dark_background"
         android:backgroundTint="#313A90"
         android:onClick="onLogin"
         android:text="התחברות"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/btnSignup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+        app:layout_constraintTop_toBottomOf="@+id/tvHome" />
 
     <Button
         android:id="@+id/button3"
@@ -81,13 +80,13 @@
         app:layout_constraintBottom_toTopOf="@+id/imageView3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="79dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
