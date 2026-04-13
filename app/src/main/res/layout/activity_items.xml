@@ -3,18 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F1FAEE"
+    android:layoutDirection="rtl">
+
+    <TextView
+        android:id="@+id/tvShop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="החנות"
+        android:textColor="#457B9D"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/spTypeFilter"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="35dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
         android:background="@android:drawable/btn_dropdown"
-        android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/rvItems"
+        android:backgroundTint="#FFFFFF"
+        android:elevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvShop" />
@@ -23,6 +38,9 @@
         android:id="@+id/rvItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,31 +49,18 @@
     <Button
         android:id="@+id/btnGoToCart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginStart="24dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="#FF9800"
-        android:elevation="8dp"
-        android:text="🛒 לעגלה"
+        android:backgroundTint="#1D3557"
+        android:elevation="6dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="🛒 עגלת קניות"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/tvShop"
-        android:layout_width="133dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="131dp"
-        android:layout_marginTop="43dp"
-        android:layout_marginBottom="19dp"
-        android:text="החנות"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/spTypeFilter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

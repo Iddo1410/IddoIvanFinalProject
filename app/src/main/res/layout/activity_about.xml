@@ -1,29 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutActivity">
+    android:background="#E8E6F8"
+    android:layoutDirection="rtl"
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="אודות"
-        android:textSize="50dp"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="80dp" />
+        android:padding="24dp"
+        tools:context=".AboutActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="411dp"
-        android:layout_height="86dp"
-        android:text="אפליקציה חדשנית שמטרתה לעזור לך למצוא את המחיר המשתלם ביותר עבור מוצרי חשמל לבית ולעסק.
-בעזרת האפליקציה תוכל להשוות בקלות מחירים בין חנויות שונות, לבדוק דירוגים וביקורות, ולמצוא את העסקה המשתלמת ביותר – בלחיצת כפתור."
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="218dp" />
+        <ImageView
+            android:id="@+id/ivAboutLogo"
+            android:layout_width="166dp"
+            android:layout_height="124dp"
+            android:layout_marginTop="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/__2025_11_30_095644"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="אודות האפליקציה"
+            android:textColor="#2A2438"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivAboutLogo" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:lineSpacingExtra="8dp"
+            android:text="אפליקציה חדשנית שמטרתה לעזור לך למצוא את המחיר המשתלם ביותר עבור מוצרי חשמל לבית ולעסק.\n\nבעזרת האפליקציה תוכל להשוות בקלות מחירים בין חברות שונות, ולמצוא את העסקה המשתלמת ביותר – בלחיצת כפתור!"
+            android:textColor="#2A2438"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <Button
+            android:id="@+id/btnBackAbout"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="48dp"
+            android:backgroundTint="#887BB0"
+            android:text="חזור"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

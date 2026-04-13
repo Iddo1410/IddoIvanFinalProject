@@ -1,7 +1,6 @@
 package com.example.iddoivanfinalproject.services;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -33,8 +32,8 @@ public class DataBaseService {
             CARTS_PATH = "carts";
 
     public interface DatabaseCallback<T> {
-        public void onCompleted(T object);
-        public void onFailed(Exception e);
+        void onCompleted(T object);
+        void onFailed(Exception e);
     }
 
     public static class DatabaseService {
@@ -53,16 +52,13 @@ public class DataBaseService {
             return instance;
         }
 
-        // region private generic methods
-
+        // region Generic Private Methods
         private void writeData(@NotNull final String path, @NotNull final Object data, final @Nullable DatabaseCallback<Void> callback) {
             readData(path).setValue(data, (error, ref) -> {
                 if (error != null) {
-                    if (callback == null) return;
-                    callback.onFailed(error.toException());
+                    if (callback != null) callback.onFailed(error.toException());
                 } else {
-                    if (callback == null) return;
-                    callback.onCompleted(null);
+                    if (callback != null) callback.onCompleted(null);
                 }
             });
         }
@@ -70,11 +66,9 @@ public class DataBaseService {
         private void deleteData(@NotNull final String path, @Nullable final DatabaseCallback<Void> callback) {
             readData(path).removeValue((error, ref) -> {
                 if (error != null) {
-                    if (callback == null) return;
-                    callback.onFailed(error.toException());
+                    if (callback != null) callback.onFailed(error.toException());
                 } else {
-                    if (callback == null) return;
-                    callback.onCompleted(null);
+                    if (callback != null) callback.onCompleted(null);
                 }
             });
         }
@@ -86,7 +80,6 @@ public class DataBaseService {
         private <T> void getData(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull final DatabaseCallback<T> callback) {
             readData(path).get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
-                    Log.e(TAG, "Error getting data", task.getException());
                     callback.onFailed(task.getException());
                     return;
                 }
@@ -98,16 +91,14 @@ public class DataBaseService {
         private <T> void getDataList(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull final DatabaseCallback<List<T>> callback) {
             readData(path).get().addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) {
-                    Log.e(TAG, "Error getting data", task.getException());
                     callback.onFailed(task.getException());
                     return;
                 }
                 List<T> tList = new ArrayList<>();
-                task.getResult().getChildren().forEach(dataSnapshot -> {
+                for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
                     T t = dataSnapshot.getValue(clazz);
-                    tList.add(t);
-                });
-
+                    if (t != null) tList.add(t);
+                }
                 callback.onCompleted(tList);
             });
         }
@@ -122,11 +113,7 @@ public class DataBaseService {
                 @Override
                 public Transaction.Result doTransaction(@NonNull MutableData currentData) {
                     T currentValue = currentData.getValue(clazz);
-                    if (currentValue == null) {
-                        currentValue = function.apply(null);
-                    } else {
-                        currentValue = function.apply(currentValue);
-                    }
+                    currentValue = function.apply(currentValue);
                     currentData.setValue(currentValue);
                     return Transaction.success(currentData);
                 }
@@ -134,7 +121,6 @@ public class DataBaseService {
                 @Override
                 public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
                     if (error != null) {
-                        Log.e(TAG, "Transaction failed", error.toException());
                         callback.onFailed(error.toException());
                         return;
                     }
@@ -143,34 +129,24 @@ public class DataBaseService {
                 }
             });
         }
-
-        // endregion of private methods
+        // endregion
 
         // region User Section
-        public void createNewUser(@NotNull final User user,
-                                  @Nullable final DatabaseCallback<String> callback) {
+        public void createNewUser(@NotNull final User user, @Nullable final DatabaseCallback<String> callback) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Log.d("TAG", "createUserWithEmail:success");
-                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            String uid = mAuth.getCurrentUser().getUid();
                             user.setId(uid);
                             writeData(USERS_PATH + "/" + uid, user, new DatabaseCallback<Void>() {
                                 @Override
-                                public void onCompleted(Void v) {
-                                    if (callback != null) callback.onCompleted(uid);
-                                }
-
+                                public void onCompleted(Void v) { if (callback != null) callback.onCompleted(uid); }
                                 @Override
-                                public void onFailed(Exception e) {
-                                    if (callback != null) callback.onFailed(e);
-                                }
+                                public void onFailed(Exception e) { if (callback != null) callback.onFailed(e); }
                             });
                         } else {
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                            if (callback != null)
-                                callback.onFailed(task.getException());
+                            if (callback != null) callback.onFailed(task.getException());
                         }
                     });
         }
@@ -186,153 +162,83 @@ public class DataBaseService {
         public void deleteUser(@NotNull final String uid, @Nullable final DatabaseCallback<Void> callback) {
             deleteData(USERS_PATH + "/" + uid, callback);
         }
+        // endregion
 
-        public void getUserByEmailAndPassword(@NotNull final String email, @NotNull final String password, @NotNull final DatabaseCallback<User> callback) {
-            readData(USERS_PATH).orderByChild("email").equalTo(email).get()
-                    .addOnCompleteListener(task -> {
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "Error getting data", task.getException());
-                            callback.onFailed(task.getException());
-                            return;
-                        }
-                        if (task.getResult().getChildrenCount() == 0) {
-                            callback.onFailed(new Exception("User not found"));
-                            return;
-                        }
-                        for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (user == null || !Objects.equals(user.getPassword(), password)) {
-                                callback.onFailed(new Exception("Invalid email or password"));
-                                return;
-                            }
-
-                            callback.onCompleted(user);
-                            return;
-                        }
-                    });
-        }
-
-        public void checkIfEmailExists(@NotNull final String email, @NotNull final DatabaseCallback<Boolean> callback) {
-            readData(USERS_PATH).orderByChild("email").equalTo(email).get()
-                    .addOnCompleteListener(task -> {
-                        if (!task.isSuccessful()) {
-                            Log.e(TAG, "Error getting data", task.getException());
-                            callback.onFailed(task.getException());
-                            return;
-                        }
-                        boolean exists = task.getResult().getChildrenCount() > 0;
-                        callback.onCompleted(exists);
-                    });
-        }
-
-        public void updateUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
-            runTransaction(USERS_PATH + "/" + user.getId(), User.class, currentUser -> user, new DatabaseCallback<User>() {
-                @Override
-                public void onCompleted(User object) {
-                    if (callback != null) {
-                        callback.onCompleted(null);
-                    }
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    if (callback != null) {
-                        callback.onFailed(e);
-                    }
-                }
-            });
-        }
-
+        // region Item Section
         public void createNewItem(@NotNull final Item item, @Nullable final DatabaseCallback<Void> callback) {
-            writeData("items/" + item.getId(), item, callback);
+            writeData(ITEM_PATH + "/" + item.getId(), item, callback);
+        }
+
+        public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
+            getDataList(ITEM_PATH, Item.class, callback);
         }
 
         public String generateItemId() {
             return generateNewId(ITEM_PATH);
         }
-        // endregion User Section
+        // endregion
 
-        // region cart section
-
-        // --- התיקון: הפונקציה שומרת את העגלה תחת מזהה המשתמש ---
+        // region Cart Section
         public void createNewCart(@NotNull final Cart cart, @Nullable final DatabaseCallback<Void> callback) {
-            if (cart.getUserId() == null || cart.getUserId().isEmpty()) {
-                if(callback != null) callback.onFailed(new Exception("User ID is missing in Cart"));
-                return;
-            }
-            // הנתיב עכשיו הוא: carts / מזהה_המשתמש / מזהה_המוצר_בעגלה
+            // שמירה בנתיב: carts / userId / cartId
             writeData(CARTS_PATH + "/" + cart.getUserId() + "/" + cart.getId(), cart, callback);
         }
 
-        // --- התיקון: הפונקציה מושכת רק את העגלה של המשתמש הספציפי ---
         public void getCartList(String userId, @NotNull final DatabaseCallback<List<Cart>> callback) {
+            // משיכת רשימה רק עבור המשתמש המחובר
             getDataList(CARTS_PATH + "/" + userId, Cart.class, callback);
         }
 
-        public void getAllItems(@NotNull final DatabaseCallback<List<Item>> callback) {
-            readData("items").get().addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    callback.onFailed(task.getException());
-                    return;
-                }
-                List<Item> itemList = new ArrayList<>();
-                task.getResult().getChildren().forEach(dataSnapshot -> {
-                    Item item = dataSnapshot.getValue(Item.class);
-                    if (item != null) {
-                        item.setId(dataSnapshot.getKey());
-                        itemList.add(item);
-                    }
-                });
-                callback.onCompleted(itemList);
-            });
+        public void deleteCartItem(@NotNull final String userId, @NotNull final String cartId, @Nullable final DatabaseCallback<Void> callback) {
+            // מחיקה מהנתיב הספציפי של המשתמש
+            deleteData(CARTS_PATH + "/" + userId + "/" + cartId, callback);
         }
-
+        // פונקציה לשליפת פריט בודד מהחנות לפי ה-ID שלו
         public void getItemById(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
-            getData("items/" + itemId, Item.class, callback);
-        }
-
-        public void getItem(@NotNull final String itemId, @NotNull final DatabaseCallback<Item> callback) {
+            // אנחנו משתמשים בנתיב items/itemId ומחזירים אובייקט מסוג Item
             getData(ITEM_PATH + "/" + itemId, Item.class, callback);
         }
 
         public String generateCartId() {
             return generateNewId(CARTS_PATH);
         }
+        // endregion
 
-        // --- התיקון: מחיקת פריט מהעגלה לפי משתמש ---
-        public void deleteCartItem(@NotNull final String userId, @NotNull final String cartId, @Nullable final DatabaseCallback<Void> callback) {
-            deleteData(CARTS_PATH + "/" + userId + "/" + cartId, callback);
-        }
-        // endregion cart section
-
-        // region Compare section
+        // region Compare Section
         public void createNewCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            if(mAuth.getCurrentUser() != null) {
-                String userid = mAuth.getCurrentUser().getUid();
+            String userid = FirebaseAuth.getInstance().getUid();
+            if(userid != null) {
                 writeData(COMPARE_PATH + "/" + userid + "/" + compareitem.getType(), compareitem, callback);
             }
         }
-
-        public void updateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            if(mAuth.getCurrentUser() != null) {
-                String userid = mAuth.getCurrentUser().getUid();
-                writeData(COMPARE_PATH + "/" + userid + "/" + compareitem.getType(), compareitem, callback);
-            }
-        }
-
         public String generateCompareId() {
+
             return generateNewId(COMPARE_PATH);
+
         }
 
         public void getCompareByType(@NotNull final String type, @NotNull final DatabaseCallback<Compareitem> callback) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            if(mAuth.getCurrentUser() != null) {
-                String userid = mAuth.getCurrentUser().getUid();
+            String userid = FirebaseAuth.getInstance().getUid();
+            if(userid != null) {
                 getData(COMPARE_PATH + "/" + userid + "/" + type, Compareitem.class, callback);
             }
         }
-        // endregion Compare section
+        public void updateCompareList(@NotNull final Compareitem compareitem, @Nullable final DatabaseCallback<Void> callback) {
+
+            FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+            if(mAuth.getCurrentUser() != null) {
+
+                String userid = mAuth.getCurrentUser().getUid();
+
+                writeData(COMPARE_PATH + "/" + userid + "/" + compareitem.getType(), compareitem, callback);
+
+            }
+
+        }
+
+
+
+        // endregion
     }
 }

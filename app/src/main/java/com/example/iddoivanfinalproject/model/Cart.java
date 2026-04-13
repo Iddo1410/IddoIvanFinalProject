@@ -6,14 +6,16 @@ public class Cart {
     private int quantity;
     private String id;
     private String userId;
+    private String pic;
     public Cart() {
     }
-    public Cart(String name, double price, int quantity, String id, String userId) {
+    public Cart(String name, double price, int quantity, String id, String userId, String pic) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.id=id;
         this.userId=userId;
+        this.pic=pic;
     }
 
     public String getName() {
@@ -58,6 +60,14 @@ public class Cart {
         this.userId = userId;
     }
 
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
+    }
+
     @Override
     public String toString() {
         return "Cart{" +
@@ -66,6 +76,7 @@ public class Cart {
                 ", quantity=" + quantity +
                 ", id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
+                ", pic='" + pic + '\'' +
                 '}';
     }
 }

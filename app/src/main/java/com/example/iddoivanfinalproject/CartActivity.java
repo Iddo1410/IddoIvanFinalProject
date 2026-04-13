@@ -24,11 +24,17 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        initViews();
+        loadCartItems();
+    }
+
+    private void initViews() {
         rvCart = findViewById(R.id.rvCart);
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
+    }
 
-        // קבלת המשתמש המחובר
+    private void loadCartItems() {
         String currentUserId = FirebaseAuth.getInstance().getUid();
 
         if (currentUserId != null) {
@@ -36,20 +42,38 @@ public class CartActivity extends AppCompatActivity {
                 @Override
                 public void onCompleted(List<Cart> carts) {
                     if (carts != null && !carts.isEmpty()) {
-                        adapter = new CartAdapter(carts);
+                        // יצירת האדפטר עם פונקציית המחיקה
+                        adapter = new CartAdapter(carts, cart -> {
+                            deleteItem(cart);
+                        });
                         rvCart.setAdapter(adapter);
                     } else {
+                        rvCart.setAdapter(null); // ניקוי הרשימה אם היא ריקה
                         Toast.makeText(CartActivity.this, "העגלה שלך ריקה", Toast.LENGTH_SHORT).show();
                     }
                 }
+
                 @Override
                 public void onFailed(Exception e) {
-                    Toast.makeText(CartActivity.this, "שגיאה בטעינה", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CartActivity.this, "שגיאה בטעינת הנתונים", Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            Toast.makeText(this, "עליך להתחבר", Toast.LENGTH_SHORT).show();
-            finish();
         }
+    }
+
+    private void deleteItem(Cart cart) {
+        // קריאה לפונקציית המחיקה ב-DatabaseService
+        databaseService.deleteCartItem(cart.getUserId(),cart.getId(), new DataBaseService.DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void unused) {
+                Toast.makeText(CartActivity.this, "הפריט הוסר מהעגלה", Toast.LENGTH_SHORT).show();
+                loadCartItems(); // טעינה מחדש של הרשימה לאחר המחיקה
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(CartActivity.this, "המחיקה נכשלה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

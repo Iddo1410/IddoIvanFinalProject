@@ -1,107 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminPage">
+    android:background="#E8E6F8"
+    android:layoutDirection="rtl"
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="506dp"
-        android:layout_height="927dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/images__1_"
-        app:layout_constraintBaseline_toBaselineOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dp"
+        tools:context=".AdminPage">
 
-    <Button
-        android:id="@+id/btnAddItem"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        android:background="#73E2EF"
-        android:onClick="onAdd"
-        android:text="הוספת מוצר"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnHistory"
-        app:layout_constraintEnd_toEndOf="@+id/btnHistory"
-        app:layout_constraintStart_toStartOf="@+id/btnHistory"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        <TextView
+            android:id="@+id/tvHi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="היי, מנהל"
+            android:textColor="#4A4041"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="היי Iddo" />
 
-    <Button
-        android:id="@+id/btnHistory"
-        android:layout_width="122dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="29dp"
-        android:background="#73E2EF"
-        android:text="היסטורית רכישות"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnUsers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAddItem" />
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="לוח בקרה וניהול המערכת"
+            android:textColor="#8C7A7C"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvHi" />
 
-    <Button
-        android:id="@+id/btnUsers"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="33dp"
-        android:background="#73E2EF"
-        android:onClick="onClick"
-        android:text="משתמשים"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogout"
-        app:layout_constraintEnd_toEndOf="@+id/btnLogout"
-        app:layout_constraintStart_toStartOf="@+id/btnLogout"
-        app:layout_constraintTop_toBottomOf="@+id/btnHistory" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="32dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubtitle">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="130dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="184dp"
-        android:background="#73E2EF"
-        android:text="התנתקות"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnUsers" />
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#D5B8BA"
+                android:onClick="onShop"
+                android:text="מעבר לחנות"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvHi"
-        android:layout_width="96dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="92dp"
-        android:layout_marginBottom="83dp"
-        android:text="היי"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/btnAddItem"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#D5B8BA"
+                android:onClick="onAdd"
+                android:text="הוספת מוצר"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="28dp"
-        android:background="#73E2EF"
-        android:onClick="onShop"
-        android:text="לחנות"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddItem"
-        app:layout_constraintEnd_toEndOf="@+id/btnAddItem"
-        app:layout_constraintStart_toStartOf="@+id/btnAddItem"
-        app:layout_constraintTop_toBottomOf="@+id/tvHi" />
+            <Button
+                android:id="@+id/btnHistory"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#D5B8BA"
+                android:text="היסטורית רכישות"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnUsers"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#D5B8BA"
+                android:onClick="onClick"
+                android:text="ניהול משתמשים"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="#A08C8E"
+                android:text="התנתקות"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

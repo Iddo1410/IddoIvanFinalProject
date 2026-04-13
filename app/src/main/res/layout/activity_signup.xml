@@ -1,108 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupActivity">
+    android:background="#F0F7F4"
+    android:layoutDirection="rtl"
+    android:fillViewport="true">
 
-    <EditText
-        android:id="@+id/fname"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="96dp"
-        android:layout_marginBottom="24dp"
-        android:ems="10"
-        android:hint="First Name"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/lname"
-        app:layout_constraintStart_toStartOf="@+id/tvEnterDetails"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterDetails" />
+        android:paddingBottom="40dp"
+        tools:context=".SignupActivity">
 
-    <EditText
-        android:id="@+id/lname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="23dp"
-        android:ems="10"
-        android:hint="Last Name"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/email"
-        app:layout_constraintStart_toStartOf="@+id/fname"
-        app:layout_constraintTop_toBottomOf="@+id/fname" />
+        <TextView
+            android:id="@+id/tvEnterDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="יצירת משתמש חדש"
+            android:textColor="#1F3625"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/lname"
-        app:layout_constraintTop_toBottomOf="@+id/lname" />
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="הזן את פרטיך כדי להירשם למערכת"
+            android:textColor="#728A7A"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEnterDetails" />
 
-    <EditText
-        android:id="@+id/phNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="311dp"
-        android:ems="10"
-        android:hint="Phone Number"
-        android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/password"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        <EditText
+            android:id="@+id/fname"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="32dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:hint="שם פרטי"
+            android:inputType="textPersonName"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1F3625"
+            android:textColorHint="#728A7A"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubtitle" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="23dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/phNumber"
-        app:layout_constraintStart_toStartOf="@+id/email"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        <EditText
+            android:id="@+id/lname"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:hint="שם משפחה"
+            android:inputType="textPersonName"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1F3625"
+            android:textColorHint="#728A7A"
+            app:layout_constraintEnd_toEndOf="@+id/fname"
+            app:layout_constraintStart_toStartOf="@+id/fname"
+            app:layout_constraintTop_toBottomOf="@+id/fname" />
 
-    <TextView
-        android:id="@+id/tvEnterDetails"
-        android:layout_width="338dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="418dp"
-        android:text="הכנס פרטים"
-        android:textSize="50dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnSignup"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:hint="אימייל"
+            android:inputType="textEmailAddress"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1F3625"
+            android:textColorHint="#728A7A"
+            app:layout_constraintEnd_toEndOf="@+id/lname"
+            app:layout_constraintStart_toStartOf="@+id/lname"
+            app:layout_constraintTop_toBottomOf="@+id/lname" />
 
-    <Button
-        android:id="@+id/btnSignup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="53dp"
-        android:text="הירשם"
-        app:layout_constraintBottom_toTopOf="@+id/tvLogin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvEnterDetails" />
+        <EditText
+            android:id="@+id/phNumber"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:hint="מספר טלפון"
+            android:inputType="phone"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1F3625"
+            android:textColorHint="#728A7A"
+            app:layout_constraintEnd_toEndOf="@+id/email"
+            app:layout_constraintStart_toStartOf="@+id/email"
+            app:layout_constraintTop_toBottomOf="@+id/email" />
 
-    <TextView
-        android:id="@+id/tvLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="111dp"
-        android:text="כבר רשום? לחץ כאן"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/btnSignup"
-        app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginTop="16dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp"
+            android:hint="סיסמה"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#1F3625"
+            android:textColorHint="#728A7A"
+            app:layout_constraintEnd_toEndOf="@+id/phNumber"
+            app:layout_constraintStart_toStartOf="@+id/phNumber"
+            app:layout_constraintTop_toBottomOf="@+id/phNumber" />
 
+        <Button
+            android:id="@+id/btnSignup"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="#2A9D8F"
+            android:text="הירשם עכשיו"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="כבר רשום? לחץ כאן להתחברות"
+            android:textColor="#2A9D8F"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
