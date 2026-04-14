@@ -216,6 +216,25 @@ public class DataBaseService {
             return generateNewId(COMPARE_PATH);
 
         }
+        /// פונקציה חדשה לעדכון שדות ספציפיים של משתמש מבלי לדרוס את כל האובייקט (שומר על הסיסמה)
+        public void updateUserFields(@NotNull String userId, String fname, String lname, String email, String phone, @Nullable final DatabaseCallback<Void> callback) {
+
+            // יצירת מפה (Map) שמכילה רק את השדות שאנחנו רוצים לעדכן
+            java.util.Map<String, Object> updates = new java.util.HashMap<>();
+            updates.put("fname", fname);
+            updates.put("lname", lname);
+            updates.put("email", email);
+            updates.put("phoneNumber", phone);
+
+            // עדכון השדות ב-Firebase
+            readData(USERS_PATH + "/" + userId).updateChildren(updates).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (callback != null) callback.onCompleted(null);
+                } else {
+                    if (callback != null) callback.onFailed(task.getException());
+                }
+            });
+        }
 
         public void getCompareByType(@NotNull final String type, @NotNull final DatabaseCallback<Compareitem> callback) {
             String userid = FirebaseAuth.getInstance().getUid();

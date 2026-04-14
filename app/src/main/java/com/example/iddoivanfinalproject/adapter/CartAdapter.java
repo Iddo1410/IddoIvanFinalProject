@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.iddoivanfinalproject.CartActivity;
 import com.example.iddoivanfinalproject.R;
 import com.example.iddoivanfinalproject.model.Cart;
 import com.example.iddoivanfinalproject.utils.ImageUtil;
@@ -20,16 +21,11 @@ import java.util.List;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
 
     private List<Cart> cartList;
-    private OnItemDeleteListener deleteListener;
+    private CartActivity.CartActionListener actionListener;
 
-    // ממשק לטיפול במחיקה מה-Activity
-    public interface OnItemDeleteListener {
-        void onDeleteClick(Cart cart);
-    }
-
-    public CartAdapter(List<Cart> cartList, OnItemDeleteListener deleteListener) {
+    public CartAdapter(List<Cart> cartList, CartActivity.CartActionListener actionListener) {
         this.cartList = cartList;
-        this.deleteListener = deleteListener;
+        this.actionListener = actionListener;
     }
 
     @NonNull
@@ -45,8 +41,13 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         Cart cart = cartList.get(position);
 
         holder.tvName.setText(cart.getName());
-        holder.tvPrice.setText(cart.getPrice() + " ₪");
-        holder.tvQuantity.setText("כמות: " + cart.getQuantity());
+
+        // --- חישוב המחיר: מחיר המוצר כפול הכמות ---
+        double totalPrice = cart.getPrice() * cart.getQuantity();
+        holder.tvPrice.setText(totalPrice + " ₪");
+        // ------------------------------------------
+
+        holder.tvQuantity.setText(String.valueOf(cart.getQuantity()));
 
         // טעינת תמונה
         if (cart.getPic() != null && !cart.getPic().isEmpty()) {
@@ -60,10 +61,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.ivCartItemPic.setImageResource(R.drawable.images__1_);
         }
 
-        // הגדרת לחיצה על כפתור המחיקה
+        // מחיקה
         holder.btnDelete.setOnClickListener(v -> {
-            if (deleteListener != null) {
-                deleteListener.onDeleteClick(cart);
+            if (actionListener != null) {
+                actionListener.onDelete(cart);
+            }
+        });
+
+        // פלוס (הגדלת כמות)
+        holder.btnPlus.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onQuantityChanged(cart, cart.getQuantity() + 1);
+            }
+        });
+
+        // מינוס (הקטנת כמות)
+        holder.btnMinus.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onQuantityChanged(cart, cart.getQuantity() - 1);
             }
         });
     }
@@ -77,6 +92,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         TextView tvName, tvPrice, tvQuantity;
         ImageView ivCartItemPic;
         ImageButton btnDelete;
+        TextView btnPlus, btnMinus;
 
         public CartViewHolder(View itemView) {
             super(itemView);
@@ -85,6 +101,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             tvQuantity = itemView.findViewById(R.id.tvCartItemQuantity);
             ivCartItemPic = itemView.findViewById(R.id.ivCartItemPic);
             btnDelete = itemView.findViewById(R.id.btnDeleteCartItem);
+
+            // קישור כפתורי הפלוס והמינוס לתצוגה
+            btnPlus = itemView.findViewById(R.id.btnPlusQuantity);
+            btnMinus = itemView.findViewById(R.id.btnMinusQuantity);
         }
     }
 }

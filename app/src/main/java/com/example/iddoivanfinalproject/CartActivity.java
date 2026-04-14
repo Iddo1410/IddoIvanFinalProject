@@ -19,6 +19,12 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter adapter;
     private DataBaseService.DatabaseService databaseService;
 
+    // ממשק חדש המטפל בפעולות השונות על פריט בעגלה
+    public interface CartActionListener {
+        void onDelete(Cart cart);
+        void onQuantityChanged(Cart cart, int newQuantity);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +48,22 @@ public class CartActivity extends AppCompatActivity {
                 @Override
                 public void onCompleted(List<Cart> carts) {
                     if (carts != null && !carts.isEmpty()) {
-                        // יצירת האדפטר עם פונקציית המחיקה
-                        adapter = new CartAdapter(carts, cart -> {
-                            deleteItem(cart);
+                        // העברת המאזין החדש לאדפטר
+                        adapter = new CartAdapter(carts, new CartActionListener() {
+                            @Override
+                            public void onDelete(Cart cart) {
+                                deleteItem(cart);
+                            }
+
+                            @Override
+                            public void onQuantityChanged(Cart cart, int newQuantity) {
+                                if (newQuantity > 0) {
+                                    updateItemQuantity(cart, newQuantity);
+                                } else {
+                                    // אם הכמות ירדה ל-0, נמחק את הפריט
+                                    deleteItem(cart);
+                                }
+                            }
                         });
                         rvCart.setAdapter(adapter);
                     } else {
@@ -61,9 +80,28 @@ public class CartActivity extends AppCompatActivity {
         }
     }
 
+    // פונקציה חדשה לעדכון הכמות בדאטה-בייס
+    private void updateItemQuantity(Cart cart, int newQuantity) {
+        cart.setQuantity(newQuantity);
+
+        // אנו משתמשים בפונקציה ששומרת/מעדכנת את העגלה - יש לוודא שהיא דורסת את הקיים לפי ה-ID
+        databaseService.createNewCart(cart, new DataBaseService.DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void unused) {
+                // מרענן את הרשימה כדי להציג את המחיר והכמות המעודכנים
+                loadCartItems();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(CartActivity.this, "שגיאה בעדכון הכמות: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void deleteItem(Cart cart) {
         // קריאה לפונקציית המחיקה ב-DatabaseService
-        databaseService.deleteCartItem(cart.getUserId(),cart.getId(), new DataBaseService.DatabaseCallback<Void>() {
+        databaseService.deleteCartItem(cart.getUserId(), cart.getId(), new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void unused) {
                 Toast.makeText(CartActivity.this, "הפריט הוסר מהעגלה", Toast.LENGTH_SHORT).show();

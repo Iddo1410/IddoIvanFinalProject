@@ -8,7 +8,7 @@
     android:layout_marginVertical="8dp"
     android:layoutDirection="rtl"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    app:cardElevation="3dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,71 +18,111 @@
 
         <ImageView
             android:id="@+id/ivCartItemPic"
-            android:layout_width="110dp"
-            android:layout_height="125dp"
-            android:layout_marginTop="4dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tvCartItemName"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
+
+        <ImageButton
+            android:id="@+id/btnDeleteCartItem"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#D32F2F" />
 
         <TextView
             android:id="@+id/tvCartItemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="#2A2438"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/ivCartItemPic"
-            app:layout_constraintStart_toEndOf="@+id/tvCartItemPrice"
+            app:layout_constraintStart_toEndOf="@+id/ivCartItemPic"
+            app:layout_constraintEnd_toStartOf="@+id/btnDeleteCartItem"
             app:layout_constraintTop_toTopOf="@+id/ivCartItemPic"
             tools:text="שם המוצר" />
 
-        <TextView
-            android:id="@+id/tvCartItemQuantity"
-            android:layout_width="0dp"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvQuantityControl"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textColor="#5C5470"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/tvCartItemName"
+            android:layout_marginTop="12dp"
+            app:cardBackgroundColor="#F4F4F6"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
             app:layout_constraintStart_toStartOf="@+id/tvCartItemName"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvCartItemName"
-            tools:text="כמות: 1" />
+            app:layout_constraintVertical_bias="1.0">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="2dp">
+
+                <TextView
+                    android:id="@+id/btnPlusQuantity"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textColor="#887BB0"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:id="@+id/tvCartItemQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:textColor="#2A2438"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="1" />
+
+                <TextView
+                    android:id="@+id/btnMinusQuantity"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:text="−"
+                    android:textColor="#887BB0"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tvCartItemPrice"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="11dp"
-            android:layout_marginEnd="7dp"
-            android:layout_marginBottom="13dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textColor="#887BB0"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tvCartItemName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnDeleteCartItem"
+            app:layout_constraintBottom_toBottomOf="@+id/cvQuantityControl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cvQuantityControl"
             tools:text="350 ₪" />
-
-        <ImageButton
-            android:id="@+id/btnDeleteCartItem"
-            android:layout_width="40dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="9dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="13dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_delete"
-            app:layout_constraintBottom_toTopOf="@+id/tvCartItemPrice"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="#D32F2F" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

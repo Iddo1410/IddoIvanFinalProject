@@ -64,6 +64,17 @@
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/btnCart"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#887BB0"
+                android:text="העגלה שלי"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/btnCompare"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Itemdetails extends AppCompatActivity {
 
@@ -80,18 +81,58 @@ public class Itemdetails extends AppCompatActivity {
         }
 
         if (currentItem != null) {
-            String cartId = databaseService.generateCartId();
-            // יצירת פריט עגלה עם ה-UID של המשתמש
-            Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic());
-
-            databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
+            // קריאה לרשימת העגלות של המשתמש
+            databaseService.getCartList(user.getUid(), new DataBaseService.DatabaseCallback<List<Cart>>() {
                 @Override
-                public void onCompleted(Void object) {
-                    Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show();
+                public void onCompleted(List<Cart> carts) {
+                    Cart existingCartItem = null;
+
+                    // חיפוש אם המוצר כבר קיים בעגלה
+                    if (carts != null) {
+                        for (Cart cart : carts) {
+                            if (cart.getName() != null && cart.getName().equals(currentItem.getName())) {
+                                existingCartItem = cart;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (existingCartItem != null) {
+                        // אם המוצר קיים, נגדיל את הכמות שלו
+                        existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
+
+                        databaseService.createNewCart(existingCartItem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "הכמות עודכנה בעגלה!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                Toast.makeText(Itemdetails.this, "שגיאה בעדכון הכמות", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        // אם המוצר לא קיים, ניצור אותו כחדש
+                        String cartId = databaseService.generateCartId();
+                        Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic());
+
+                        databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onFailed(Exception e) {
+                                Toast.makeText(Itemdetails.this, "שגיאה בהוספה", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
+
                 @Override
                 public void onFailed(Exception e) {
-                    Toast.makeText(Itemdetails.this, "שגיאה בהוספה", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Itemdetails.this, "שגיאה בטעינת העגלה", Toast.LENGTH_SHORT).show();
                 }
             });
         }

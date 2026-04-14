@@ -20,7 +20,7 @@ public class UsersPage extends AppCompatActivity {
 
     private TextView tvHi;
     private DataBaseService.DatabaseService dataBaseService;
-    private Button btnShop, btnCompare;
+    private Button btnShop, btnCompare, btnCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,9 @@ public class UsersPage extends AppCompatActivity {
         tvHi = findViewById(R.id.tvHiUser);
         btnShop = findViewById(R.id.btnShop);
         btnCompare = findViewById(R.id.btnCompare);
+        btnCart=findViewById(R.id.btnCart);
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -56,10 +59,17 @@ public class UsersPage extends AppCompatActivity {
             });
         }
 
+
         // לחיצה על כפתור החנות
         if (btnShop != null) {
             btnShop.setOnClickListener(v -> {
                 Intent intent = new Intent(UsersPage.this, Items.class);
+                startActivity(intent);
+            });
+        }
+        if (btnCart!=null){
+            btnCart.setOnClickListener(v -> {
+                Intent intent = new Intent(UsersPage.this, CartActivity.class);
                 startActivity(intent);
             });
         }

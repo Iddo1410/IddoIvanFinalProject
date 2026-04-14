@@ -22,31 +22,40 @@ public class Allusers extends AppCompatActivity {
     ArrayAdapter<String> adapter;
     ArrayList<User> usersList;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_allusers);
         usersList = new ArrayList<>();
 
-
         lvUsers = findViewById(R.id.lvUsers);
         userDisplayList = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, userDisplayList);
         lvUsers.setAdapter(adapter);
+
         lvUsers.setOnItemClickListener((parent, view, position, id) -> {
             User selectedUser = usersList.get(position);
 
             Intent intent = new Intent(Allusers.this, Userdetails.class);
+            // הנה המפתח לתיקון! מעבירים את ה-ID של המשתמש הספציפי
+            intent.putExtra("userId", selectedUser.getId());
             intent.putExtra("fname", selectedUser.getFname());
             intent.putExtra("lname", selectedUser.getLname());
             intent.putExtra("email", selectedUser.getEmail());
+            intent.putExtra("phoneNumber", selectedUser.getPhoneNumber());
 
             startActivity(intent);
         });
+    }
 
+    // --- הפונקציה הזו מבטיחה שהרשימה תתרענן כל פעם שתחזור למסך הזה ---
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUsersFromDatabase();
+    }
 
-        // קבלת כל המשתמשים
+    private void loadUsersFromDatabase() {
         DataBaseService.DatabaseService.getInstance().getUserList(new DataBaseService.DatabaseCallback<List<User>>() {
             @Override
             public void onCompleted(List<User> users) {
@@ -54,15 +63,15 @@ public class Allusers extends AppCompatActivity {
                 usersList.clear();
 
                 for (User user : users) {
-                    usersList.add(user); // שומר את האובייקט עצמו
+                    usersList.add(user);
 
                     String display = user.getFname() + " " + user.getLname() + "\n" +
-                            "Email: " + user.getEmail() + "\n";
+                            "Email: " + user.getEmail() + "\n" +
+                            "Phone: " + (user.getPhoneNumber() != null ? user.getPhoneNumber() : "אין מספר");
                     userDisplayList.add(display);
                 }
 
-                adapter.notifyDataSetChanged();
-
+                adapter.notifyDataSetChanged(); // מעדכן את המסך
             }
 
             @Override
@@ -72,5 +81,3 @@ public class Allusers extends AppCompatActivity {
         });
     }
 }
-
-
