@@ -255,6 +255,11 @@ public class DataBaseService {
             }
 
         }
+        // פונקציה למחיקת כל העגלה של משתמש ספציפי בבת אחת
+        public void clearUserCart(@NotNull final String userId, @Nullable final DatabaseCallback<Void> callback) {
+            // מוחק את כל הנתיב: carts / userId
+            deleteData(CARTS_PATH + "/" + userId, callback);
+        }
 
 
 

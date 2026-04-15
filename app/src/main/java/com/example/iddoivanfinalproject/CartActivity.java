@@ -1,7 +1,11 @@
 package com.example.iddoivanfinalproject;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +23,11 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter adapter;
     private DataBaseService.DatabaseService databaseService;
 
-    // ממשק חדש המטפל בפעולות השונות על פריט בעגלה
+    // הוספת משתנים עבור כפתור הרכישה ורשימת המוצרים
+    private Button btnPurchase;
+    private List<Cart> currentCartList;
+
+    // ממשק המטפל בפעולות השונות על פריט בעגלה
     public interface CartActionListener {
         void onDelete(Cart cart);
         void onQuantityChanged(Cart cart, int newQuantity);
@@ -38,6 +46,32 @@ public class CartActivity extends AppCompatActivity {
         rvCart = findViewById(R.id.rvCart);
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
+
+        // אתחול כפתור הרכישה והוספת מאזין לחיצה שיפתח את חלונית האישור
+        btnPurchase = findViewById(R.id.btnPurchase);
+        btnPurchase.setOnClickListener(v -> showPurchaseConfirmationDialog());
+    }
+
+    // פונקציה חדשה: הצגת חלונית אישור לפני רכישה
+    private void showPurchaseConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("אישור רכישה")
+                .setMessage("האם אתה בטוח שברצונך לבצע את הרכישה ולקנות את המוצרים בעגלה?")
+                .setPositiveButton("כן, קנה עכשיו", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // אם המשתמש אישר - נבצע את הרכישה
+                        processPurchase();
+                    }
+                })
+                .setNegativeButton("ביטול", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // אם המשתמש ביטל - פשוט נסגור את החלונית
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 
     private void loadCartItems() {
@@ -47,8 +81,11 @@ public class CartActivity extends AppCompatActivity {
             databaseService.getCartList(currentUserId, new DataBaseService.DatabaseCallback<List<Cart>>() {
                 @Override
                 public void onCompleted(List<Cart> carts) {
+                    currentCartList = carts; // שמירת הרשימה הנוכחית
+
                     if (carts != null && !carts.isEmpty()) {
-                        // העברת המאזין החדש לאדפטר
+                        btnPurchase.setEnabled(true); // אפשור כפתור הרכישה אם העגלה לא ריקה
+
                         adapter = new CartAdapter(carts, new CartActionListener() {
                             @Override
                             public void onDelete(Cart cart) {
@@ -68,6 +105,7 @@ public class CartActivity extends AppCompatActivity {
                         rvCart.setAdapter(adapter);
                     } else {
                         rvCart.setAdapter(null); // ניקוי הרשימה אם היא ריקה
+                        btnPurchase.setEnabled(false); // כיבוי כפתור הרכישה כשהעגלה ריקה
                         Toast.makeText(CartActivity.this, "העגלה שלך ריקה", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -80,11 +118,37 @@ public class CartActivity extends AppCompatActivity {
         }
     }
 
-    // פונקציה חדשה לעדכון הכמות בדאטה-בייס
+    // פונקציית הרכישה וניקוי כל העגלה בבת אחת (תופעל רק לאחר אישור)
+    private void processPurchase() {
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        if (uid == null || currentCartList == null || currentCartList.isEmpty()) {
+            return; // אין מה לרכוש
+        }
+
+        // קריאה לפונקציה שמוחקת את כל העגלה של המשתמש במסד הנתונים
+        databaseService.clearUserCart(uid, new DataBaseService.DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void unused) {
+                // הרכישה והמחיקה הצליחו
+                Toast.makeText(CartActivity.this, "הרכישה בוצעה בהצלחה! העגלה רוקנה.", Toast.LENGTH_LONG).show();
+
+                // קריאה לטעינת העגלה - תמשוך נתונים ריקים, תנקה את המסך ותכבה את הכפתור
+                loadCartItems();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                // טיפול בשגיאה
+                Toast.makeText(CartActivity.this, "שגיאה בביצוע הרכישה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // פונקציה לעדכון הכמות בדאטה-בייס
     private void updateItemQuantity(Cart cart, int newQuantity) {
         cart.setQuantity(newQuantity);
 
-        // אנו משתמשים בפונקציה ששומרת/מעדכנת את העגלה - יש לוודא שהיא דורסת את הקיים לפי ה-ID
         databaseService.createNewCart(cart, new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void unused) {
@@ -99,8 +163,8 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
+    // פונקציה למחיקת פריט בודד מהעגלה
     private void deleteItem(Cart cart) {
-        // קריאה לפונקציית המחיקה ב-DatabaseService
         databaseService.deleteCartItem(cart.getUserId(), cart.getId(), new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void unused) {
