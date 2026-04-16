@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.iddoivanfinalproject.adapter.ItemAdapter;
 import com.example.iddoivanfinalproject.model.Item;
+import com.example.iddoivanfinalproject.model.User;
 import com.example.iddoivanfinalproject.services.DataBaseService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +40,7 @@ public class Items extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
 
-        // אתחול רכיבים
+        // 1. אתחול רכיבים
         recyclerView = findViewById(R.id.rvItems);
         btnGoToCart = findViewById(R.id.btnGoToCart);
         spTypeFilter = findViewById(R.id.spTypeFilter);
@@ -44,7 +48,7 @@ public class Items extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        // הגדרת האדפטר
+        // 2. הגדרת האדפטר (RecyclerView)
         adapter = new ItemAdapter(filteredList, new ItemAdapter.OnItemClickListener() {
             @Override
             public void onClick(Item item) {
@@ -60,19 +64,60 @@ public class Items extends AppCompatActivity {
 
         setupSpinner();
 
-        // --- התיקון למעבר לעגלה ---
+        // 3. הגדרת כפתור עגלה - מוסתר כברירת מחדל (GONE)
         if (btnGoToCart != null) {
+            btnGoToCart.setVisibility(View.GONE);
             btnGoToCart.setOnClickListener(v -> {
-                // מעבר למחלקה CartActivity (צריך ליצור אותה למטה)
                 Intent intent = new Intent(Items.this, CartActivity.class);
                 startActivity(intent);
             });
         }
 
+        // 4. בדיקת סטטוס אדמין/משתמש והצגת הכפתור בהתאם
+        checkUserStatus();
+    }
+
+    // פונקציה שקוראת לרשימה בכל פעם שחוזרים למסך (למשל אחרי מחיקה)
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadItemsFromDatabase();
     }
 
+    private void checkUserStatus() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+
+            // משיכת פרטי המשתמש מה-Database כדי לבדוק את השדה isAdmin
+            databaseService.getUser(uid, new DataBaseService.DatabaseCallback<User>() {
+                @Override
+                public void onCompleted(User user) {
+                    if (user != null) {
+                        if (user.isAdmin()) {
+                            // זה אדמין - הכפתור נשאר חבוי
+                            if (btnGoToCart != null) btnGoToCart.setVisibility(View.GONE);
+                        } else {
+                            // זה משתמש רגיל - מציגים את העגלה
+                            if (btnGoToCart != null) btnGoToCart.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    // במקרה של תקלה בטעינה, נשאיר מוסתר ליתר ביטחון
+                    if (btnGoToCart != null) btnGoToCart.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            if (btnGoToCart != null) btnGoToCart.setVisibility(View.GONE);
+        }
+    }
+
     private void setupSpinner() {
+        // וודא שבקובץ arrs.xml המערך שלך נקרא typeArr
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.typeArr, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -97,8 +142,14 @@ public class Items extends AppCompatActivity {
                 if (items != null) {
                     allItemsList.clear();
                     allItemsList.addAll(items);
+
+                    // רענון הסינון הנוכחי
                     if (spTypeFilter.getSelectedItem() != null) {
                         filterItems(spTypeFilter.getSelectedItem().toString());
+                    } else {
+                        filteredList.clear();
+                        filteredList.addAll(allItemsList);
+                        adapter.notifyDataSetChanged();
                     }
                 }
             }

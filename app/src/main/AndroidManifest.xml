@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IddoIvanFinalProject">
         <activity
+            android:name=".OrderHistory"
+            android:exported="false" />
+        <activity
             android:name=".CompareList"
             android:exported="false" />
         <activity

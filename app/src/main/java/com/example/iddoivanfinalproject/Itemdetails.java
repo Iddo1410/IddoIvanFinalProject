@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.iddoivanfinalproject.model.Cart;
 import com.example.iddoivanfinalproject.model.Compareitem;
 import com.example.iddoivanfinalproject.model.Item;
+import com.example.iddoivanfinalproject.model.User;
 import com.example.iddoivanfinalproject.services.DataBaseService;
 import com.example.iddoivanfinalproject.utils.ImageUtil;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +29,7 @@ public class Itemdetails extends AppCompatActivity {
 
     private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear;
     private ImageView ivPic;
-    private Button btnBack, btnAddToCart, btnGoToCompare;
+    private Button btnBack, btnAddToCart, btnGoToCompare, btnDeleteItem;
     private CheckBox cbCompare;
     private DataBaseService.DatabaseService databaseService;
 
@@ -49,6 +50,9 @@ public class Itemdetails extends AppCompatActivity {
         if (itemId != null) {
             loadItemData();
         }
+
+        // בדיקת משתמש והצגת כפתורים מתאימים
+        checkUserStatus();
     }
 
     private void initViews() {
@@ -58,84 +62,109 @@ public class Itemdetails extends AppCompatActivity {
         tvBrand = findViewById(R.id.tvBrand);
         tvType = findViewById(R.id.tvType);
         tvYear = findViewById(R.id.tvYear);
+        ivPic = findViewById(R.id.ivPic);
+
+        // כפתורים
         btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnGoToCompare = findViewById(R.id.btnGoToCompare);
+        btnDeleteItem = findViewById(R.id.btnDeleteItem);
         btnBack = findViewById(R.id.btnBack);
         cbCompare = findViewById(R.id.cbCompare);
-        ivPic = findViewById(R.id.ivPic);
-        btnGoToCompare = findViewById(R.id.btnGoToCompare);
 
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        if (btnGoToCompare != null) {
-            btnGoToCompare.setOnClickListener(v -> startActivity(new Intent(this, CompareList.class)));
+        // הגדרת מחיקה כאן מראש (אבל הכפתור מוסתר עד שנבדוק אם זה אדמין)
+        if (btnDeleteItem != null) {
+            btnDeleteItem.setOnClickListener(v -> deleteCurrentItem());
         }
 
-        btnAddToCart.setOnClickListener(v -> addToCart());
+        if (btnGoToCompare != null) {
+            btnGoToCompare.setOnClickListener(v -> {
+                Intent intent = new Intent(Itemdetails.this, CompareList.class);
+                if (currentItem != null) intent.putExtra("COMPARE_TYPE", currentItem.getType());
+                startActivity(intent);
+            });
+        }
+
+        if (btnAddToCart != null) {
+            btnAddToCart.setOnClickListener(v -> addToCart());
+        }
     }
 
-    private void addToCart() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "עליך להתחבר קודם", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    // הפונקציה שמחליטה מה להציג למי
+    private void checkUserStatus() {
+        // קודם כל נעלים הכל כדי שלא יהיו "הבהובים" במסך
+        if (btnAddToCart != null) btnAddToCart.setVisibility(View.GONE);
+        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.GONE);
+        if (cbCompare != null) cbCompare.setVisibility(View.GONE);
+        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE);
 
-        if (currentItem != null) {
-            // קריאה לרשימת העגלות של המשתמש
-            databaseService.getCartList(user.getUid(), new DataBaseService.DatabaseCallback<List<Cart>>() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null) {
+            String uid = currentUser.getUid();
+
+            // פונים למסד הנתונים כדי להביא את כל פרטי המשתמש (כולל האם הוא אדמין)
+            databaseService.getUser(uid, new DataBaseService.DatabaseCallback<User>() {
                 @Override
-                public void onCompleted(List<Cart> carts) {
-                    Cart existingCartItem = null;
-
-                    // חיפוש אם המוצר כבר קיים בעגלה
-                    if (carts != null) {
-                        for (Cart cart : carts) {
-                            if (cart.getName() != null && cart.getName().equals(currentItem.getName())) {
-                                existingCartItem = cart;
-                                break;
-                            }
+                public void onCompleted(User user) {
+                    if (user != null) {
+                        // --- כאן הבדיקה המקצועית: האם הוא מנהל? ---
+                        if (user.isAdmin()) {
+                            // זה אדמין -> מדליקים לו אך ורק את כפתור המחיקה
+                            if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.VISIBLE);
+                        } else {
+                            // זה לקוח רגיל -> מדליקים לו קנייה והשוואה
+                            showCustomerButtons();
                         }
-                    }
-
-                    if (existingCartItem != null) {
-                        // אם המוצר קיים, נגדיל את הכמות שלו
-                        existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
-
-                        databaseService.createNewCart(existingCartItem, new DataBaseService.DatabaseCallback<Void>() {
-                            @Override
-                            public void onCompleted(Void object) {
-                                Toast.makeText(Itemdetails.this, "הכמות עודכנה בעגלה!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-                                Toast.makeText(Itemdetails.this, "שגיאה בעדכון הכמות", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     } else {
-                        // אם המוצר לא קיים, ניצור אותו כחדש
-                        String cartId = databaseService.generateCartId();
-                        Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic());
-
-                        databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
-                            @Override
-                            public void onCompleted(Void object) {
-                                Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show();
-                            }
-                            @Override
-                            public void onFailed(Exception e) {
-                                Toast.makeText(Itemdetails.this, "שגיאה בהוספה", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        // למקרה שאין נתונים על המשתמש
+                        showCustomerButtons();
                     }
                 }
 
                 @Override
                 public void onFailed(Exception e) {
-                    Toast.makeText(Itemdetails.this, "שגיאה בטעינת העגלה", Toast.LENGTH_SHORT).show();
+                    // למקרה של שגיאה בטעינה ממסד הנתונים
+                    showCustomerButtons();
                 }
             });
+        } else {
+            // אם המשתמש הוא אורח (לא מחובר כלל)
+            showCustomerButtons();
         }
+    }
+
+    // פונקציית עזר קטנה כדי לא לכתוב את אותו קוד 3 פעמים
+    private void showCustomerButtons() {
+        if (btnAddToCart != null) btnAddToCart.setVisibility(View.VISIBLE);
+        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.VISIBLE);
+        if (cbCompare != null) cbCompare.setVisibility(View.VISIBLE);
+        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE);
+    }
+
+    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
+    // פונקציית המחיקה המשודרגת (למציאת הבעיה)
+    private void deleteCurrentItem() {
+        if (itemId == null || itemId.isEmpty()) {
+            Toast.makeText(this, "שגיאה: לא נמצא ID של מוצר למחיקה!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+        databaseService.deleteItem(itemId, new DataBaseService.DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void object) {
+                Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                // אם יש שגיאה, נראה בדיוק למה פיירבייס מסרב למחוק
+                Toast.makeText(Itemdetails.this, "השגיאה: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void loadItemData() {
@@ -196,6 +225,14 @@ public class Itemdetails extends AppCompatActivity {
             if (compareitem.getItemArrayList() == null) compareitem.setItemArrayList(new ArrayList<>());
 
             if (isChecked) {
+                if (compareitem.getItemArrayList().size() >= 2) {
+                    Toast.makeText(Itemdetails.this, "ניתן להוסיף עד 2 פריטים להשוואה", Toast.LENGTH_SHORT).show();
+                    cbCompare.setOnCheckedChangeListener(null);
+                    cbCompare.setChecked(false);
+                    setCheckboxListener();
+                    return;
+                }
+
                 compareitem.getItemArrayList().add(currentItem);
                 compareitem.setType(currentItem.getType());
                 compareitem.setDate(formattedDate);
@@ -208,6 +245,53 @@ public class Itemdetails extends AppCompatActivity {
             });
         });
     }
+
+    private void addToCart() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "עליך להתחבר קודם", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (currentItem != null) {
+            databaseService.getCartList(user.getUid(), new DataBaseService.DatabaseCallback<List<Cart>>() {
+                @Override
+                public void onCompleted(List<Cart> carts) {
+                    Cart existingCartItem = null;
+
+                    if (carts != null) {
+                        for (Cart cart : carts) {
+                            if (cart.getName() != null && cart.getName().equals(currentItem.getName())) {
+                                existingCartItem = cart;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (existingCartItem != null) {
+                        existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
+                        databaseService.createNewCart(existingCartItem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "הכמות עודכנה בעגלה!", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override public void onFailed(Exception e) {}
+                        });
+                    } else {
+                        String cartId = databaseService.generateCartId();
+                        Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic());
+                        databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
+                            @Override public void onCompleted(Void object) {
+                                Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show();
+                            }
+                            @Override public void onFailed(Exception e) {}
+                        });
+                    }
+                }
+                @Override public void onFailed(Exception e) {}
+            });
+        }
+    }
+
 
     public void onBack(View view) { finish(); }
 }

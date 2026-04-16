@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.example.iddoivanfinalproject.model.Cart;
 import com.example.iddoivanfinalproject.model.Compareitem;
 import com.example.iddoivanfinalproject.model.Item;
+import com.example.iddoivanfinalproject.model.Order;
 import com.example.iddoivanfinalproject.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -260,6 +262,42 @@ public class DataBaseService {
             // מוחק את כל הנתיב: carts / userId
             deleteData(CARTS_PATH + "/" + userId, callback);
         }
+        // בתוך מחלקת DatabaseService
+        public void saveOrder(Order order, DatabaseCallback<Void> callback) {
+            // יצירת מזהה ייחודי להזמנה
+            String key = databaseReference.child("Purchases").push().getKey();
+            order.setId(key);
+
+            databaseReference.child("Purchases").child(key).setValue(order)
+                    .addOnSuccessListener(unused -> callback.onCompleted(null))
+                    .addOnFailureListener(callback::onFailed);
+        }
+
+        // פונקציה עבור המנהל לצפייה בכל ההיסטוריה
+        public void getAllOrders(DatabaseCallback<List<Order>> callback) {
+            databaseReference.child("Purchases").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    List<Order> orders = new ArrayList<>();
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        orders.add(child.getValue(Order.class));
+                    }
+                    callback.onCompleted(orders);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    callback.onFailed(error.toException());
+                }
+            });
+        }
+        // הוסף את הפונקציה הזו ל-DataBaseService
+        public void deleteItem(String itemId, DatabaseCallback<Void> callback) {
+            // מוחק את הפריט מצומת ה-Items לפי ה-ID שלו
+            databaseReference.child("Items").child(itemId).removeValue()
+                    .addOnSuccessListener(aVoid -> callback.onCompleted(null))
+                    .addOnFailureListener(e -> callback.onFailed(e));
+        }
+
 
 
 

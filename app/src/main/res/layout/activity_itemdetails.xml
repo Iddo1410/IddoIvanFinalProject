@@ -118,6 +118,7 @@
             android:text="הוספה להשוואה"
             android:textColor="@color/black"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvYear" />
 
@@ -131,6 +132,7 @@
             android:text="הוספה לעגלה"
             android:textColor="@color/black"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/btnBack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cbCompare" />
@@ -158,9 +160,26 @@
             android:text="ההשוואות שלי"
             android:textColor="@color/black"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnAddToCart" />
+
+        <Button
+            android:id="@+id/btnDeleteItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="#E74C3C"
+            android:text="מחק מוצר מהחנות"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

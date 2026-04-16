@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.iddoivanfinalproject.adapter.CartAdapter;
 import com.example.iddoivanfinalproject.model.Cart;
+import com.example.iddoivanfinalproject.model.Order;
 import com.example.iddoivanfinalproject.services.DataBaseService;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -121,25 +122,42 @@ public class CartActivity extends AppCompatActivity {
     // פונקציית הרכישה וניקוי כל העגלה בבת אחת (תופעל רק לאחר אישור)
     private void processPurchase() {
         String uid = FirebaseAuth.getInstance().getUid();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         if (uid == null || currentCartList == null || currentCartList.isEmpty()) {
-            return; // אין מה לרכוש
+            return;
         }
 
-        // קריאה לפונקציה שמוחקת את כל העגלה של המשתמש במסד הנתונים
-        databaseService.clearUserCart(uid, new DataBaseService.DatabaseCallback<Void>() {
+        // חישוב המחיר הכולל של העגלה
+        double total = 0;
+        for (Cart item : currentCartList) {
+            total += item.getPrice() * item.getQuantity();
+        }
+
+        // יצירת אובייקט ההזמנה
+        Order newOrder = new Order(uid, email, currentCartList, total, System.currentTimeMillis());
+
+        // 1. שמירת ההזמנה בהיסטוריה
+        databaseService.saveOrder(newOrder, new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void unused) {
-                // הרכישה והמחיקה הצליחו
-                Toast.makeText(CartActivity.this, "הרכישה בוצעה בהצלחה! העגלה רוקנה.", Toast.LENGTH_LONG).show();
+                // 2. רק אם השמירה הצליחה - ננקה את העגלה של המשתמש
+                databaseService.clearUserCart(uid, new DataBaseService.DatabaseCallback<Void>() {
+                    @Override
+                    public void onCompleted(Void unused) {
+                        Toast.makeText(CartActivity.this, "הרכישה הושלמה ונשמרה במערכת!", Toast.LENGTH_LONG).show();
+                        loadCartItems();
+                    }
 
-                // קריאה לטעינת העגלה - תמשוך נתונים ריקים, תנקה את המסך ותכבה את הכפתור
-                loadCartItems();
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(CartActivity.this, "ההזמנה נשמרה אך ארעה שגיאה בפינוי העגלה", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailed(Exception e) {
-                // טיפול בשגיאה
                 Toast.makeText(CartActivity.this, "שגיאה בביצוע הרכישה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
