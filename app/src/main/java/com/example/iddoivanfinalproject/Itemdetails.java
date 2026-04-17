@@ -145,26 +145,96 @@ public class Itemdetails extends AppCompatActivity {
 
     // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
     // פונקציית המחיקה המשודרגת (למציאת הבעיה)
+    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
+    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
     private void deleteCurrentItem() {
         if (itemId == null || itemId.isEmpty()) {
             Toast.makeText(this, "שגיאה: לא נמצא ID של מוצר למחיקה!", Toast.LENGTH_LONG).show();
             return;
         }
 
-
+        // 1. קודם נמחוק את המוצר הראשי מהחנות
         databaseService.deleteItem(itemId, new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
-                Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
-                finish();
+
+                // 2. עכשיו ניגש לרשימת ההשוואה וננקה גם אותה
+                if (currentItem != null && currentItem.getType() != null) {
+                    databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() {
+                        @Override
+                        public void onCompleted(Compareitem dbCompare) {
+                            if (dbCompare != null && dbCompare.getItemArrayList() != null) {
+
+                                List<Item> newList = new ArrayList<>();
+                                boolean itemFoundInCompare = false;
+
+                                // מעבר בטוח על המוצרים בהשוואה - מונע קריסות אם נתונים חסרים
+                                for (Item i : dbCompare.getItemArrayList()) {
+                                    // נבדוק גם לפי ID וגם לפי שם כדי להיות בטוחים ב-100%
+                                    boolean isSameId = i.getId() != null && i.getId().equals(itemId);
+                                    boolean isSameName = i.getName() != null && currentItem.getName() != null && i.getName().equals(currentItem.getName());
+
+                                    if (isSameId || isSameName) {
+                                        itemFoundInCompare = true; // מצאנו את המוצר! לא נוסיף אותו לרשימה החדשה
+                                    } else {
+                                        newList.add(i); // מוצרים אחרים נשמור ברשימה
+                                    }
+                                }
+
+                                // אם המוצר אכן היה בהשוואה ונמחק, נעדכן את פיירבייס
+                                if (itemFoundInCompare) {
+                                    dbCompare.getItemArrayList().clear();
+                                    dbCompare.getItemArrayList().addAll(newList);
+
+                                    databaseService.updateCompareList(dbCompare, new DataBaseService.DatabaseCallback<Void>() {
+                                        @Override
+                                        public void onCompleted(Void o) {
+                                            Toast.makeText(Itemdetails.this, "המוצר נמחק מהחנות וגם מההשוואה!", Toast.LENGTH_LONG).show();
+                                            finish();
+                                        }
+
+                                        @Override
+                                        public void onFailed(Exception e) {
+                                            Toast.makeText(Itemdetails.this, "המוצר נמחק, אך שגיאה בעדכון ההשוואה", Toast.LENGTH_LONG).show();
+                                            finish();
+                                        }
+                                    });
+                                } else {
+                                    // המוצר נמחק מהחנות, אבל הוא בכלל לא היה בהשוואה
+                                    Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+
+                            } else {
+                                // אין בכלל מוצרים בהשוואה מהסוג הזה
+                                Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(Itemdetails.this, "נמחק מהחנות. שגיאה בגישה להשוואה.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                } else {
+                    Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
 
             @Override
             public void onFailed(Exception e) {
-                // אם יש שגיאה, נראה בדיוק למה פיירבייס מסרב למחוק
-                Toast.makeText(Itemdetails.this, "השגיאה: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(Itemdetails.this, "שגיאה במחיקת המוצר: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    // פונקציית עזר קטנה כדי לחסוך קוד כפול - מציגה הודעה וסוגרת את המסך
+    private void finishWithSuccess() {
+        Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה מכל המקומות!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void loadItemData() {

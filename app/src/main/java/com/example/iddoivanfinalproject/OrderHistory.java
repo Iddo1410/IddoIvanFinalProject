@@ -2,6 +2,7 @@ package com.example.iddoivanfinalproject;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ public class OrderHistory extends AppCompatActivity {
 
     private RecyclerView rvOrders;
     private OrderAdapter adapter;
+    Button btnBack;
     private DataBaseService.DatabaseService databaseService;
     private ProgressBar progressBar;
 
@@ -29,6 +31,10 @@ public class OrderHistory extends AppCompatActivity {
 
         initViews();
         loadOrders();
+        btnBack = findViewById(R.id.btnUniversalBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
     }
 
     private void initViews() {

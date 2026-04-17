@@ -28,10 +28,9 @@ public class Additemtostore extends AppCompatActivity {
 
     private EditText etItemName, etItemPrice, etItemType, etItemBrand, etItemYear, etItemDetails;
     private Spinner spType, spBrand, spYear;
-    private Button btnGallery, btnTakePic, btnAddItem;
+    private Button btnGallery, btnTakePic, btnAddItem, btnBack;
     private ImageView imageView;
 
-    private ImageButton btnBack;
 
 
     private DataBaseService.DatabaseService databaseService;
@@ -177,8 +176,19 @@ public class Additemtostore extends AppCompatActivity {
             }
 
 
+
         });
+        Button btnUniversalBack = findViewById(R.id.btnUniversalBack); // מקשר את הכפתור
+        btnUniversalBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // הפקודה שסוגרת את המסך וחוזרת אחורה
+            }
+        });
+
     }
+
+
 
     private void InitViews() {
         etItemName = findViewById(R.id.etName);
@@ -192,6 +202,8 @@ public class Additemtostore extends AppCompatActivity {
         btnAddItem = findViewById(R.id.btnAdd);
         imageView = findViewById(R.id.myImg);
     }
+
+
 
 
     /// select image from gallery

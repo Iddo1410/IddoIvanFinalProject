@@ -34,7 +34,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private EditText etEmail, etPassword, etFName, etLName, etPhone;
     String email,password;
-    private Button btnRegister;
+    private Button btnRegister, btnBacktoMain;
     private TextView tvLogin;
 
     private DataBaseService.DatabaseService dataBaseService;
@@ -64,6 +64,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         etPhone = findViewById(R.id.phNumber);
         btnRegister = findViewById(R.id.btnSignup);
         tvLogin = findViewById(R.id.tvLogin);
+        btnBacktoMain=findViewById(R.id.btnBackToMain);
 
         /// set the click listener
         btnRegister.setOnClickListener(this);
@@ -74,26 +75,44 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == btnRegister.getId()) {
-            Log.d(TAG, "onClick: Register button clicked");
+            String email = etEmail.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+            String fName = etFName.getText().toString().trim();
+            String lName = etLName.getText().toString().trim();
+            String phone = etPhone.getText().toString().trim();
 
-            /// get the input from the user
-            String email = etEmail.getText().toString();
-            String password = etPassword.getText().toString();
-            String fName = etFName.getText().toString();
-            String lName = etLName.getText().toString();
-            String phone = etPhone.getText().toString();
+            // --- תוספת הבדיקות לפני שנרשמים ל-Firebase ---
 
+            // 1. בדיקה ששום שדה לא ריק
+            if (email.isEmpty() || password.isEmpty() || fName.isEmpty() || lName.isEmpty() || phone.isEmpty()) {
+                Toast.makeText(this, "נא למלא את כל הפרטים", Toast.LENGTH_SHORT).show();
+                return; // עוצר את הפונקציה כאן ולא ממשיך להרשמה
+            }
 
-            /// Validate input
+            // 2. פיירבייס דורש סיסמה של 6 תווים לפחות, נבדוק את זה כדי שלא יקרוס
+            if (password.length() < 6) {
+                etPassword.setError("סיסמה חייבת להכיל לפחות 6 תווים");
+                etPassword.requestFocus();
+                return;
+            }
 
+            // 3. (אופציונלי אבל מומלץ) בדיקה שהאימייל בפורמט תקין
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("אימייל לא תקין");
+                etEmail.requestFocus();
+                return;
+            }
 
-            Log.d(TAG, "onClick: Registering user...");
-
-            /// Register user
+            // אם הכל תקין - ממשיכים להרשמה
             registerUser(fName, lName, phone, email, password);
+
         } else if (v.getId() == tvLogin.getId()) {
             Intent registerIntent = new Intent(SignupActivity.this, LoginActivity.class);
             startActivity(registerIntent);
+        } else if (v.getId() == btnBacktoMain.getId()) {
+            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 

@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
+    private Button btnBackToMain; // <-- 1. הוספת המשתנה לכפתור החזרה
     private TextView tvRegister;
 
     private FirebaseAuth mAuth;
@@ -57,12 +58,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin = findViewById(R.id.btnLogin);
         tvRegister = findViewById(R.id.tvSignup);
 
+        // <-- 2. קישור הכפתור מקובץ ה-XML
+        btnBackToMain = findViewById(R.id.btnBackToMain);
+
         // טעינת פרטים שמורים
         etEmail.setText(sharedPreferences.getString("email", ""));
         etPassword.setText(sharedPreferences.getString("password", ""));
 
         btnLogin.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
+
+        // <-- 3. הוספת מאזין לכפתור החזרה
+        btnBackToMain.setOnClickListener(this);
     }
 
     @Override
@@ -86,6 +93,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         } else if (v.getId() == tvRegister.getId()) {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+
+        } else if (v.getId() == btnBackToMain.getId()) {
+            // <-- 4. הפעולה שתקרה בלחיצה: חזרה לדף הראשי וסגירת חלון ההתחברות
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
         }
     }
 

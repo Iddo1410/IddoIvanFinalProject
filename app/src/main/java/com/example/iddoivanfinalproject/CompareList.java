@@ -18,6 +18,7 @@ import com.example.iddoivanfinalproject.model.Item;
 import com.example.iddoivanfinalproject.services.DataBaseService;
 import com.example.iddoivanfinalproject.utils.ImageUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CompareList extends AppCompatActivity {
@@ -43,6 +44,15 @@ public class CompareList extends AppCompatActivity {
 
         initViews();
         setupSpinner();
+    }
+
+    // הוספנו את onResume כדי לרענן את הנתונים בכל פעם שחוזרים למסך
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (spCompareCategory != null && spCompareCategory.getSelectedItem() != null) {
+            loadComparisonData(spCompareCategory.getSelectedItem().toString());
+        }
     }
 
     private void initViews() {
@@ -93,34 +103,76 @@ public class CompareList extends AppCompatActivity {
     }
 
     private void loadComparisonData(String type) {
-        databaseService.getCompareByType(type, new DataBaseService.DatabaseCallback<Compareitem>() {
+        // 1. קודם כל נביא את כל המוצרים שקיימים כרגע בחנות הכללית
+        databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() {
             @Override
-            public void onCompleted(Compareitem dbCompare) {
-                if (dbCompare != null && dbCompare.getItemArrayList() != null && !dbCompare.getItemArrayList().isEmpty()) {
-                    List<Item> items = dbCompare.getItemArrayList();
-                    cardTable.setVisibility(View.VISIBLE);
-                    tvEmptyMessage.setVisibility(View.GONE);
+            public void onCompleted(List<Item> allStoreItems) {
+                if (allStoreItems == null) return;
 
-                    populateItem1(items.get(0));
+                // 2. עכשיו נביא את רשימת ההשוואה של המשתמש
+                databaseService.getCompareByType(type, new DataBaseService.DatabaseCallback<Compareitem>() {
+                    @Override
+                    public void onCompleted(Compareitem dbCompare) {
+                        if (dbCompare != null && dbCompare.getItemArrayList() != null && !dbCompare.getItemArrayList().isEmpty()) {
 
-                    if (items.size() > 1) {
-                        populateItem2(items.get(1));
-                        // ביצוע ההשוואה והדגשת הערכים הטובים יותר
-                        applyHighlighting(items.get(0), items.get(1));
-                    } else {
-                        clearItem2();
-                        resetColors(); // איפוס צבעים אם יש רק פריט אחד
+                            // 3. הסינון החכם! נשאיר בהשוואה רק מוצרים שבאמת עדיין קיימים בחנות
+                            List<Item> validItems = new ArrayList<>();
+                            for (Item compareItem : dbCompare.getItemArrayList()) {
+                                boolean existsInStore = false;
+
+                                // בודקים אם המוצר מההשוואה נמצא ברשימת המוצרים הכללית
+                                for (Item storeItem : allStoreItems) {
+                                    if (compareItem.getId() != null && compareItem.getId().equals(storeItem.getId())) {
+                                        existsInStore = true;
+                                        break;
+                                    }
+                                }
+
+                                // אם המוצר קיים בחנות, הוא "חוקי" ונציג אותו
+                                if (existsInStore) {
+                                    validItems.add(compareItem);
+                                }
+                            }
+
+                            // 4. הצגת הנתונים המסוננים והתקינים
+                            if (!validItems.isEmpty()) {
+                                cardTable.setVisibility(View.VISIBLE);
+                                tvEmptyMessage.setVisibility(View.GONE);
+
+                                populateItem1(validItems.get(0));
+
+                                if (validItems.size() > 1) {
+                                    populateItem2(validItems.get(1));
+                                    // ביצוע ההשוואה והדגשת הערכים
+                                    applyHighlighting(validItems.get(0), validItems.get(1));
+                                } else {
+                                    clearItem2();
+                                    resetColors(); // איפוס צבעים אם יש רק פריט אחד
+                                }
+                            } else {
+                                // כל המוצרים שהיו בהשוואה נמחקו מהחנות ע"י האדמין
+                                cardTable.setVisibility(View.GONE);
+                                tvEmptyMessage.setVisibility(View.VISIBLE);
+                                tvEmptyMessage.setText("אין מוצרים זמינים להשוואה בקטגוריית " + type);
+                            }
+
+                        } else {
+                            cardTable.setVisibility(View.GONE);
+                            tvEmptyMessage.setVisibility(View.VISIBLE);
+                            tvEmptyMessage.setText("אין מוצרים להשוואה בקטגוריית " + type);
+                        }
                     }
-                } else {
-                    cardTable.setVisibility(View.GONE);
-                    tvEmptyMessage.setVisibility(View.VISIBLE);
-                    tvEmptyMessage.setText("אין מוצרים להשוואה בקטגוריית " + type);
-                }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(CompareList.this, "שגיאה בטעינת ההשוואה", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(CompareList.this, "שגיאה בטעינה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompareList.this, "שגיאה בחיבור לנתוני החנות", Toast.LENGTH_SHORT).show();
             }
         });
     }

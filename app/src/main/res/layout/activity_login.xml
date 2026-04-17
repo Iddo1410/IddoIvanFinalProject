@@ -85,6 +85,7 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
+            app:cornerRadius="12dp"
             app:layout_constraintEnd_toEndOf="@+id/etPasswordLogin"
             app:layout_constraintStart_toStartOf="@+id/etPasswordLogin"
             app:layout_constraintTop_toBottomOf="@+id/etPasswordLogin" />
@@ -102,6 +103,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+
+        <Button
+            android:id="@+id/btnBackToMain"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E2EDE9"
+            android:text="חזור לדף הראשי"
+            android:textColor="#2A9D8F"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:layout_constraintEnd_toEndOf="@+id/btnLogin"
+            app:layout_constraintStart_toStartOf="@+id/btnLogin"
+            app:layout_constraintTop_toBottomOf="@+id/tvSignup" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

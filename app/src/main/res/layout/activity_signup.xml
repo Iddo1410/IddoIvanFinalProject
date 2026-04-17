@@ -153,6 +153,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnSignup" />
+        <Button
+            android:id="@+id/btnBackToMain"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E2EDE9"
+            android:text="חזור לדף הראשי"
+            android:onClick="onClick"
+            android:textColor="#2A9D8F"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:layout_constraintEnd_toEndOf="@+id/btnSignup"
+            app:layout_constraintStart_toStartOf="@+id/btnSignup"
+            app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

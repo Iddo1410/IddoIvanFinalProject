@@ -290,12 +290,11 @@ public class DataBaseService {
                 }
             });
         }
-        // הוסף את הפונקציה הזו ל-DataBaseService
-        public void deleteItem(String itemId, DatabaseCallback<Void> callback) {
-            // מוחק את הפריט מצומת ה-Items לפי ה-ID שלו
-            databaseReference.child("Items").child(itemId).removeValue()
-                    .addOnSuccessListener(aVoid -> callback.onCompleted(null))
-                    .addOnFailureListener(e -> callback.onFailed(e));
+        /// delete an item from the database
+        /// @param itemId the id of the item to delete
+        /// @param callback the callback to call when the operation is completed
+        public void deleteItem(@NotNull final String itemId, @Nullable final DatabaseCallback<Void> callback) {
+            deleteData("items/" + itemId, callback);
         }
 
 

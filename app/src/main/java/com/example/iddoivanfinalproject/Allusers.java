@@ -1,8 +1,10 @@
 package com.example.iddoivanfinalproject;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ public class Allusers extends AppCompatActivity {
     ListView lvUsers;
     ArrayList<String> userDisplayList;
     ArrayAdapter<String> adapter;
+    Button btnBack;
     ArrayList<User> usersList;
 
     @Override
@@ -33,11 +36,11 @@ public class Allusers extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, userDisplayList);
         lvUsers.setAdapter(adapter);
 
+        // --- לחיצה רגילה: מעבר לעמוד פרטי משתמש ---
         lvUsers.setOnItemClickListener((parent, view, position, id) -> {
             User selectedUser = usersList.get(position);
 
             Intent intent = new Intent(Allusers.this, Userdetails.class);
-            // הנה המפתח לתיקון! מעבירים את ה-ID של המשתמש הספציפי
             intent.putExtra("userId", selectedUser.getId());
             intent.putExtra("fname", selectedUser.getFname());
             intent.putExtra("lname", selectedUser.getLname());
@@ -46,6 +49,40 @@ public class Allusers extends AppCompatActivity {
 
             startActivity(intent);
         });
+
+        // --- לחיצה ארוכה: מחיקת משתמש (התוספת החדשה) ---
+        lvUsers.setOnItemLongClickListener((parent, view, position, id) -> {
+            User selectedUser = usersList.get(position);
+
+            // יצירת חלונית קופצת לאישור המחיקה
+            new AlertDialog.Builder(Allusers.this)
+                    .setTitle("מחיקת משתמש")
+                    .setMessage("האם אתה בטוח שברצונך למחוק את המשתמש " + selectedUser.getFname() + " " + selectedUser.getLname() + "?")
+                    .setPositiveButton("כן, מחק", (dialog, which) -> {
+                        // קריאה לפונקציית המחיקה ב-Firebase
+                        DataBaseService.DatabaseService.getInstance().deleteUser(selectedUser.getId(), new DataBaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void object) {
+                                Toast.makeText(Allusers.this, "המשתמש נמחק בהצלחה!", Toast.LENGTH_SHORT).show();
+                                loadUsersFromDatabase(); // רענון הרשימה מיד אחרי המחיקה
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                Toast.makeText(Allusers.this, "שגיאה במחיקה: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    })
+                    .setNegativeButton("ביטול", null)
+                    .show();
+
+            return true; // מחזיר true כדי שהלחיצה הרגילה לא תופעל במקביל
+        });
+        // הוסף את זה בתוך onCreate
+        btnBack = findViewById(R.id.btnUniversalBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
     }
 
     // --- הפונקציה הזו מבטיחה שהרשימה תתרענן כל פעם שתחזור למסך הזה ---
@@ -63,12 +100,15 @@ public class Allusers extends AppCompatActivity {
                 usersList.clear();
 
                 for (User user : users) {
-                    usersList.add(user);
+                    // --- כאן הסינון: מוסיפים רק אם המשתמש הוא לא אדמין ---
+                    if (!user.isAdmin()) {
+                        usersList.add(user);
 
-                    String display = user.getFname() + " " + user.getLname() + "\n" +
-                            "Email: " + user.getEmail() + "\n" +
-                            "Phone: " + (user.getPhoneNumber() != null ? user.getPhoneNumber() : "אין מספר");
-                    userDisplayList.add(display);
+                        String display = user.getFname() + " " + user.getLname() + "\n" +
+                                "Email: " + user.getEmail() + "\n" +
+                                "Phone: " + (user.getPhoneNumber() != null ? user.getPhoneNumber() : "אין מספר");
+                        userDisplayList.add(display);
+                    }
                 }
 
                 adapter.notifyDataSetChanged(); // מעדכן את המסך
