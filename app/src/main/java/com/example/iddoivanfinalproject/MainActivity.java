@@ -38,4 +38,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+    public void onDetails (View v){
+        if (v.getId()==R.id.btnDeatils){
+            Intent intent= new Intent(MainActivity.this, About.class);
+            startActivity(intent);
+        }
+    }
 }

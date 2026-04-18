@@ -45,7 +45,7 @@
         android:text="הרשמה"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/btnDeatils"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,17 +64,19 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btnSignup"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHome" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btnDeatils"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="75dp"
         android:background="@color/cardview_dark_background"
         android:backgroundTint="#2F388E"
         android:text="אודות"
+        android:onClick="onDetails"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/imageView3"
@@ -90,7 +92,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/btnDeatils"
         app:srcCompat="@drawable/__2025_11_30_095644" />
 
 
