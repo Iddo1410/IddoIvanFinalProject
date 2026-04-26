@@ -20,7 +20,7 @@ public class UsersPage extends AppCompatActivity {
 
     private TextView tvHi;
     private DataBaseService.DatabaseService dataBaseService;
-    private Button btnShop, btnCompare, btnCart;
+    private Button btnShop, btnCompare, btnCart, btnUserOrderHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class UsersPage extends AppCompatActivity {
         btnShop = findViewById(R.id.btnShop);
         btnCompare = findViewById(R.id.btnCompare);
         btnCart=findViewById(R.id.btnCart);
+        btnUserOrderHistory=findViewById(R.id.btnUserOrderHistory);
 
 
 
@@ -70,6 +71,12 @@ public class UsersPage extends AppCompatActivity {
         if (btnCart!=null){
             btnCart.setOnClickListener(v -> {
                 Intent intent = new Intent(UsersPage.this, CartActivity.class);
+                startActivity(intent);
+            });
+        }
+        if (btnUserOrderHistory != null) {
+            btnUserOrderHistory.setOnClickListener(v -> {
+                Intent intent = new Intent(UsersPage.this, UserOrderHistory.class);
                 startActivity(intent);
             });
         }

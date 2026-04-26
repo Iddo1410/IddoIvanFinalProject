@@ -35,6 +35,10 @@ public class CompareList extends AppCompatActivity {
     private TextView tvName2, tvBrand2, tvYear2, tvPrice2, tvDetails2;
     private ImageView imgItem2;
 
+    // רכיבי פריט 3
+    private TextView tvName3, tvBrand3, tvYear3, tvPrice3, tvDetails3;
+    private ImageView imgItem3;
+
     private DataBaseService.DatabaseService databaseService;
 
     @Override
@@ -46,7 +50,6 @@ public class CompareList extends AppCompatActivity {
         setupSpinner();
     }
 
-    // הוספנו את onResume כדי לרענן את הנתונים בכל פעם שחוזרים למסך
     @Override
     protected void onResume() {
         super.onResume();
@@ -75,13 +78,18 @@ public class CompareList extends AppCompatActivity {
         tvDetails2 = findViewById(R.id.tvDetails2);
         imgItem2 = findViewById(R.id.imgItem2);
 
+        tvName3 = findViewById(R.id.tvName3);
+        tvBrand3 = findViewById(R.id.tvBrand3);
+        tvYear3 = findViewById(R.id.tvYear3);
+        tvPrice3 = findViewById(R.id.tvPrice3);
+        tvDetails3 = findViewById(R.id.tvDetails3);
+        imgItem3 = findViewById(R.id.imgItem3);
+
         databaseService = DataBaseService.DatabaseService.getInstance();
     }
 
     private void setupSpinner() {
-        // משיכת הקטגוריות מהקובץ arrs.xml
         String[] categoriesArray = getResources().getStringArray(R.array.typeArr);
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categoriesArray);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCompareCategory.setAdapter(adapter);
@@ -103,38 +111,43 @@ public class CompareList extends AppCompatActivity {
     }
 
     private void loadComparisonData(String type) {
-        // 1. קודם כל נביא את כל המוצרים שקיימים כרגע בחנות הכללית
         databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() {
             @Override
             public void onCompleted(List<Item> allStoreItems) {
                 if (allStoreItems == null) return;
 
-                // 2. עכשיו נביא את רשימת ההשוואה של המשתמש
                 databaseService.getCompareByType(type, new DataBaseService.DatabaseCallback<Compareitem>() {
                     @Override
                     public void onCompleted(Compareitem dbCompare) {
                         if (dbCompare != null && dbCompare.getItemArrayList() != null && !dbCompare.getItemArrayList().isEmpty()) {
 
-                            // 3. הסינון החכם! נשאיר בהשוואה רק מוצרים שבאמת עדיין קיימים בחנות
                             List<Item> validItems = new ArrayList<>();
                             for (Item compareItem : dbCompare.getItemArrayList()) {
                                 boolean existsInStore = false;
-
-                                // בודקים אם המוצר מההשוואה נמצא ברשימת המוצרים הכללית
                                 for (Item storeItem : allStoreItems) {
-                                    if (compareItem.getId() != null && compareItem.getId().equals(storeItem.getId())) {
+                                    if (compareItem.getId() != null && storeItem.getId() != null && compareItem.getId().equals(storeItem.getId())) {
                                         existsInStore = true;
                                         break;
                                     }
                                 }
-
-                                // אם המוצר קיים בחנות, הוא "חוקי" ונציג אותו
                                 if (existsInStore) {
                                     validItems.add(compareItem);
                                 }
                             }
 
-                            // 4. הצגת הנתונים המסוננים והתקינים
+                            // --- מנגנון הריפוי האוטומטי (Auto-Heal) ---
+                            // אם מצאנו שיש ב-Firebase פריטים שכבר לא קיימים בחנות ("רוחות רפאים"), אנחנו מנקים אותם לתמיד!
+                            if (validItems.size() != dbCompare.getItemArrayList().size()) {
+                                dbCompare.getItemArrayList().clear();
+                                dbCompare.getItemArrayList().addAll(validItems);
+
+                                databaseService.updateCompareList(dbCompare, new DataBaseService.DatabaseCallback<Void>() {
+                                    @Override public void onCompleted(Void o) {}
+                                    @Override public void onFailed(Exception e) {}
+                                });
+                            }
+                            // ------------------------------------------------
+
                             if (!validItems.isEmpty()) {
                                 cardTable.setVisibility(View.VISIBLE);
                                 tvEmptyMessage.setVisibility(View.GONE);
@@ -143,14 +156,19 @@ public class CompareList extends AppCompatActivity {
 
                                 if (validItems.size() > 1) {
                                     populateItem2(validItems.get(1));
-                                    // ביצוע ההשוואה והדגשת הערכים
-                                    applyHighlighting(validItems.get(0), validItems.get(1));
                                 } else {
                                     clearItem2();
-                                    resetColors(); // איפוס צבעים אם יש רק פריט אחד
                                 }
+
+                                if (validItems.size() > 2) {
+                                    populateItem3(validItems.get(2));
+                                } else {
+                                    clearItem3();
+                                }
+
+                                applyHighlighting(validItems);
+
                             } else {
-                                // כל המוצרים שהיו בהשוואה נמחקו מהחנות ע"י האדמין
                                 cardTable.setVisibility(View.GONE);
                                 tvEmptyMessage.setVisibility(View.VISIBLE);
                                 tvEmptyMessage.setText("אין מוצרים זמינים להשוואה בקטגוריית " + type);
@@ -177,51 +195,48 @@ public class CompareList extends AppCompatActivity {
         });
     }
 
-    // לוגיקת ההדגשה (Highlighting)
-    private void applyHighlighting(Item item1, Item item2) {
-        // --- השוואת מחיר (נמוך יותר טוב יותר) ---
-        if (item1.getPrice() < item2.getPrice()) {
-            tvPrice1.setTextColor(Color.parseColor("#27AE60")); // ירוק
-            tvPrice2.setTextColor(Color.BLACK);
-        } else if (item2.getPrice() < item1.getPrice()) {
-            tvPrice2.setTextColor(Color.parseColor("#27AE60"));
-            tvPrice1.setTextColor(Color.BLACK);
-        } else {
-            resetPriceColors(); // שווים
+    private void applyHighlighting(List<Item> items) {
+        resetColors();
+
+        if (items.size() < 2) return;
+
+        double minPrice = items.get(0).getPrice();
+        for (Item item : items) {
+            if (item.getPrice() < minPrice) minPrice = item.getPrice();
         }
 
-        // --- השוואת שנה (גבוהה/חדשה יותר טוב יותר) ---
-        try {
-            int year1 = Integer.parseInt(item1.getYear());
-            int year2 = Integer.parseInt(item2.getYear());
+        int maxYear = 0;
+        for (Item item : items) {
+            try {
+                int year = Integer.parseInt(item.getYear());
+                if (year > maxYear) maxYear = year;
+            } catch (Exception ignored) {}
+        }
 
-            if (year1 > year2) {
-                tvYear1.setTextColor(Color.parseColor("#27AE60"));
-                tvYear2.setTextColor(Color.BLACK);
-            } else if (year2 > year1) {
-                tvYear2.setTextColor(Color.parseColor("#27AE60"));
-                tvYear1.setTextColor(Color.BLACK);
-            } else {
-                tvYear1.setTextColor(Color.BLACK);
-                tvYear2.setTextColor(Color.BLACK);
-            }
-        } catch (Exception e) {
-            // במקרה של שגיאה בפורמט השנה
-            tvYear1.setTextColor(Color.BLACK);
-            tvYear2.setTextColor(Color.BLACK);
+        if (items.size() >= 1) {
+            if (items.get(0).getPrice() == minPrice) tvPrice1.setTextColor(Color.parseColor("#27AE60"));
+            try { if (Integer.parseInt(items.get(0).getYear()) == maxYear) tvYear1.setTextColor(Color.parseColor("#27AE60")); } catch(Exception ignored){}
+        }
+
+        if (items.size() >= 2) {
+            if (items.get(1).getPrice() == minPrice) tvPrice2.setTextColor(Color.parseColor("#27AE60"));
+            try { if (Integer.parseInt(items.get(1).getYear()) == maxYear) tvYear2.setTextColor(Color.parseColor("#27AE60")); } catch(Exception ignored){}
+        }
+
+        if (items.size() >= 3 && tvPrice3 != null && tvYear3 != null) {
+            if (items.get(2).getPrice() == minPrice) tvPrice3.setTextColor(Color.parseColor("#27AE60"));
+            try { if (Integer.parseInt(items.get(2).getYear()) == maxYear) tvYear3.setTextColor(Color.parseColor("#27AE60")); } catch(Exception ignored){}
         }
     }
 
     private void resetColors() {
         tvPrice1.setTextColor(Color.BLACK);
-        tvPrice2.setTextColor(Color.BLACK);
         tvYear1.setTextColor(Color.BLACK);
-        tvYear2.setTextColor(Color.BLACK);
-    }
-
-    private void resetPriceColors() {
-        tvPrice1.setTextColor(Color.BLACK);
         tvPrice2.setTextColor(Color.BLACK);
+        tvYear2.setTextColor(Color.BLACK);
+
+        if (tvPrice3 != null) tvPrice3.setTextColor(Color.BLACK);
+        if (tvYear3 != null) tvYear3.setTextColor(Color.BLACK);
     }
 
     private void populateItem1(Item item) {
@@ -242,6 +257,15 @@ public class CompareList extends AppCompatActivity {
         if (item.getPic() != null) imgItem2.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
     }
 
+    private void populateItem3(Item item) {
+        if (tvName3 != null) tvName3.setText(item.getName());
+        if (tvBrand3 != null) tvBrand3.setText(item.getBrand());
+        if (tvYear3 != null) tvYear3.setText(item.getYear());
+        if (tvPrice3 != null) tvPrice3.setText("₪" + item.getPrice());
+        if (tvDetails3 != null) tvDetails3.setText(item.getDetails());
+        if (imgItem3 != null && item.getPic() != null) imgItem3.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
+    }
+
     private void clearItem2() {
         tvName2.setText("טרם נבחר");
         tvBrand2.setText("-");
@@ -249,5 +273,14 @@ public class CompareList extends AppCompatActivity {
         tvPrice2.setText("-");
         tvDetails2.setText("-");
         imgItem2.setImageDrawable(null);
+    }
+
+    private void clearItem3() {
+        if (tvName3 != null) tvName3.setText("טרם נבחר");
+        if (tvBrand3 != null) tvBrand3.setText("-");
+        if (tvYear3 != null) tvYear3.setText("-");
+        if (tvPrice3 != null) tvPrice3.setText("-");
+        if (tvDetails3 != null) tvDetails3.setText("-");
+        if (imgItem3 != null) imgItem3.setImageDrawable(null);
     }
 }

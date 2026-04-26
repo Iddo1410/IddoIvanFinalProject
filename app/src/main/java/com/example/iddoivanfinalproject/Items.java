@@ -49,17 +49,8 @@ public class Items extends AppCompatActivity {
         databaseService = DataBaseService.DatabaseService.getInstance();
 
         // 2. הגדרת האדפטר (RecyclerView)
-        adapter = new ItemAdapter(filteredList, new ItemAdapter.OnItemClickListener() {
-            @Override
-            public void onClick(Item item) {
-                Intent go = new Intent(Items.this, Itemdetails.class);
-                go.putExtra("ITEM_ID", item.getId());
-                startActivity(go);
-            }
-
-            @Override
-            public void onLongClick(Item item) { }
-        });
+        // תיקון: העברנו רק את הרשימה. הלחיצה כבר מטופלת בתוך ה-ItemAdapter שתיקנו קודם!
+        adapter = new ItemAdapter(filteredList);
         recyclerView.setAdapter(adapter);
 
         setupSpinner();
@@ -163,9 +154,16 @@ public class Items extends AppCompatActivity {
 
     private void filterItems(String type) {
         filteredList.clear();
-        for (Item item : allItemsList) {
-            if (item.getType() != null && item.getType().equals(type)) {
-                filteredList.add(item);
+
+        // תיקון: הגנה במקרה שהמשתמש בוחר להציג "הכל"
+        // שים לב: אם במערך שלך (arrs.xml) קוראים לזה אחרת למשל "All", שנה את "הכל" למילה המתאימה
+        if (type.equals("הכל") || type.equals("All Categories") || type.isEmpty()) {
+            filteredList.addAll(allItemsList);
+        } else {
+            for (Item item : allItemsList) {
+                if (item.getType() != null && item.getType().equals(type)) {
+                    filteredList.add(item);
+                }
             }
         }
         adapter.notifyDataSetChanged();

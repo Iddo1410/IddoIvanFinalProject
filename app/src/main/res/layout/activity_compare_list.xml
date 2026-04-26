@@ -10,14 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="השוואת מוצרים"
-            android:textSize="28sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
             android:textColor="#2C3E50"
@@ -40,7 +40,7 @@
 
             <Spinner
                 android:id="@+id/spCompareCategory"
-                android:layout_width="200dp"
+                android:layout_width="180dp"
                 android:layout_height="48dp"
                 android:background="#FFFFFF"
                 android:elevation="2dp" />
@@ -69,53 +69,59 @@
                 android:id="@+id/tableLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="1,2"
+                android:stretchColumns="1,2,3"
                 android:paddingBottom="8dp">
 
-                <TableRow android:padding="12dp" android:gravity="center_vertical">
-                    <TextView android:text="תמונה" android:textStyle="bold" android:textSize="15sp" android:textColor="#34495E"/>
-                    <ImageView android:id="@+id/imgItem1" android:layout_width="110dp" android:layout_height="110dp" android:scaleType="fitCenter" />
-                    <ImageView android:id="@+id/imgItem2" android:layout_width="110dp" android:layout_height="110dp" android:scaleType="fitCenter" />
+                <TableRow android:padding="8dp" android:gravity="center_vertical">
+                    <TextView android:text="תמונה" android:textStyle="bold" android:textSize="14sp" android:textColor="#34495E"/>
+                    <ImageView android:id="@+id/imgItem1" android:layout_width="85dp" android:layout_height="85dp" android:scaleType="fitCenter" />
+                    <ImageView android:id="@+id/imgItem2" android:layout_width="85dp" android:layout_height="85dp" android:scaleType="fitCenter" />
+                    <ImageView android:id="@+id/imgItem3" android:layout_width="85dp" android:layout_height="85dp" android:scaleType="fitCenter" />
                 </TableRow>
 
                 <View android:layout_height="1dp" android:background="#E0E0E0" />
 
-                <TableRow android:padding="12dp" android:background="#F8F9FA">
+                <TableRow android:padding="8dp" android:background="#F8F9FA">
                     <TextView android:text="שם" android:textStyle="bold" android:textColor="#34495E" />
-                    <TextView android:id="@+id/tvName1" android:gravity="center" android:textSize="15sp" android:textStyle="bold" />
-                    <TextView android:id="@+id/tvName2" android:gravity="center" android:textSize="15sp" android:textStyle="bold" />
+                    <TextView android:id="@+id/tvName1" android:gravity="center" android:textSize="14sp" android:textStyle="bold" />
+                    <TextView android:id="@+id/tvName2" android:gravity="center" android:textSize="14sp" android:textStyle="bold" />
+                    <TextView android:id="@+id/tvName3" android:gravity="center" android:textSize="14sp" android:textStyle="bold" />
                 </TableRow>
 
                 <View android:layout_height="1dp" android:background="#E0E0E0" />
 
-                <TableRow android:padding="12dp">
+                <TableRow android:padding="8dp">
                     <TextView android:text="מותג" android:textStyle="bold" android:textColor="#34495E"/>
-                    <TextView android:id="@+id/tvBrand1" android:gravity="center" android:textSize="15sp" />
-                    <TextView android:id="@+id/tvBrand2" android:gravity="center" android:textSize="15sp" />
+                    <TextView android:id="@+id/tvBrand1" android:gravity="center" android:textSize="14sp" />
+                    <TextView android:id="@+id/tvBrand2" android:gravity="center" android:textSize="14sp" />
+                    <TextView android:id="@+id/tvBrand3" android:gravity="center" android:textSize="14sp" />
                 </TableRow>
 
                 <View android:layout_height="1dp" android:background="#E0E0E0" />
 
-                <TableRow android:padding="12dp" android:background="#F8F9FA">
+                <TableRow android:padding="8dp" android:background="#F8F9FA">
                     <TextView android:text="שנה" android:textStyle="bold" android:textColor="#34495E"/>
-                    <TextView android:id="@+id/tvYear1" android:gravity="center" android:textSize="15sp" />
-                    <TextView android:id="@+id/tvYear2" android:gravity="center" android:textSize="15sp" />
+                    <TextView android:id="@+id/tvYear1" android:gravity="center" android:textSize="14sp" />
+                    <TextView android:id="@+id/tvYear2" android:gravity="center" android:textSize="14sp" />
+                    <TextView android:id="@+id/tvYear3" android:gravity="center" android:textSize="14sp" />
                 </TableRow>
 
                 <View android:layout_height="1dp" android:background="#E0E0E0" />
 
-                <TableRow android:padding="12dp">
+                <TableRow android:padding="8dp">
                     <TextView android:text="מחיר" android:textStyle="bold" android:textColor="#34495E"/>
-                    <TextView android:id="@+id/tvPrice1" android:gravity="center" android:textColor="#27AE60" android:textStyle="bold" android:textSize="16sp" />
-                    <TextView android:id="@+id/tvPrice2" android:gravity="center" android:textColor="#27AE60" android:textStyle="bold" android:textSize="16sp" />
+                    <TextView android:id="@+id/tvPrice1" android:gravity="center" android:textColor="#27AE60" android:textStyle="bold" android:textSize="15sp" />
+                    <TextView android:id="@+id/tvPrice2" android:gravity="center" android:textColor="#27AE60" android:textStyle="bold" android:textSize="15sp" />
+                    <TextView android:id="@+id/tvPrice3" android:gravity="center" android:textColor="#27AE60" android:textStyle="bold" android:textSize="15sp" />
                 </TableRow>
 
                 <View android:layout_height="1dp" android:background="#E0E0E0" />
 
-                <TableRow android:padding="12dp" android:background="#F8F9FA">
+                <TableRow android:padding="8dp" android:background="#F8F9FA">
                     <TextView android:text="פירוט" android:textStyle="bold" android:textColor="#34495E"/>
-                    <TextView android:id="@+id/tvDetails1" android:gravity="center" android:textSize="13sp" />
-                    <TextView android:id="@+id/tvDetails2" android:gravity="center" android:textSize="13sp" />
+                    <TextView android:id="@+id/tvDetails1" android:gravity="center" android:textSize="12sp" />
+                    <TextView android:id="@+id/tvDetails2" android:gravity="center" android:textSize="12sp" />
+                    <TextView android:id="@+id/tvDetails3" android:gravity="center" android:textSize="12sp" />
                 </TableRow>
 
             </TableLayout>

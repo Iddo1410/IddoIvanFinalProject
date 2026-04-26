@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8E6F8"
+    android:background="#F0F7F4"
     android:layoutDirection="rtl"
     android:fillViewport="true">
 
@@ -21,8 +21,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:text="היי"
-            android:textColor="#2A2438"
-            android:textSize="32sp"
+            android:textColor="#1F3625"
+            android:textSize="36sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="האזור האישי שלך"
-            android:textColor="#5C5470"
-            android:textSize="18sp"
+            android:textColor="#728A7A"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvHiUser" />
@@ -57,8 +57,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#887BB0"
-                android:text="מעבר לחנות"
+                android:backgroundTint="#2A9D8F"
+                app:cornerRadius="12dp"
+                android:text="לחנות"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -68,7 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#887BB0"
+                android:backgroundTint="#2A9D8F"
+                app:cornerRadius="12dp"
                 android:text="העגלה שלי"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -79,8 +81,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#887BB0"
+                android:backgroundTint="#2A9D8F"
+                app:cornerRadius="12dp"
                 android:text="ההשוואות שלי"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnUserOrderHistory"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="#2A9D8F"
+                app:cornerRadius="12dp"
+                android:text="ההזמנות שלי"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -90,9 +105,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="#6E6291"
+                android:backgroundTint="#E2EDE9"
+                app:cornerRadius="12dp"
                 android:text="התנתקות"
-                android:textColor="#FFFFFF"
+                android:textColor="#2A9D8F"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 

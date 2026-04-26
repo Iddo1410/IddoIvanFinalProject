@@ -51,7 +51,6 @@ public class Itemdetails extends AppCompatActivity {
             loadItemData();
         }
 
-        // בדיקת משתמש והצגת כפתורים מתאימים
         checkUserStatus();
     }
 
@@ -64,7 +63,6 @@ public class Itemdetails extends AppCompatActivity {
         tvYear = findViewById(R.id.tvYear);
         ivPic = findViewById(R.id.ivPic);
 
-        // כפתורים
         btnAddToCart = findViewById(R.id.btnAddToCart);
         btnGoToCompare = findViewById(R.id.btnGoToCompare);
         btnDeleteItem = findViewById(R.id.btnDeleteItem);
@@ -73,7 +71,6 @@ public class Itemdetails extends AppCompatActivity {
 
         databaseService = DataBaseService.DatabaseService.getInstance();
 
-        // הגדרת מחיקה כאן מראש (אבל הכפתור מוסתר עד שנבדוק אם זה אדמין)
         if (btnDeleteItem != null) {
             btnDeleteItem.setOnClickListener(v -> deleteCurrentItem());
         }
@@ -91,9 +88,7 @@ public class Itemdetails extends AppCompatActivity {
         }
     }
 
-    // הפונקציה שמחליטה מה להציג למי
     private void checkUserStatus() {
-        // קודם כל נעלים הכל כדי שלא יהיו "הבהובים" במסך
         if (btnAddToCart != null) btnAddToCart.setVisibility(View.GONE);
         if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.GONE);
         if (cbCompare != null) cbCompare.setVisibility(View.GONE);
@@ -103,39 +98,29 @@ public class Itemdetails extends AppCompatActivity {
 
         if (currentUser != null) {
             String uid = currentUser.getUid();
-
-            // פונים למסד הנתונים כדי להביא את כל פרטי המשתמש (כולל האם הוא אדמין)
             databaseService.getUser(uid, new DataBaseService.DatabaseCallback<User>() {
                 @Override
                 public void onCompleted(User user) {
                     if (user != null) {
-                        // --- כאן הבדיקה המקצועית: האם הוא מנהל? ---
                         if (user.isAdmin()) {
-                            // זה אדמין -> מדליקים לו אך ורק את כפתור המחיקה
                             if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.VISIBLE);
                         } else {
-                            // זה לקוח רגיל -> מדליקים לו קנייה והשוואה
                             showCustomerButtons();
                         }
                     } else {
-                        // למקרה שאין נתונים על המשתמש
                         showCustomerButtons();
                     }
                 }
-
                 @Override
                 public void onFailed(Exception e) {
-                    // למקרה של שגיאה בטעינה ממסד הנתונים
                     showCustomerButtons();
                 }
             });
         } else {
-            // אם המשתמש הוא אורח (לא מחובר כלל)
             showCustomerButtons();
         }
     }
 
-    // פונקציית עזר קטנה כדי לא לכתוב את אותו קוד 3 פעמים
     private void showCustomerButtons() {
         if (btnAddToCart != null) btnAddToCart.setVisibility(View.VISIBLE);
         if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.VISIBLE);
@@ -143,45 +128,34 @@ public class Itemdetails extends AppCompatActivity {
         if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE);
     }
 
-    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
-    // פונקציית המחיקה המשודרגת (למציאת הבעיה)
-    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
-    // פונקציית המחיקה מ-Firebase (מופעלת רק ע"י האדמין)
     private void deleteCurrentItem() {
         if (itemId == null || itemId.isEmpty()) {
             Toast.makeText(this, "שגיאה: לא נמצא ID של מוצר למחיקה!", Toast.LENGTH_LONG).show();
             return;
         }
 
-        // 1. קודם נמחוק את המוצר הראשי מהחנות
         databaseService.deleteItem(itemId, new DataBaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
-
-                // 2. עכשיו ניגש לרשימת ההשוואה וננקה גם אותה
                 if (currentItem != null && currentItem.getType() != null) {
                     databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() {
                         @Override
                         public void onCompleted(Compareitem dbCompare) {
                             if (dbCompare != null && dbCompare.getItemArrayList() != null) {
-
                                 List<Item> newList = new ArrayList<>();
                                 boolean itemFoundInCompare = false;
 
-                                // מעבר בטוח על המוצרים בהשוואה - מונע קריסות אם נתונים חסרים
                                 for (Item i : dbCompare.getItemArrayList()) {
-                                    // נבדוק גם לפי ID וגם לפי שם כדי להיות בטוחים ב-100%
                                     boolean isSameId = i.getId() != null && i.getId().equals(itemId);
                                     boolean isSameName = i.getName() != null && currentItem.getName() != null && i.getName().equals(currentItem.getName());
 
                                     if (isSameId || isSameName) {
-                                        itemFoundInCompare = true; // מצאנו את המוצר! לא נוסיף אותו לרשימה החדשה
+                                        itemFoundInCompare = true;
                                     } else {
-                                        newList.add(i); // מוצרים אחרים נשמור ברשימה
+                                        newList.add(i);
                                     }
                                 }
 
-                                // אם המוצר אכן היה בהשוואה ונמחק, נעדכן את פיירבייס
                                 if (itemFoundInCompare) {
                                     dbCompare.getItemArrayList().clear();
                                     dbCompare.getItemArrayList().addAll(newList);
@@ -192,7 +166,6 @@ public class Itemdetails extends AppCompatActivity {
                                             Toast.makeText(Itemdetails.this, "המוצר נמחק מהחנות וגם מההשוואה!", Toast.LENGTH_LONG).show();
                                             finish();
                                         }
-
                                         @Override
                                         public void onFailed(Exception e) {
                                             Toast.makeText(Itemdetails.this, "המוצר נמחק, אך שגיאה בעדכון ההשוואה", Toast.LENGTH_LONG).show();
@@ -200,18 +173,14 @@ public class Itemdetails extends AppCompatActivity {
                                         }
                                     });
                                 } else {
-                                    // המוצר נמחק מהחנות, אבל הוא בכלל לא היה בהשוואה
                                     Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה!", Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
-
                             } else {
-                                // אין בכלל מוצרים בהשוואה מהסוג הזה
                                 Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
                                 finish();
                             }
                         }
-
                         @Override
                         public void onFailed(Exception e) {
                             Toast.makeText(Itemdetails.this, "נמחק מהחנות. שגיאה בגישה להשוואה.", Toast.LENGTH_SHORT).show();
@@ -223,18 +192,11 @@ public class Itemdetails extends AppCompatActivity {
                     finish();
                 }
             }
-
             @Override
             public void onFailed(Exception e) {
                 Toast.makeText(Itemdetails.this, "שגיאה במחיקת המוצר: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    // פונקציית עזר קטנה כדי לחסוך קוד כפול - מציגה הודעה וסוגרת את המסך
-    private void finishWithSuccess() {
-        Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה מכל המקומות!", Toast.LENGTH_SHORT).show();
-        finish();
     }
 
     private void loadItemData() {
@@ -265,12 +227,53 @@ public class Itemdetails extends AppCompatActivity {
             public void onCompleted(Compareitem dbCompare) {
                 if (dbCompare != null) {
                     compareitem = dbCompare;
-                    checkIfItemInCompare();
+
+                    // --- מנגנון הריפוי: מנקה פריטי "רפאים" מ-Firebase לפני שהוא מאפשר למשתמש ללחוץ על הצ'קבוקס ---
+                    databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() {
+                        @Override
+                        public void onCompleted(List<Item> storeItems) {
+                            if (storeItems != null && compareitem.getItemArrayList() != null) {
+                                List<Item> validItems = new ArrayList<>();
+
+                                for (Item cItem : compareitem.getItemArrayList()) {
+                                    boolean exists = false;
+                                    for (Item sItem : storeItems) {
+                                        if (cItem.getId() != null && sItem.getId() != null && cItem.getId().equals(sItem.getId())) {
+                                            exists = true;
+                                            break;
+                                        }
+                                    }
+                                    if (exists) validItems.add(cItem);
+                                }
+
+                                // אם הרשימה כוללת מוצרים שלא קיימים יותר (לדוגמה: מוצר שמחקת), ננקה אותם
+                                if (validItems.size() != compareitem.getItemArrayList().size()) {
+                                    compareitem.getItemArrayList().clear();
+                                    compareitem.getItemArrayList().addAll(validItems);
+
+                                    databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
+                                        @Override public void onCompleted(Void o) {}
+                                        @Override public void onFailed(Exception e) {}
+                                    });
+                                }
+                            }
+
+                            checkIfItemInCompare();
+                            setCheckboxListener();
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            checkIfItemInCompare();
+                            setCheckboxListener();
+                        }
+                    });
+
                 } else {
                     compareitem = new Compareitem();
                     compareitem.setId(databaseService.generateCompareId());
+                    setCheckboxListener();
                 }
-                setCheckboxListener();
             }
             @Override
             public void onFailed(Exception e) {}
@@ -295,8 +298,8 @@ public class Itemdetails extends AppCompatActivity {
             if (compareitem.getItemArrayList() == null) compareitem.setItemArrayList(new ArrayList<>());
 
             if (isChecked) {
-                if (compareitem.getItemArrayList().size() >= 2) {
-                    Toast.makeText(Itemdetails.this, "ניתן להוסיף עד 2 פריטים להשוואה", Toast.LENGTH_SHORT).show();
+                if (compareitem.getItemArrayList().size() >= 3) {
+                    Toast.makeText(Itemdetails.this, "ניתן להוסיף עד 3 פריטים להשוואה", Toast.LENGTH_SHORT).show();
                     cbCompare.setOnCheckedChangeListener(null);
                     cbCompare.setChecked(false);
                     setCheckboxListener();
@@ -361,7 +364,6 @@ public class Itemdetails extends AppCompatActivity {
             });
         }
     }
-
 
     public void onBack(View view) { finish(); }
 }
