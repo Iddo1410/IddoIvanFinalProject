@@ -5,57 +5,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F5F7"
-    android:layoutDirection="rtl">
+    android:layoutDirection="rtl"
+    android:background="#F4F5F7">
 
+    <!-- כותרת -->
     <TextView
         android:id="@+id/tvCartTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:text="עגלת הקניות שלי"
         android:textColor="#333333"
-        android:textSize="26sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- קו עדין מתחת לכותרת -->
+    <View
+        android:id="@+id/dividerTop"
+        android:layout_width="120dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="8dp"
+        android:background="#800000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvCartTitle" />
+
+    <!-- רשימת מוצרים -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCart"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tvCartTitle"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/dividerTop"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_cart" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Bottom Bar -->
+    <androidx.cardview.widget.CardView
         android:id="@+id/bottomBar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="12dp"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_margin="12dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/btnPurchase"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="בצע רכישה"
-            android:textColor="#800000"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:backgroundTint="#E2E2E2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="18dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="סה״כ לתשלום: ₪0"
+                android:textColor="#555555"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <!-- כפתור רכישה -->
+            <Button
+                android:id="@+id/btnPurchase"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#800000"
+                android:text="בצע רכישה"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- כפתור חזור -->
+            <Button
+                android:id="@+id/btnUniversalBack"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:backgroundTint="#E2E2E2"
+                android:text="חזור"
+                android:textAllCaps="false"
+                android:textColor="#800000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

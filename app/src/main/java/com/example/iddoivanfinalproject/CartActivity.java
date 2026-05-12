@@ -3,6 +3,7 @@ package com.example.iddoivanfinalproject;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -25,7 +26,8 @@ public class CartActivity extends AppCompatActivity {
     private DataBaseService.DatabaseService databaseService;
 
     // הוספת משתנים עבור כפתור הרכישה ורשימת המוצרים
-    private Button btnPurchase;
+    private Button btnPurchase, btnBack;
+    private TextView tvTotalPrice;
     private List<Cart> currentCartList;
 
     // ממשק המטפל בפעולות השונות על פריט בעגלה
@@ -47,7 +49,11 @@ public class CartActivity extends AppCompatActivity {
         rvCart = findViewById(R.id.rvCart);
         rvCart.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
-
+        btnBack = findViewById(R.id.btnUniversalBack);
+        tvTotalPrice=findViewById(R.id.tvSummary);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
         // אתחול כפתור הרכישה והוספת מאזין לחיצה שיפתח את חלונית האישור
         btnPurchase = findViewById(R.id.btnPurchase);
         btnPurchase.setOnClickListener(v -> showPurchaseConfirmationDialog());
@@ -82,7 +88,8 @@ public class CartActivity extends AppCompatActivity {
             databaseService.getCartList(currentUserId, new DataBaseService.DatabaseCallback<List<Cart>>() {
                 @Override
                 public void onCompleted(List<Cart> carts) {
-                    currentCartList = carts; // שמירת הרשימה הנוכחית
+                    currentCartList = carts;// שמירת הרשימה הנוכחית
+                    updateTotalPrice(carts);
 
                     if (carts != null && !carts.isEmpty()) {
                         btnPurchase.setEnabled(true); // אפשור כפתור הרכישה אם העגלה לא ריקה
@@ -109,6 +116,15 @@ public class CartActivity extends AppCompatActivity {
                         btnPurchase.setEnabled(false); // כיבוי כפתור הרכישה כשהעגלה ריקה
                         Toast.makeText(CartActivity.this, "העגלה שלך ריקה", Toast.LENGTH_SHORT).show();
                     }
+                }
+                private void updateTotalPrice(List<Cart> carts) {
+                    double total = 0;
+
+                    for (Cart item : carts) {
+                        total += item.getPrice() * item.getQuantity();
+                    }
+
+                    tvTotalPrice.setText("סה״כ לתשלום: ₪" + String.format("%.2f", total));
                 }
 
                 @Override

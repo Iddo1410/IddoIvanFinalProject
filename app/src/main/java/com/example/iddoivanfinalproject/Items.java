@@ -29,7 +29,7 @@ public class Items extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter adapter;
     private DataBaseService.DatabaseService databaseService;
-    private Button btnGoToCart;
+    private Button btnGoToCart, btnBack;
     private Spinner spTypeFilter;
 
     private ArrayList<Item> allItemsList = new ArrayList<>();
@@ -44,7 +44,10 @@ public class Items extends AppCompatActivity {
         recyclerView = findViewById(R.id.rvItems);
         btnGoToCart = findViewById(R.id.btnGoToCart);
         spTypeFilter = findViewById(R.id.spTypeFilter);
-
+        btnBack = findViewById(R.id.btnUniversalBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         databaseService = DataBaseService.DatabaseService.getInstance();
 

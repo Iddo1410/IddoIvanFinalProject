@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ public class CompareList extends AppCompatActivity {
     private TextView tvEmptyMessage, tvTitle;
     private CardView cardTable;
     private Spinner spCompareCategory;
+    private Button btnBack;
 
     // רכיבי פריט 1
     private TextView tvName1, tvBrand1, tvYear1, tvPrice1, tvDetails1;
@@ -63,6 +65,10 @@ public class CompareList extends AppCompatActivity {
         tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
         cardTable = findViewById(R.id.cardTable);
         spCompareCategory = findViewById(R.id.spCompareCategory);
+        btnBack = findViewById(R.id.btnUniversalBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
         tvName1 = findViewById(R.id.tvName1);
         tvBrand1 = findViewById(R.id.tvBrand1);
