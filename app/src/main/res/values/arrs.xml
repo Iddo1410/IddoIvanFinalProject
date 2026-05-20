@@ -9,6 +9,7 @@
         <item>טלוויזיה</item>
         <item>שואב אבק</item>
         <item>מזגן</item>
+        <item>אוזניות</item>
 
 
 
@@ -30,18 +31,18 @@
         <item>LG</item>
         <item>Bosch</item>
         <item>Siemens</item>
-        <item>Whirlpool</item>
         <item>Electrolux</item>
+        <item>JBL</item>
         <item>Miele</item>
+        <item>Fujicom</item>
+        <item>Electra</item>
+        <item>Luxor</item>
         <item>Dyson</item>
-        <item>Panasonic</item>
         <item>Philips</item>
-        <item>Toshiba</item>
         <item>Haier</item>
         <item>Sharp</item>
-        <item>Kenwood</item>
-        <item>Kitchenaid</item>
-
+        <item>Tadiran</item>
+        <item>Tornado</item>
     </string-array>
 
 
