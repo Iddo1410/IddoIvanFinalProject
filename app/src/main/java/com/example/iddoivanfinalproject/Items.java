@@ -25,14 +25,16 @@ import com.google.firebase.auth.FirebaseUser; // מייצג את המשתמש ש
 import java.util.ArrayList; // מחלקת מערך דינמי (רשימה שגודלה יכול להשתנות)
 import java.util.List; // ממשק רשימה ב-Java
 
-public class Items extends AppCompatActivity { // הגדרת המחלקה של מסך "מוצרים"
-
+public class Items extends BaseActivity {
     // משתני המסך
     private RecyclerView recyclerView; // רכיב התצוגה של רשימת המוצרים
     private ItemAdapter adapter; // המתווך שיחבר בין הנתונים למסך
     private DataBaseService.DatabaseService databaseService; // משתנה להתקשרות מול מסד הנתונים
     private Button btnGoToCart, btnBack; // כפתור מעבר לעגלה וכפתור חזרה
     private Spinner spTypeFilter; // תפריט נפתח לבחירת קטגוריית סינון
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
 
     // רשימות נתונים
     private ArrayList<Item> allItemsList = new ArrayList<>(); // רשימה שתשמור את *כל* המוצרים שקיימים בחנות

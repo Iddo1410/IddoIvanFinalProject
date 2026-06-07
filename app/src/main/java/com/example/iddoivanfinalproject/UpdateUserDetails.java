@@ -3,6 +3,7 @@ package com.example.iddoivanfinalproject; // הגדרת מיקום הקובץ ב
 // ייבוא המחלקות הדרושות מהספריות של אנדרואיד
 import android.content.Intent; // מחלקה לטיפול במעבר בין מסכים והעברת נתונים ביניהם
 import android.os.Bundle; // מחלקה לשמירת מצב המסך
+import android.view.View;
 import android.widget.Button; // רכיב כפתור
 import android.widget.EditText; // רכיב שדה טקסט שניתן לעריכה (להקשת קלט)
 import android.widget.Toast; // מחלקה להצגת הודעות קופצות קצרות בתחתית המסך
@@ -12,11 +13,13 @@ import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיס
 import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא שירות הגישה למסד הנתונים שיצרת
 import com.google.firebase.auth.FirebaseAuth; // ייבוא מערכת האימות של Firebase
 
-public class UpdateUserDetails extends AppCompatActivity { // מחלקת מסך עדכון פרטי משתמש
-
+public class UpdateUserDetails extends BaseActivity {
     // הגדרת משתנים פרטיים עבור רכיבי התצוגה שבמסך
     EditText etFname, etLname, etEmail, etPhone; // שדות לעריכת שם פרטי, משפחה, אימייל וטלפון
     Button btnSave; // כפתור לשמירת השינויים
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר

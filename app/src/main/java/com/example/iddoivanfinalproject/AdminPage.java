@@ -17,10 +17,12 @@ import com.example.iddoivanfinalproject.model.User; // ייבוא מודל המ�
 import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא שירות מסד הנתונים
 import com.google.firebase.auth.FirebaseAuth; // ייבוא מערכת אימות המשתמשים של Firebase (להתנתקות)
 
-public class AdminPage extends AppCompatActivity { // הגדרת מחלקת עמוד המנהל, יורשת תכונות של מסך אנדרואיד בסיסי
-
+public class AdminPage extends BaseActivity {
     private TextView textView5; // משתנה שייצג את שדה הטקסט של הברכה ("היי...") במסך
     private DataBaseService.DatabaseService dataBaseService; // משתנה לגישה לפעולות מול מסד הנתונים
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נטען

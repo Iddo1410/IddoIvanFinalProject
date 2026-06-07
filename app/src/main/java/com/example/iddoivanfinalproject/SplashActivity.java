@@ -3,6 +3,7 @@ package com.example.iddoivanfinalproject; // הגדרת המיקום של הקו
 // ייבוא המחלקות הדרושות מהספריות של אנדרואיד
 import android.content.Intent; // מחלקה האחראית על מעבר בין מסכים
 import android.os.Bundle; // מחלקה לשמירת מצב המסך בזמן פתיחתו
+import android.view.View;
 import android.view.animation.Animation; // מחלקה לייצוג אנימציות (כמו הופעה הדרגתית, תזוזה וכו')
 import android.view.animation.AnimationUtils; // מחלקת עזר לטעינת קבצי אנימציה מתוך תיקיית המשאבים (res)
 import android.widget.ImageView; // רכיב להצגת תמונה במסך
@@ -13,8 +14,11 @@ import androidx.core.graphics.Insets; // מחלקה לטיפול בשוליים 
 import androidx.core.view.ViewCompat; // מחלקה לטיפול בתצוגה גרפית
 import androidx.core.view.WindowInsetsCompat; // מחלקה לטיפול באזורי מסך מיוחדים (שורת סטטוס וכו')
 
-public class SplashActivity extends AppCompatActivity { // הגדרת המחלקה של מסך הפתיחה
+public class SplashActivity extends BaseActivity { // הגדרת המחלקה של מסך הפתיחה
     private ImageView myImageView; // משתנה שייצג את התמונה שמופיעה במסך הפתיחה הלוגו שלך)
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר

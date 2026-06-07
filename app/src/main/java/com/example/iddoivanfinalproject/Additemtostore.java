@@ -24,8 +24,7 @@ import com.example.iddoivanfinalproject.model.Item; // ייבוא מחלקת ה�
 import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא שירות מסד הנתונים של האפליקציה (Firebase)
 import com.example.iddoivanfinalproject.utils.ImageUtil; // ייבוא מחלקת עזר שיצרת לטיפול בפעולות על תמונות
 
-public class Additemtostore extends AppCompatActivity { // הגדרת מחלקת המסך "הוספת פריט לחנות", יורשת תכונות של מסך אנדרואיד
-
+public class Additemtostore extends BaseActivity {
     // הגדרת משתנים פרטיים שייצגו את שדות הטקסט במסך
     private EditText etItemName, etItemPrice, etItemType, etItemBrand, etItemYear, etItemDetails;
     // הגדרת משתנים פרטיים שייצגו את התפריטים הנפתחים
@@ -41,6 +40,9 @@ public class Additemtostore extends AppCompatActivity { // הגדרת מחלקת
     /// Activity result launcher for capturing image from camera
     // אובייקט שישמש להפעלת המצלמה וקבלת התמונה שצולמה בחזרה
     private ActivityResultLauncher<Intent> captureImageLauncher;
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
 
     // constant to compare
     // the activity result code
@@ -103,6 +105,7 @@ public class Additemtostore extends AppCompatActivity { // הגדרת מחלקת
                 selectImageFromGallery(); // קריאה לפונקציה שפותחת את הגלריה
             }
         });
+
 
         btnTakePic.setOnClickListener(new View.OnClickListener() { // הגדרת מאזין לחיצה עבור כפתור "צילום תמונה"
             @Override

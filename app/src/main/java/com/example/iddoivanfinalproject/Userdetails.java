@@ -4,6 +4,7 @@ package com.example.iddoivanfinalproject; // הגדרת החבילה ומיקו�
 import android.content.Intent; // מחלקה למעבר בין מסכים והעברת נתונים
 import android.content.SharedPreferences; // מחלקה לשמירת נתונים בזיכרון המקומי של המכשיר
 import android.os.Bundle; // מחלקה לשמירת מצב המסך בזמן יצירתו
+import android.view.View;
 import android.widget.Button; // רכיב כפתור
 import android.widget.TextView; // רכיב תצוגת טקסט
 
@@ -12,11 +13,13 @@ import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיס
 
 import com.google.firebase.auth.FirebaseAuth; // ייבוא שירות האימות של Firebase
 
-public class Userdetails extends AppCompatActivity { // מחלקת מסך הצגת פרטי משתמש
-
+    public class Userdetails extends BaseActivity {
     // הגדרת משתנים פרטיים לרכיבי התצוגה במסך
     TextView tvDetails; // שדה טקסט גדול שיציג את כל פרטי המשתמש
     Button btnUpdate; // כפתור "עדכן פרטים"
+        public void onMenuClick(View v) {
+            openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+        }
 
     SharedPreferences sp; // משתנה לגישה לזיכרון המקומי (כדי לשמור נתונים זמניים)
 

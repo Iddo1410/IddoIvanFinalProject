@@ -3,14 +3,17 @@ package com.example.iddoivanfinalproject; // הגדרת החבילה ומיקו�
 // ייבוא מחלקות וספריות שדרושות להפעלת הקוד
 import android.content.Intent; // מחלקה למעבר בין מסכים
 import android.os.Bundle; // מחלקה לשמירת נתונים ומצב המסך
+import android.view.View;
 import android.widget.Button; // רכיב כפתור
 
 import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיסית למסכים באנדרואיד
 
 import com.google.firebase.auth.FirebaseAuth; // ייבוא שירות האימות של Firebase (כדי לבצע את הניתוק)
 
-public class SignoutActivity extends AppCompatActivity { // הגדרת המחלקה של מסך ההתנתקות
-
+public class SignoutActivity extends BaseActivity {
+    public void onMenuClick(View v) {
+        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר
         super.onCreate(savedInstanceState); // קריאה לפעולת ההקמה של מחלקת האם
