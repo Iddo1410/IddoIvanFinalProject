@@ -14,11 +14,8 @@ import androidx.core.graphics.Insets; // מחלקה לטיפול בשוליים 
 import androidx.core.view.ViewCompat; // מחלקה לטיפול בתצוגה גרפית
 import androidx.core.view.WindowInsetsCompat; // מחלקה לטיפול באזורי מסך מיוחדים (שורת סטטוס וכו')
 
-public class SplashActivity extends BaseActivity { // הגדרת המחלקה של מסך הפתיחה
+public class SplashActivity extends AppCompatActivity { // הגדרת המחלקה של מסך הפתיחה
     private ImageView myImageView; // משתנה שייצג את התמונה שמופיעה במסך הפתיחה הלוגו שלך)
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר

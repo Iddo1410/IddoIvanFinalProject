@@ -10,7 +10,7 @@ import androidx.core.graphics.Insets; // מחלקה לטיפול בשוליים 
 import androidx.core.view.ViewCompat; // מחלקה לטיפול בתאימות תצוגה בין גרסאות אנדרואיד שונות
 import androidx.core.view.WindowInsetsCompat; // מחלקה לטיפול באזורי המערכת (כמו אזור שורת הסטטוס והסוללה)
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת אוטומטית ברגע שהמסך נוצר ונטען
@@ -30,9 +30,6 @@ public class MainActivity extends BaseActivity {
         });
 
 
-    }
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
     }
 
     // פונקציה המופעלת בלחיצה על כפתור ההרשמה (מקושרת ישירות מקובץ ה-XML דרך תכונת android:onClick="onClick")

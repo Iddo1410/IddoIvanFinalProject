@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth; // מערכת ההתחברות ו�
 import com.google.firebase.auth.FirebaseUser; // מחלקה המייצגת משתמש מחובר ב-Firebase
 
 // המחלקה של מסך ההתחברות. יורשת ממסך בסיסי ומיישמת מאזין ללחיצות (OnClickListener)
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "LoginActivity"; // תגית לשימוש בהדפסות לוג (לצרכי דיבאג)
 
@@ -32,9 +32,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private Button btnLogin; // כפתור "התחבר"
     private Button btnBackToMain; // <-- 1. משתנה לכפתור החזרה למסך הראשי (כהערתך)
     private TextView tvRegister; // טקסט לחיץ למעבר להרשמה
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     private FirebaseAuth mAuth; // משתנה לביצוע פעולות התחברות מול Firebase
     private DataBaseService.DatabaseService dataBaseService; // משתנה למשיכת נתוני המשתמש ממסד הנתונים

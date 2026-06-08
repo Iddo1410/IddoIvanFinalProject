@@ -20,12 +20,9 @@ import com.google.firebase.auth.FirebaseUser; // מחלקה המייצגת את 
 import java.util.ArrayList; // מחלקה של מערך דינמי שניתן להוסיף אליו איברים
 import java.util.List; // ממשק לרשימות כלליות ב-Java
 
-public class UserOrderHistory extends BaseActivity {
+public class UserOrderHistory extends AppCompatActivity {
     // הגדרת משתנים פרטיים עבור הרכיבים במסך
     private RecyclerView rvOrders; // הרכיב שיציג את רשימת ההזמנות
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
     private OrderAdapter adapter; // המתווך שיחבר את הנתונים לרשימה
     Button btnBack; // כפתור לחזרה אחורה
     private DataBaseService.DatabaseService databaseService; // משתנה להתקשרות מול מסד הנתונים

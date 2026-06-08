@@ -13,13 +13,10 @@ import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיס
 import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא שירות הגישה למסד הנתונים שיצרת
 import com.google.firebase.auth.FirebaseAuth; // ייבוא מערכת האימות של Firebase
 
-public class UpdateUserDetails extends BaseActivity {
+public class UpdateUserDetails extends AppCompatActivity {
     // הגדרת משתנים פרטיים עבור רכיבי התצוגה שבמסך
     EditText etFname, etLname, etEmail, etPhone; // שדות לעריכת שם פרטי, משפחה, אימייל וטלפון
     Button btnSave; // כפתור לשמירת השינויים
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר

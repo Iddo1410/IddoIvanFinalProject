@@ -9,22 +9,20 @@ import android.util.Log; // ייבוא מחלקה המאפשרת הדפסת הו
 import android.widget.ArrayAdapter; // ייבוא מחלקה שתפקידה לקחת נתונים (כמו מערך) ולהציג אותם ברשימה (כמו ספינר)
 import android.widget.Button; // ייבוא מחלקת רכיב הכפתור
 import android.widget.EditText; // ייבוא מחלקה לרכיב של שדה טקסט שניתן לעריכה על ידי המשתמש
-import android.widget.ImageButton; // ייבוא מחלקת כפתור שהוא תמונה (כרגע לא בשימוש בקובץ זה)
 import android.widget.ImageView; // ייבוא מחלקה לרכיב המציג תמונה על המסך
 import android.widget.Spinner; // ייבוא מחלקה לרכיב של רשימה נפתחת (תפריט גלילה)
+import android.view.View; // ייבוא מחלקה המייצגת את אבן הבניין הבסיסית לכל אלמנט ויזואלי במסך
+import android.widget.Toast; // ייבוא מחלקה להצגת הודעות פופ-אפ קצרות שמופיעות ונעלמות
 
 import androidx.activity.result.ActivityResultLauncher; // ייבוא מחלקה לטיפול בתוצאות שחוזרות מפעילויות (כמו צילום תמונה)
 import androidx.activity.result.contract.ActivityResultContracts; // ייבוא חוזים למערכת הפעילויות (מגדיר איזה סוג תוצאה אנו מחפשים)
 import androidx.appcompat.app.AppCompatActivity; // ייבוא מחלקת הבסיס למסכים (פעילויות) באנדרואיד
 
-import android.view.View; // ייבוא מחלקה המייצגת את אבן הבניין הבסיסית לכל אלמנט ויזואלי במסך
-import android.widget.Toast; // ייבוא מחלקה להצגת הודעות פופ-אפ קצרות שמופיעות ונעלמות
-
 import com.example.iddoivanfinalproject.model.Item; // ייבוא מחלקת המודל 'פריט' (Item) שיצרת
 import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא שירות מסד הנתונים של האפליקציה (Firebase)
 import com.example.iddoivanfinalproject.utils.ImageUtil; // ייבוא מחלקת עזר שיצרת לטיפול בפעולות על תמונות
 
-public class Additemtostore extends BaseActivity {
+public class Additemtostore extends AppCompatActivity {
     // הגדרת משתנים פרטיים שייצגו את שדות הטקסט במסך
     private EditText etItemName, etItemPrice, etItemType, etItemBrand, etItemYear, etItemDetails;
     // הגדרת משתנים פרטיים שייצגו את התפריטים הנפתחים
@@ -40,9 +38,6 @@ public class Additemtostore extends BaseActivity {
     /// Activity result launcher for capturing image from camera
     // אובייקט שישמש להפעלת המצלמה וקבלת התמונה שצולמה בחזרה
     private ActivityResultLauncher<Intent> captureImageLauncher;
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     // constant to compare
     // the activity result code
@@ -59,7 +54,7 @@ public class Additemtostore extends BaseActivity {
         ImageUtil.requestPermission(this); // קריאה למחלקת העזר לבקש מהמשתמש הרשאות גישה למצלמה ולאחסון המכשיר
 
         /// get the instance of the database service
-        databaseService= DataBaseService.DatabaseService.getInstance(); // קבלת המופע (Instance) של שירות מסד הנתונים כדי לעבוד איתו
+        databaseService = DataBaseService.DatabaseService.getInstance(); // קבלת המופע (Instance) של שירות מסד הנתונים כדי לעבוד איתו
 
         // יצירת מתווך (Adapter) שמחבר בין מערך סוגי המוצרים (מה-XML) לתפריט הנפתח
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(
@@ -114,61 +109,69 @@ public class Additemtostore extends BaseActivity {
             }
         });
 
-        btnAddItem.setOnClickListener(new View.OnClickListener() { // הגדרת מאזין לחיצה עבור כפתור "הוספת המוצר לחנות"
+        // כפתור הוספת המוצר - עבר תיקון למניעת קריסות (Null/NumberFormat)
+        btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { // הקוד שמתבצע בלחיצה על "הוסף"
-                String itemName = etItemName.getText().toString(); // קבלת הטקסט (שם המוצר) מהשדה והמרתו למחרוזת
-                String itemType=spType.getSelectedItem().toString(); // קבלת הערך שנבחר בספינר הסוג
-                String itemBrand = spBrand.getSelectedItem().toString(); // קבלת הערך שנבחר בספינר המותג
-                String itemPrice = etItemPrice.getText().toString(); // קבלת המחיר שהוקלד כטקסט
-                String itemYear=spYear.getSelectedItem().toString(); // קבלת הערך שנבחר בספינר השנה
-                String itemDetails=etItemDetails.getText().toString(); // קבלת פרטי המוצר מהשדה
+            public void onClick(View v) {
+                // שולפים את כל הטקסטים ומנקים רווחים מיותרים עם trim()
+                String itemName = etItemName.getText().toString().trim();
+                String itemPrice = etItemPrice.getText().toString().trim();
+                String itemDetails = etItemDetails.getText().toString().trim();
 
-                String imageBase64 = ImageUtil.convertTo64Base(imageView); // שימוש במחלקת העזר כדי להפוך את התמונה שבמסך לטקסט מסוג Base64 (כדי לשמור במסד הנתונים)
-                double price = Double.parseDouble(itemPrice); // המרת מחרוזת המחיר למספר עשרוני ממשי (Double)
+                // מוודאים שהספינרים החזירו ערך תקין ולא יגרמו לקריסה
+                String itemType = spType.getSelectedItem() != null ? spType.getSelectedItem().toString() : "";
+                String itemBrand = spBrand.getSelectedItem() != null ? spBrand.getSelectedItem().toString() : "";
+                String itemYear = spYear.getSelectedItem() != null ? spYear.getSelectedItem().toString() : "";
 
-                // בדיקת תקינות: מוודא שאף אחד מהשדות אינו ריק
+                // 1. בדיקת תקינות: מוודא שאף אחד מהשדות אינו ריק
                 if (itemName.isEmpty() || itemType.isEmpty() || itemBrand.isEmpty() ||
-                        itemPrice.isEmpty() || itemYear.isEmpty()||itemDetails.isEmpty() ) {
-                    Toast.makeText(Additemtostore.this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show(); // אם חסר משהו, קופצת הודעת שגיאה
-                } else {
-                    Toast.makeText(Additemtostore.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show(); // (הערה: ההודעה מוצגת פה לפני ששמרנו, אך מבחינת תקינות קלט הכל בסדר)
+                        itemPrice.isEmpty() || itemYear.isEmpty() || itemDetails.isEmpty()) {
+                    Toast.makeText(Additemtostore.this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
+                    return; // קריטי! עוצר את הפעולה ולא נותן לאפליקציה לקרוס
                 }
 
-                /// generate a new id for the item
-                String id=databaseService.generateItemId(); // יצירת מזהה (ID) חדש וייחודי לפריט בעזרת שירות מסד הנתונים
+                // 2. המרת המחיר למספר (מתוך בלוק בטיחות)
+                double price;
+                try {
+                    price = Double.parseDouble(itemPrice);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(Additemtostore.this, "אנא הזן מחיר חוקי", Toast.LENGTH_SHORT).show();
+                    return; // אם המחיר לא חוקי עוצרים את השמירה
+                }
 
-                // יצירת אובייקט מסוג 'פריט' ושמירת כל הנתונים שנאספו בתוכו
+                // 3. הכל תקין! נמיר את התמונה ונשמור
+                String imageBase64 = ImageUtil.convertTo64Base(imageView);
+                Toast.makeText(Additemtostore.this, "מתחיל בשמירת המוצר...", Toast.LENGTH_SHORT).show();
+
+                String id = databaseService.generateItemId(); // יצירת ID חדש
                 Item newItem = new Item(id, itemName, itemType, itemBrand, price, itemYear, itemDetails, imageBase64);
 
-                /// save the item to the database and get the result in the callback
-                // שליחת האובייקט לפונקציה בשירות ה-Database ששומרת אותו בענן
+                // שמירה ל-Firebase
                 databaseService.createNewItem(newItem, new DataBaseService.DatabaseCallback<Void>() {
                     @Override
-                    public void onCompleted(Void object) { // בלוק שרץ אם השמירה במסד הנתונים הצליחה
-                        Log.d("TAG", "Item added successfully"); // מדפיס הודעת הצלחה ללוג למפתח
-                        Toast.makeText(Additemtostore.this, "Item added successfully", Toast.LENGTH_SHORT).show(); // מציג הודעה למשתמש באפליקציה על הצלחה
-                        /// clear the input fields after adding the item for the next item
-                        Log.d("TAG", "Clearing input fields"); // מדווח ללוג שהשדות ינוקו (למרות שבפועל הקוד עובר מסך)
+                    public void onCompleted(Void object) {
+                        Log.d("TAG", "Item added successfully");
+                        Toast.makeText(Additemtostore.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(Additemtostore.this, AdminPage.class); // יצירת כוונה (Intent) למעבר אל מסך מנהל
-                        startActivity(intent); // ביצוע המעבר למסך המנהל
+                        Intent intent = new Intent(Additemtostore.this, AdminPage.class);
+                        startActivity(intent);
+                        finish(); // סוגר את עמוד ההוספה שלא יחזרו אליו
                     }
 
                     @Override
-                    public void onFailed(Exception e) { // בלוק שרץ אם קרתה שגיאה בשמירה
-                        Log.e("TAG", "Failed to add item", e); // מדפיס את השגיאה בפירוט ללוג
-                        Toast.makeText(Additemtostore.this, "Failed to add food", Toast.LENGTH_SHORT).show(); // מציג הודעת כישלון למשתמש
+                    public void onFailed(Exception e) {
+                        Log.e("TAG", "Failed to add item", e);
+                        Toast.makeText(Additemtostore.this, "שגיאה! לא ניתן לשמור את המוצר.", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
 
-        Button btnUniversalBack = findViewById(R.id.btnUniversalBack); // חיפוש וקשירת הכפתור המאפשר "חזרה אחורה" (שימי לב שכתוב במקור: "מקשר את הכפתור")
-        btnUniversalBack.setOnClickListener(new View.OnClickListener() { // מאזין ללחיצה על כפתור החזרה
+        Button btnUniversalBack = findViewById(R.id.btnUniversalBack); // חיפוש וקשירת הכפתור המאפשר "חזרה אחורה"
+        btnUniversalBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // הפקודה שסוגרת את המסך וחוזרת אחורה (בדיוק כפי שהערת לעצמך בקוד המקורי)
+                finish(); // הפקודה שסוגרת את המסך וחוזרת אחורה
             }
         });
 
@@ -177,10 +180,10 @@ public class Additemtostore extends BaseActivity {
     private void InitViews() { // פונקציה שעושה סדר ומקשרת את המשתנים לרכיבי הממשק ב-XML דרך ה-ID שלהם
         etItemName = findViewById(R.id.etName);
         etItemPrice = findViewById(R.id.etPrice);
-        etItemDetails=findViewById(R.id.etDetails);
+        etItemDetails = findViewById(R.id.etDetails);
         spType = findViewById(R.id.spType);
         spBrand = findViewById(R.id.spBrand);
-        spYear=findViewById(R.id.spYear);
+        spYear = findViewById(R.id.spYear);
         btnGallery = findViewById(R.id.btnGallery);
         btnTakePic = findViewById(R.id.btnCamera);
         btnAddItem = findViewById(R.id.btnAdd);
@@ -189,9 +192,6 @@ public class Additemtostore extends BaseActivity {
 
     /// select image from gallery
     private void selectImageFromGallery() { // הפונקציה שמתמודדת עם בחירת תמונה מהגלריה
-        //   Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI); // קוד מוער (לא פעיל)
-        //  selectImageLauncher.launch(intent); // קוד מוער (לא פעיל)
-
         imageChooser(); // הפעלה של פונקציית העזר לפתיחת תפריט בחירת הקבצים
     }
 
@@ -202,34 +202,21 @@ public class Additemtostore extends BaseActivity {
     }
 
     void imageChooser() { // פונקציה לפתיחת תפריט בחירת קובץ מהמכשיר
-
-        // create an instance of the
-        // intent of the type image
         Intent i = new Intent(); // יצירת פעולה חדשה
         i.setType("image/*"); // פילטור - אנו דורשים מהמערכת להציג רק תמונות מכל סוג
         i.setAction(Intent.ACTION_GET_CONTENT); // פעולה המבקשת לקבל תוכן מתוך המכשיר (פותח גלריה או סייר קבצים)
-
-        // pass the constant to compare it
-        // with the returned requestCode
-        // פותח את חלון הבחירה (Chooser) למשתמש, וכדי לדעת מאיפה חזרנו אנחנו משתמשים בקבוע SELECT_PICTURE (המספר 200)
         startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
     }
 
-    // this function is triggered when user
-    // selects the image from the imageChooser
-    public void onActivityResult(int requestCode, int resultCode, Intent data) { // פונקציית מערכת המופעלת ברגע שפעילות (כמו בחירת קובץ) מסתיימת
-        super.onActivityResult(requestCode, resultCode, data); // מריץ את קוד האם (למקרה שיש למערכת עבודה משלה)
+    // this function is triggered when user selects the image from the imageChooser
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) { // בודק האם תהליך בחירת הקובץ הצליח (המשתמש בחר תמונה ולא לחץ על 'ביטול')
-
-            // compare the resultCode with the
-            // SELECT_PICTURE constant
-            if (requestCode == SELECT_PICTURE) { // בודק אם הפעילות שהסתיימה היא אכן בקשת פתיחת הגלריה שביקשנו (קוד 200)
-                // Get the url of the image from data
-                Uri selectedImageUri = data.getData(); // מחלץ את הכתובת (URI - נתיב) של התמונה בתוך המכשיר מהמידע שחזר
-                if (null != selectedImageUri) { // אם הכתובת שהתקבלה היא לא ריקה (התקבלה בהצלחה)
-                    // update the preview image in the layout
-                    imageView.setImageURI(selectedImageUri); // מציב את התמונה שנבחרה ברכיב תצוגת התמונה באפליקציה שלך
+        if (resultCode == RESULT_OK) { // בודק האם תהליך בחירת הקובץ הצליח
+            if (requestCode == SELECT_PICTURE) { // מוודא שזה הקוד של בחירת התמונה שלנו
+                Uri selectedImageUri = data.getData(); // מחלץ את הכתובת של התמונה
+                if (null != selectedImageUri) {
+                    imageView.setImageURI(selectedImageUri); // מציב את התמונה שנבחרה בתצוגה
                 }
             }
         }

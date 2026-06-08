@@ -29,12 +29,9 @@ import com.example.iddoivanfinalproject.services.DataBaseService; // שירות 
 /// It also contains a button to register the user
 /// When the user is registered, they are redirected to the main activity
 // המחלקה של מסך ההרשמה. היא יורשת ממסך אנדרואיד רגיל ומיישמת מאזין ללחיצות (OnClickListener)
-public class SignupActivity extends BaseActivity  implements View.OnClickListener {
+public class SignupActivity extends AppCompatActivity  implements View.OnClickListener {
 
     private static final String TAG = "RegisterActivity"; // תגית שתשמש אותנו להדפסת הודעות (Logs) למסוף
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     // הגדרת משתנים לרכיבי המסך
     private EditText etEmail, etPassword, etFName, etLName, etPhone; // שדות הקלט (אימייל, סיסמה, שם פרטי, משפחה, טלפון)

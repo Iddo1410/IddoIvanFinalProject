@@ -19,15 +19,12 @@ import com.example.iddoivanfinalproject.services.DataBaseService; // ייבוא 
 import java.util.ArrayList; // מחלקה ליצירת רשימות גמישות (מערכים דינמיים)
 import java.util.List; // ממשק (Interface) של רשימות כלליות ב-Java
 
-public class Allusers extends BaseActivity {
+public class Allusers extends AppCompatActivity {
     ListView lvUsers; // משתנה לרכיב התצוגה של הרשימה (כפי שהוא מופיע ב-XML)
     ArrayList<String> userDisplayList; // רשימה שתשמור את הטקסטים שיוצגו בפועל במסך (שם, אימייל וכו')
     ArrayAdapter<String> adapter; // המתווך שייקח את הטקסטים מ-userDisplayList וישים אותם בתוך ה-ListView
     Button btnBack; // משתנה לייצוג כפתור החזרה במסך
     ArrayList<User> usersList; // רשימה שתשמור את אובייקטי המשתמשים האמיתיים (לא רק טקסט, אלא את כל המידע עליהם)\
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר

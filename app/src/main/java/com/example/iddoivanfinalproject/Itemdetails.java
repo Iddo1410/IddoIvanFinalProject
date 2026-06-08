@@ -28,16 +28,13 @@ import java.time.format.DateTimeFormatter; // מחלקה לעיצוב פורמט
 import java.util.ArrayList; // מחלקה למערך דינמי (רשימה)
 import java.util.List; // ממשק רשימה ב-Java
 
-public class Itemdetails extends BaseActivity {
+public class Itemdetails extends AppCompatActivity {
     // הגדרת משתנים פרטיים לרכיבי התצוגה במסך
     private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear; // שדות טקסט
     private ImageView ivPic; // תמונת המוצר
     private Button btnBack, btnAddToCart, btnGoToCompare, btnDeleteItem; // כפתורים שונים
     private CheckBox cbCompare; // תיבת סימון להוספה/הסרה מהשוואה
     private DataBaseService.DatabaseService databaseService; // משתנה להתקשרות מול מסד הנתונים
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
 
     Compareitem compareitem = new Compareitem(); // אובייקט שישמור את רשימת ההשוואה הנוכחית של הקטגוריה
     Item currentItem; // אובייקט שישמור את המוצר הנוכחי שאנחנו צופים בו כעת

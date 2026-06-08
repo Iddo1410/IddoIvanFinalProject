@@ -10,10 +10,7 @@ import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיס
 
 import com.google.firebase.auth.FirebaseAuth; // ייבוא שירות האימות של Firebase (כדי לבצע את הניתוק)
 
-public class SignoutActivity extends BaseActivity {
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
+public class SignoutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת ברגע שהמסך נוצר
         super.onCreate(savedInstanceState); // קריאה לפעולת ההקמה של מחלקת האם

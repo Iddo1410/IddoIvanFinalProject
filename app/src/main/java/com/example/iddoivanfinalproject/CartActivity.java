@@ -21,16 +21,13 @@ import com.google.firebase.auth.FirebaseAuth; // מערכת אימות המשת�
 
 import java.util.List; // ממשק לרשימות דינמיות ב-Java
 
-public class CartActivity extends BaseActivity {
+public class CartActivity extends AppCompatActivity {
     private RecyclerView rvCart; // משתנה לרכיב הרשימה במסך
     private CartAdapter adapter; // משתנה למתווך שמצייר את השורות ברשימה
     private DataBaseService.DatabaseService databaseService; // משתנה לפעולות מול מסד הנתונים
 
     // הוספת משתנים עבור כפתור הרכישה, כפתור חזרה אחורה ושדה הטקסט של המחיר הכולל
     private Button btnPurchase, btnBack;
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
     private TextView tvTotalPrice;
     private List<Cart> currentCartList; // משתנה שישמור את רשימת המוצרים הנוכחית שבעגלה
 

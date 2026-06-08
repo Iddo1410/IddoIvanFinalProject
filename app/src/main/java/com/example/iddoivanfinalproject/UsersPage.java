@@ -18,13 +18,10 @@ import com.example.iddoivanfinalproject.model.User; // מודל הנתונים �
 import com.example.iddoivanfinalproject.services.DataBaseService; // שירות הגישה למסד הנתונים
 import com.google.firebase.auth.FirebaseAuth; // מערכת האימות וההתחברות של Firebase
 
-public class UsersPage extends BaseActivity {
+public class UsersPage extends AppCompatActivity {
     // הגדרת משתנים פרטיים עבור רכיבי התצוגה במסך
     private TextView tvHi; // שדה הטקסט שיציג את הברכה ("היי [שם]")
     private DataBaseService.DatabaseService dataBaseService; // משתנה לתקשורת מול מסד הנתונים בענן
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
     private Button btnShop, btnCompare, btnCart, btnUserOrderHistory; // כפתורי הניווט השונים של הלקוח
 
     @Override

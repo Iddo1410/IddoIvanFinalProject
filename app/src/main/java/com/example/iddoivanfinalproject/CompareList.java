@@ -23,15 +23,13 @@ import com.example.iddoivanfinalproject.utils.ImageUtil; // מחלקת עזר ל
 import java.util.ArrayList; // מחלקת מערך דינמי
 import java.util.List; // ממשק לרשימות ב-Java
 
-public class CompareList extends BaseActivity {
+public class CompareList extends AppCompatActivity {
     // משתנים כלליים של המסך
     private TextView tvEmptyMessage, tvTitle; // טקסט להודעה כשאין מוצרים, וטקסט כותרת
     private CardView cardTable; // הכרטיסייה שמכילה את טבלת ההשוואה עצמה
     private Spinner spCompareCategory; // התפריט הנפתח לבחירת איזה סוג מוצרים להשוות
     private Button btnBack; // כפתור חזרה
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-    }
+
 
     // רכיבי התצוגה בעמודה של פריט מספר 1 בטבלה
     private TextView tvName1, tvBrand1, tvYear1, tvPrice1, tvDetails1;

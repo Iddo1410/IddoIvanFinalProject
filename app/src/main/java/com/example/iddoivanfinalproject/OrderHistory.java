@@ -17,7 +17,7 @@ import com.example.iddoivanfinalproject.services.DataBaseService; // שירות 
 
 import java.util.List; // ממשק לרשימות דינמיות ב-Java
 
-public class OrderHistory extends BaseActivity {
+public class OrderHistory extends AppCompatActivity {
     // הגדרת משתנים פרטיים עבור רכיבי המסך
     private RecyclerView rvOrders; // הרכיב שיציג את רשימת ההזמנות במסך
     private OrderAdapter adapter; // המתווך (Adapter) שיחבר בין נתוני ההזמנות לתצוגה ברשימה
@@ -37,9 +37,6 @@ public class OrderHistory extends BaseActivity {
         if (btnBack != null) { // מוודא שהכפתור אכן נמצא ב-XML
             btnBack.setOnClickListener(v -> finish()); // בלחיצה על הכפתור, המסך ייסגר (finish) ונחזור אחורה
         }
-    }
-    public void onMenuClick(View v) {
-        openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
     }
 
     private void initViews() { // פונקציה לאתחול רכיבי התצוגה

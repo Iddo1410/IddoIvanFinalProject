@@ -13,13 +13,10 @@ import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיס
 
 import com.google.firebase.auth.FirebaseAuth; // ייבוא שירות האימות של Firebase
 
-    public class Userdetails extends BaseActivity {
+    public class Userdetails extends AppCompatActivity {
     // הגדרת משתנים פרטיים לרכיבי התצוגה במסך
     TextView tvDetails; // שדה טקסט גדול שיציג את כל פרטי המשתמש
     Button btnUpdate; // כפתור "עדכן פרטים"
-        public void onMenuClick(View v) {
-            openDrawer(); // קורא לפונקציה שכתבנו ב-BaseActivity
-        }
 
     SharedPreferences sp; // משתנה לגישה לזיכרון המקומי (כדי לשמור נתונים זמניים)
 
