@@ -25,7 +25,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     // רשימה שתשמור את כל המוצרים שנמצאים בעגלת הקניות
     private List<Cart> cartList;
-    // משתנה מסוג ממשק (Interface) שמאזין לפעולות המשתמש (מחיקה, הוספה, הפחתה)
+    // משתנה מסוג ממשק (Interface) שמאזין לפעולות המשתמש (מחיקה, הוספה, הפחתה, ולחיצה)
     private CartActivity.CartActionListener actionListener;
 
     // בנאי (Constructor) המקבל את רשימת המוצרים ואת המאזין (המסך שמשתמש באדפטר)
@@ -78,6 +78,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             // אם אין תמונה למוצר, תוצג תמונת ברירת מחדל
             holder.ivCartItemPic.setImageResource(R.drawable.images__1_);
         }
+
+        // --- תוספת חדשה: הגדרת לחיצה על כל מסגרת השורה (כדי לעבור לעמוד המוצר) ---
+        holder.itemView.setOnClickListener(v -> {
+            if (actionListener != null) {
+                // מדווח למסך העגלה שלחצו על השורה, ומעביר את הפריט שנלחץ
+                actionListener.onItemClicked(cart);
+            }
+        });
+        // -------------------------------------------------------------------------
 
         // הגדרת פעולה בעת לחיצה על כפתור המחיקה (פח אשפה)
         holder.btnDelete.setOnClickListener(v -> {

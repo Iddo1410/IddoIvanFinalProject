@@ -90,7 +90,7 @@ public class Additemtostore extends AppCompatActivity {
                 result -> { // בלוק הקוד שירוץ כאשר חזרנו מצילום התמונה
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) { // בדיקה שהצילום הצליח ויש נתונים
                         Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data"); // חילוץ התמונה מתוך הנתונים במבנה Bitmap
-                        imageView.setImageBitmap(bitmap); // עדכון רכיב תצוגת התמונה במסך עם התמונה שצולמה
+                        imageView.setImageBitmap(bitmap); // עדכון רכיב תצוגת התמונה במסך WITH התמונה שצולמה
                     }
                 });
 
@@ -109,7 +109,7 @@ public class Additemtostore extends AppCompatActivity {
             }
         });
 
-        // כפתור הוספת המוצר - עבר תיקון למניעת קריסות (Null/NumberFormat)
+        // כפתור הוספת המוצר - מתוקן למניעת אובדן שם המשתמש במסך המנהל
         btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,9 +153,9 @@ public class Additemtostore extends AppCompatActivity {
                         Log.d("TAG", "Item added successfully");
                         Toast.makeText(Additemtostore.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(Additemtostore.this, AdminPage.class);
-                        startActivity(intent);
-                        finish(); // סוגר את עמוד ההוספה שלא יחזרו אליו
+                        // תיקון קריטי: במקום לפתוח מופע חדש של AdminPage (שמאבד את ה-Intent המקורי עם ה-USER_ID),
+                        // אנו פשוט סוגרים את המסך הנוכחי וחוזרים למסך המנהל הקיים ברקע.
+                        finish();
                     }
 
                     @Override
@@ -174,7 +174,6 @@ public class Additemtostore extends AppCompatActivity {
                 finish(); // הפקודה שסוגרת את המסך וחוזרת אחורה
             }
         });
-
     }
 
     private void InitViews() { // פונקציה שעושה סדר ומקשרת את המשתנים לרכיבי הממשק ב-XML דרך ה-ID שלהם
@@ -209,6 +208,7 @@ public class Additemtostore extends AppCompatActivity {
     }
 
     // this function is triggered when user selects the image from the imageChooser
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 

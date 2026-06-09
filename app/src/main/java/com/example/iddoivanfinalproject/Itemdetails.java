@@ -1,278 +1,262 @@
-package com.example.iddoivanfinalproject; // הגדרת מיקום הקובץ בחבילת הפרויקט
+package com.example.iddoivanfinalproject; // הגדרת מיקום הקובץ בתוך תיקיות הפרויקט
 
-// ייבוא מחלקות וספריות שדרושות להפעלת הקוד
-import android.content.Intent; // מחלקה למעבר בין מסכים
-import android.os.Bundle; // מחלקה לשמירת מצב המסך
+// ייבוא מחלקות וספריות שדרושות להפעלת הקוד (אנדרואיד ופיירבייס)
+import android.content.Intent; // מחלקה המשמשת למעבר בין מסכים באפליקציה
+import android.os.Bundle; // מחלקה לשמירת מצב המסך בזמן הפתיחה
 import android.view.View; // מחלקת הבסיס לכל רכיבי התצוגה באנדרואיד
-import android.widget.Button; // רכיב כפתור
-import android.widget.CheckBox; // רכיב תיבת סימון (וי)
-import android.widget.ImageView; // רכיב להצגת תמונה
-import android.widget.TextView; // רכיב להצגת טקסט
-import android.widget.Toast; // רכיב להצגת הודעות קופצות קצרות (פופ-אפ)
+import android.widget.Button; // רכיב של כפתור
+import android.widget.CheckBox; // רכיב של תיבת סימון (V) - משמש אותנו להוספה להשוואה
+import android.widget.ImageView; // רכיב המציג תמונה במסך
+import android.widget.TextView; // רכיב המציג טקסט במסך
+import android.widget.Toast; // מחלקה להצגת הודעות קופצות קצרות (פופ-אפ) בתחתית המסך
 
-import androidx.appcompat.app.AppCompatActivity; // מחלקת האם למסכי אנדרואיד
+import androidx.appcompat.app.AppCompatActivity; // מחלקת האם הבסיסית שממנה יורש מסך מודרני
 
-// ייבוא מודלים ושירותים מתוך הפרויקט שלך
-import com.example.iddoivanfinalproject.model.Cart; // מודל עגלת קניות
-import com.example.iddoivanfinalproject.model.Compareitem; // מודל רשימת השוואה
-import com.example.iddoivanfinalproject.model.Item; // מודל פריט/מוצר
-import com.example.iddoivanfinalproject.model.User; // מודל משתמש
-import com.example.iddoivanfinalproject.services.DataBaseService; // שירות התקשורת עם מסד הנתונים
-import com.example.iddoivanfinalproject.utils.ImageUtil; // מחלקת עזר לטיפול בתמונות
-import com.google.firebase.auth.FirebaseAuth; // מערכת אימות המשתמשים של Firebase
-import com.google.firebase.auth.FirebaseUser; // מודל המייצג משתמש מחובר ב-Firebase
+// ייבוא המודלים והשירותים שיצרת בפרויקט
+import com.example.iddoivanfinalproject.model.Cart; // מודל המייצג פריט בעגלה
+import com.example.iddoivanfinalproject.model.Compareitem; // מודל המייצג רשימת השוואה
+import com.example.iddoivanfinalproject.model.Item; // מודל המייצג את המוצר הספציפי שאנחנו צופים בו
+import com.example.iddoivanfinalproject.model.User; // מודל המייצג את המשתמש המחובר
+import com.example.iddoivanfinalproject.services.DataBaseService; // שירות התקשורת עם מסד הנתונים (Firebase)
+import com.example.iddoivanfinalproject.utils.ImageUtil; // מחלקת עזר שיצרת לטיפול בהמרת תמונות
+import com.google.firebase.auth.FirebaseAuth; // מערכת ההזדהות של פיירבייס (לדעת מי מחובר)
+import com.google.firebase.auth.FirebaseUser; // אובייקט של המשתמש המחובר כרגע
 
-// ספריות עזר לתאריכים ורשימות
-import java.time.LocalDate; // מחלקה שמייצגת תאריך (ללא שעה)
+import java.time.LocalDate; // מחלקה לעבודה עם תאריכים
 import java.time.format.DateTimeFormatter; // מחלקה לעיצוב פורמט התאריך
-import java.util.ArrayList; // מחלקה למערך דינמי (רשימה)
-import java.util.List; // ממשק רשימה ב-Java
+import java.util.ArrayList; // מחלקה של מערך דינמי (רשימה)
+import java.util.List; // ממשק עבודה עם רשימות
 
-public class Itemdetails extends AppCompatActivity {
-    // הגדרת משתנים פרטיים לרכיבי התצוגה במסך
-    private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear; // שדות טקסט
+public class Itemdetails extends AppCompatActivity { // הגדרת מחלקת המסך "פרטי מוצר"
+    // הגדרת המשתנים שייצגו את הרכיבים במסך
+    private TextView tvName, tvDescription, tvPrice, tvBrand, tvType, tvYear; // טקסטים לפרטי המוצר
     private ImageView ivPic; // תמונת המוצר
-    private Button btnBack, btnAddToCart, btnGoToCompare, btnDeleteItem; // כפתורים שונים
-    private CheckBox cbCompare; // תיבת סימון להוספה/הסרה מהשוואה
-    private DataBaseService.DatabaseService databaseService; // משתנה להתקשרות מול מסד הנתונים
+    private Button btnBack, btnAddToCart, btnGoToCompare, btnDeleteItem; // הכפתורים במסך
+    private CheckBox cbCompare; // תיבת הסימון להשוואה
+    private DataBaseService.DatabaseService databaseService; // החיבור למסד הנתונים בענן
 
-    Compareitem compareitem = new Compareitem(); // אובייקט שישמור את רשימת ההשוואה הנוכחית של הקטגוריה
-    Item currentItem; // אובייקט שישמור את המוצר הנוכחי שאנחנו צופים בו כעת
-    String formattedDate; // מחרוזת שתשמור את התאריך של היום
-    private String itemId = null; // משתנה שישמור את המזהה (ID) של המוצר, בהתחלה מוגדר כריק (null)
+    Compareitem compareitem = new Compareitem(); // אובייקט שישמור את רשימת ההשוואה של המשתמש
+    Item currentItem; // אובייקט שישמור את פרטי המוצר שאנחנו צופים בו ממש עכשיו
+    String formattedDate; // משתנה שישמור את התאריך של היום
+    private String itemId = null; // משתנה שישמור את ה-ID (המזהה) של המוצר, בהתחלה ריק
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { // הפונקציה המרכזית שמופעלת כשנכנסים למסך
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_itemdetails); // חיבור קובץ העיצוב (XML) של המסך
+    protected void onCreate(Bundle savedInstanceState) { // הפונקציה הראשונה שרצה כשנכנסים למסך
+        super.onCreate(savedInstanceState); // הכנה בסיסית של אנדרואיד
+        setContentView(R.layout.activity_itemdetails); // חיבור קובץ העיצוב XML לקוד
 
-        // שמירת התאריך הנוכחי בפורמט של יום/חודש/שנה
-        formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        initViews(); // קריאה לפונקציה שמקשרת את המשתנים לרכיבים במסך
+        formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); // שולף את התאריך של היום ומעצב אותו (יום/חודש/שנה)
+        initViews(); // מפעיל פונקציה שמקשרת את המשתנים לרכיבים במסך
 
-        // משיכת המזהה של המוצר (ITEM_ID) מהמסך הקודם שממנו עברנו לכאן
-        itemId = getIntent().getStringExtra("ITEM_ID");
-        if (itemId != null) { // אם אכן התקבל מזהה תקין
-            loadItemData(); // מפעיל את הפונקציה שטוענת את פרטי המוצר מהמסד
+        itemId = getIntent().getStringExtra("ITEM_ID"); // שולף את ה-ID של המוצר שהועבר מהמסך הקודם (למשל מהחנות או מההשוואה)
+        if (itemId != null) { // בודק שבאמת הועבר ID חוקי
+            loadItemData(); // אם כן, מפעיל פונקציה שתמשוך את פרטי המוצר מפיירבייס
         }
 
-        checkUserStatus(); // קריאה לפונקציה שבודקת מי המשתמש (מנהל/לקוח) ומעדכנת את הכפתורים בהתאם
+        checkUserStatus(); // בודק מי מחובר עכשיו (מנהל או לקוח) כדי לדעת אילו כפתורים להציג לו
     }
 
-    private void initViews() { // פונקציה לקישור משתני התצוגה לקובץ ה-XML באמצעות ה-ID שלהם
-        tvName = findViewById(R.id.tvName);
-        tvDescription = findViewById(R.id.tvDescription);
-        tvPrice = findViewById(R.id.tvPrice);
-        tvBrand = findViewById(R.id.tvBrand);
-        tvType = findViewById(R.id.tvType);
-        tvYear = findViewById(R.id.tvYear);
-        ivPic = findViewById(R.id.ivPic);
+    private void initViews() { // פונקציה שעושה סדר ומקשרת כל משתנה ל-ID של הרכיב ב-XML
+        tvName = findViewById(R.id.tvName); // קישור שם
+        tvDescription = findViewById(R.id.tvDescription); // קישור תיאור
+        tvPrice = findViewById(R.id.tvPrice); // קישור מחיר
+        tvBrand = findViewById(R.id.tvBrand); // קישור מותג
+        tvType = findViewById(R.id.tvType); // קישור סוג/קטגוריה
+        tvYear = findViewById(R.id.tvYear); // קישור שנה
+        ivPic = findViewById(R.id.ivPic); // קישור תמונה
 
-        btnAddToCart = findViewById(R.id.btnAddToCart);
-        btnGoToCompare = findViewById(R.id.btnGoToCompare);
-        btnDeleteItem = findViewById(R.id.btnDeleteItem);
-        btnBack = findViewById(R.id.btnBack);
-        cbCompare = findViewById(R.id.cbCompare);
+        btnAddToCart = findViewById(R.id.btnAddToCart); // קישור כפתור עגלה
+        btnGoToCompare = findViewById(R.id.btnGoToCompare); // קישור כפתור מעבר להשוואה
+        btnDeleteItem = findViewById(R.id.btnDeleteItem); // קישור כפתור מחיקה (למנהל)
+        btnBack = findViewById(R.id.btnBack); // קישור כפתור חזרה
+        cbCompare = findViewById(R.id.cbCompare); // קישור תיבת הסימון
 
-        databaseService = DataBaseService.DatabaseService.getInstance(); // קבלת מופע (חיבור) למסד הנתונים
+        databaseService = DataBaseService.DatabaseService.getInstance(); // קבלת המופע לעבודה מול פיירבייס
 
-        // הגדרת פעולות בעת לחיצה על הכפתורים
-        if (btnDeleteItem != null) { // מוודא שהכפתור קיים
-            btnDeleteItem.setOnClickListener(v -> deleteCurrentItem()); // בלחיצה, קורא לפונקציית המחיקה
+        if (btnDeleteItem != null) { // מוודא שכפתור המחיקה קיים במסך
+            btnDeleteItem.setOnClickListener(v -> deleteCurrentItem()); // קובע שבלחיצה עליו תופעל פונקציית המחיקה
         }
 
-        if (btnGoToCompare != null) {
-            btnGoToCompare.setOnClickListener(v -> { // בלחיצה על "מעבר להשוואה"
-                Intent intent = new Intent(Itemdetails.this, CompareList.class); // יוצר מעבר למסך ההשוואה
-                // מעביר למסך ההשוואה את סוג המוצר הנוכחי (כדי שיפתח ישר על הקטגוריה המתאימה)
-                if (currentItem != null) intent.putExtra("COMPARE_TYPE", currentItem.getType());
-                startActivity(intent); // מתחיל את המעבר
+        if (btnGoToCompare != null) { // מוודא שכפתור מעבר להשוואה קיים
+            btnGoToCompare.setOnClickListener(v -> { // קובע מה יקרה בלחיצה עליו
+                Intent intent = new Intent(Itemdetails.this, CompareList.class); // מכין מעבר למסך ההשוואה
+                if (currentItem != null) intent.putExtra("COMPARE_TYPE", currentItem.getType()); // שולח יחד איתו את הקטגוריה של המוצר הנוכחי
+                startActivity(intent); // משגר את המעבר
             });
         }
 
-        if (btnAddToCart != null) {
-            btnAddToCart.setOnClickListener(v -> addToCart()); // בלחיצה על "הוסף לעגלה" יפעיל את הפונקציה המתאימה
+        if (btnAddToCart != null) { // מוודא שכפתור "הוסף לעגלה" קיים
+            btnAddToCart.setOnClickListener(v -> addToCart()); // קובע שלחיצה תפעיל פונקציה להוספה לעגלה
         }
     }
 
-    private void checkUserStatus() { // פונקציה שבודקת הרשאות ומתאימה את המסך
-        // כברירת מחדל, מסתירים את כל הכפתורים עד שנדע מי המשתמש
-        if (btnAddToCart != null) btnAddToCart.setVisibility(View.GONE);
-        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.GONE);
-        if (cbCompare != null) cbCompare.setVisibility(View.GONE);
-        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE);
+    private void checkUserStatus() { // פונקציה שמסתירה/מציגה כפתורים לפי סוג המשתמש (מנהל או לקוח)
+        // בהתחלה מסתירים את כל הכפתורים מכולם עד שנבדוק מי מחובר
+        if (btnAddToCart != null) btnAddToCart.setVisibility(View.GONE); // מעלים כפתור עגלה
+        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.GONE); // מעלים כפתור השוואה
+        if (cbCompare != null) cbCompare.setVisibility(View.GONE); // מעלים תיבת סימון
+        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE); // מעלים כפתור מחיקה
 
-        // שולף את המשתמש הנוכחי שמחובר למערכת
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser(); // שולף את פרטי המשתמש המחובר מפיירבייס
 
-        if (currentUser != null) { // אם המשתמש מחובר
-            String uid = currentUser.getUid(); // מקבל את המזהה הייחודי שלו
-            // מבקש את פרטי המשתמש ממסד הנתונים
-            databaseService.getUser(uid, new DataBaseService.DatabaseCallback<User>() {
+        if (currentUser != null) { // אם אכן יש מישהו שמחובר לאפליקציה
+            String uid = currentUser.getUid(); // לוקח את תעודת הזהות (ID) שלו
+            databaseService.getUser(uid, new DataBaseService.DatabaseCallback<User>() { // מבקש מהמסד את כל הפרטים עליו (כולל האם הוא מנהל)
                 @Override
-                public void onCompleted(User user) {
-                    if (user != null) { // אם נמצאו פרטים
-                        if (user.isAdmin()) { // בודק האם המשתמש מוגדר כמנהל
-                            // אם כן - חושף רק את כפתור המחיקה
-                            if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.VISIBLE);
-                        } else { // אם זה משתמש רגיל (לא מנהל)
-                            showCustomerButtons(); // מפעיל פונקציה שחושפת כפתורי לקוח
+                public void onCompleted(User user) { // כשהפרטים הגיעו מהמסד
+                    if (user != null) { // אם מצאנו את המשתמש
+                        if (user.isAdmin()) { // בודק: האם הוא מוגדר כמנהל?
+                            if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.VISIBLE); // אם כן, מציג לו רק את כפתור ה"מחק מוצר"
+                        } else { // אם הוא לא מנהל (הוא לקוח רגיל)
+                            showCustomerButtons(); // מפעיל פונקציה שמציגה לו את כפתורי העגלה וההשוואה
                         }
-                    } else { // אם לא נמצאו פרטי משתמש (למקרה של תקלה), נציג כפתורי לקוח ליתר ביטחון
-                        showCustomerButtons();
+                    } else { // אם משום מה לא מצאנו נתונים על המשתמש
+                        showCustomerButtons(); // נציג לו כפתורי לקוח ליתר ביטחון
                     }
                 }
                 @Override
-                public void onFailed(Exception e) { // אם הייתה שגיאה בתקשורת נציג כפתורי לקוח
-                    showCustomerButtons();
+                public void onFailed(Exception e) { // אם התקשורת נכשלה
+                    showCustomerButtons(); // נציג כפתורי לקוח
                 }
             });
-        } else { // אם אף אחד לא מחובר בכלל
-            showCustomerButtons(); // נציג כפתורי לקוח
+        } else { // אם אין משתמש מחובר בכלל (אורח)
+            showCustomerButtons(); // גם אורח רואה את הכפתורים (למרות שאם ילחץ 'עגלה' יקפוץ לו שהוא חייב להתחבר)
         }
     }
 
-    private void showCustomerButtons() { // פונקציית עזר שחושפת את כל הכפתורים שרלוונטיים ללקוחות
-        if (btnAddToCart != null) btnAddToCart.setVisibility(View.VISIBLE); // הצגת "הוסף לעגלה"
-        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.VISIBLE); // הצגת "מעבר להשוואה"
-        if (cbCompare != null) cbCompare.setVisibility(View.VISIBLE); // הצגת תיבת הסימון של השוואה
-        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE); // וידוא שכפתור המחיקה (של המנהל) מוסתר
-    }
+    private void showCustomerButtons() { // פונקציית עזר שפשוט חושפת את הכפתורים שרלוונטיים ללקוחות
+        if (btnAddToCart != null) btnAddToCart.setVisibility(View.VISIBLE); // מציג "הוסף לעגלה"
+        if (btnGoToCompare != null) btnGoToCompare.setVisibility(View.VISIBLE); // מציג "מעבר להשוואה"
 
-    private void deleteCurrentItem() { // פונקציה למחיקת המוצר (רלוונטי רק למנהלים)
-        if (itemId == null || itemId.isEmpty()) { // בדיקה שיש לנו מזהה מוצר חוקי למחוק
-            Toast.makeText(this, "שגיאה: לא נמצא ID של מוצר למחיקה!", Toast.LENGTH_LONG).show();
-            return; // עצירת הפעולה אם אין מזהה
+        if (cbCompare != null) { // מוודא שתיבת ההשוואה קיימת
+            cbCompare.setVisibility(View.VISIBLE); // מציג אותה
+            cbCompare.setEnabled(false); // נועל אותה זמנית ללחיצות (כדי שלא ילחץ לפני שפיירבייס מסיים לחשוב וה-V יעלם)
         }
 
-        // שלב 1: מחיקת המוצר המרכזי מתוך מאגר המוצרים בחנות
-        databaseService.deleteItem(itemId, new DataBaseService.DatabaseCallback<Void>() {
+        if (btnDeleteItem != null) btnDeleteItem.setVisibility(View.GONE); // מוודא שכפתור מחיקת המוצר (של מנהלים) נשאר מוסתר
+    }
+
+    private void deleteCurrentItem() { // פונקציה למחיקת המוצר מהחנות (מיועדת למנהלים בלבד)
+        if (itemId == null || itemId.isEmpty()) { // בודק שיש לנו מזהה מוצר חוקי למחוק
+            Toast.makeText(this, "שגיאה: לא נמצא ID של מוצר למחיקה!", Toast.LENGTH_LONG).show(); // מקפיץ שגיאה
+            return; // עוצר הכל
+        }
+
+        databaseService.deleteItem(itemId, new DataBaseService.DatabaseCallback<Void>() { // שלב 1: פקודה למחיקת המוצר ממאגר המוצרים של החנות
             @Override
-            public void onCompleted(Void object) { // אם המוצר נמחק מהחנות בהצלחה
-
-                // שלב 2: ניקוי המוצר מתוך רשימת ההשוואה (אם מישהו הוסיף אותו לשם)
-                if (currentItem != null && currentItem.getType() != null) {
-                    databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() {
+            public void onCompleted(Void object) { // כשהמוצר נמחק מהחנות בהצלחה
+                if (currentItem != null && currentItem.getType() != null) { // בודק שאנחנו יודעים מי המוצר שכרגע נמחק
+                    databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() { // שלב 2: מחפש אם המוצר הזה היה שמור ברשימת השוואה של מישהו
                         @Override
-                        public void onCompleted(Compareitem dbCompare) { // מקבל את רשימת ההשוואה של הקטגוריה שלו
-                            if (dbCompare != null && dbCompare.getItemArrayList() != null) {
-                                List<Item> newList = new ArrayList<>(); // רשימה חדשה ונקייה
-                                boolean itemFoundInCompare = false; // דגל שיסמן אם מצאנו את המוצר שלנו בהשוואה
+                        public void onCompleted(Compareitem dbCompare) { // כשרשימת ההשוואה מגיעה מהרשת
+                            if (dbCompare != null && dbCompare.getItemArrayList() != null) { // אם קיימת רשימת השוואה
+                                List<Item> newList = new ArrayList<>(); // יוצר רשימה חדשה חלופית
+                                boolean itemFoundInCompare = false; // מסמן אם המוצר שמחקנו כרגע בכלל נמצא בתוך רשימת ההשוואה הזו
 
-                                // לולאה שעוברת על המוצרים שברשימת ההשוואה
-                                for (Item i : dbCompare.getItemArrayList()) {
-                                    // בודק התאמה לפי מזהה (ID) או לפי שם, למקרה שה-ID השתנה
-                                    boolean isSameId = i.getId() != null && i.getId().equals(itemId);
-                                    boolean isSameName = i.getName() != null && currentItem.getName() != null && i.getName().equals(currentItem.getName());
+                                for (Item i : dbCompare.getItemArrayList()) { // עובר על המוצרים בתוך רשימת ההשוואה
+                                    boolean isSameId = i.getId() != null && i.getId().equals(itemId); // בודק התאמה לפי ID
+                                    boolean isSameName = i.getName() != null && currentItem.getName() != null && i.getName().equals(currentItem.getName()); // בודק התאמה לפי שם
 
-                                    if (isSameId || isSameName) { // אם מצאנו את המוצר שנמחק
-                                        itemFoundInCompare = true; // מסמנים שמצאנו
+                                    if (isSameId || isSameName) { // אם זה המוצר שלנו
+                                        itemFoundInCompare = true; // סימן שמצאנו אותו
                                     } else {
-                                        newList.add(i); // שומרים את שאר המוצרים שלא נמחקו לתוך הרשימה החדשה
+                                        newList.add(i); // כל שאר המוצרים שלא נמחקו עוברים לרשימה החדשה
                                     }
                                 }
 
-                                if (itemFoundInCompare) { // אם אכן נדרש ניקוי
-                                    dbCompare.getItemArrayList().clear(); // מרוקנים את הרשימה הישנה
-                                    dbCompare.getItemArrayList().addAll(newList); // מכניסים את הרשימה המעודכנת (בלי המוצר שנמחק)
+                                if (itemFoundInCompare) { // אם המוצר באמת היה שם וצריך למחוק אותו גם משם
+                                    dbCompare.getItemArrayList().clear(); // מרוקן את הישנה
+                                    dbCompare.getItemArrayList().addAll(newList); // דוחף את הרשימה החדשה (הנקייה מהמוצר שנמחק)
 
-                                    // שומרים את רשימת ההשוואה המעודכנת חזרה ב-Firebase
-                                    databaseService.updateCompareList(dbCompare, new DataBaseService.DatabaseCallback<Void>() {
+                                    databaseService.updateCompareList(dbCompare, new DataBaseService.DatabaseCallback<Void>() { // שלב 3: מעדכן את פיירבייס ברשימת ההשוואה הנקייה
                                         @Override
-                                        public void onCompleted(Void o) {
-                                            Toast.makeText(Itemdetails.this, "המוצר נמחק מהחנות וגם מההשוואה!", Toast.LENGTH_LONG).show();
-                                            finish(); // סוגרים את המסך וחוזרים אחורה
+                                        public void onCompleted(Void o) { // כשהעדכון הסתיים
+                                            Toast.makeText(Itemdetails.this, "המוצר נמחק מהחנות וגם מההשוואה!", Toast.LENGTH_LONG).show(); // הודעת הצלחה כפולה
+                                            finish(); // סוגר את עמוד המוצר וחוזר לחנות
                                         }
                                         @Override
-                                        public void onFailed(Exception e) {
-                                            Toast.makeText(Itemdetails.this, "המוצר נמחק, אך שגיאה בעדכון ההשוואה", Toast.LENGTH_LONG).show();
-                                            finish(); // סוגרים את המסך גם במקרה של שגיאה חלקית
+                                        public void onFailed(Exception e) { // אם נכשל
+                                            Toast.makeText(Itemdetails.this, "המוצר נמחק, אך שגיאה בעדכון ההשוואה", Toast.LENGTH_LONG).show(); // מודיע על חצי הצלחה
+                                            finish(); // סוגר מסך
                                         }
                                     });
-                                } else { // אם המוצר ממילא לא היה ברשימת ההשוואה
-                                    Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה!", Toast.LENGTH_SHORT).show();
+                                } else { // אם המוצר בכלל לא היה בהשוואה מלכתחילה
+                                    Toast.makeText(Itemdetails.this, "המוצר נמחק בהצלחה!", Toast.LENGTH_SHORT).show(); // מודיע על הצלחה
                                     finish(); // סוגר מסך
                                 }
-                            } else { // אם אין רשימת השוואה לקטגוריה הזו בכלל
-                                Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
+                            } else { // אם אין רשימת השוואה לקטגוריה הזו בכלל ב-DB
+                                Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show(); // מודיע על הצלחה
                                 finish(); // סוגר מסך
                             }
                         }
                         @Override
-                        public void onFailed(Exception e) { // אם שגיאה בקריאת ההשוואה, עדיין המוצר נמחק מהחנות
+                        public void onFailed(Exception e) { // תקלה בגישה ל-Compare
                             Toast.makeText(Itemdetails.this, "נמחק מהחנות. שגיאה בגישה להשוואה.", Toast.LENGTH_SHORT).show();
                             finish();
                         }
                     });
-                } else { // אם חסר סוג המוצר ואי אפשר למצוא את ההשוואה
+                } else { // אם חסרים נתונים על הקטגוריה
                     Toast.makeText(Itemdetails.this, "נמחק בהצלחה מ-Firebase!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
             @Override
-            public void onFailed(Exception e) { // אם המחיקה מהחנות עצמה נכשלה
-                Toast.makeText(Itemdetails.this, "שגיאה במחיקת המוצר: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            public void onFailed(Exception e) { // אם מחיקת המוצר מהחנות נכשלה
+                Toast.makeText(Itemdetails.this, "שגיאה במחיקת המוצר: " + e.getMessage(), Toast.LENGTH_LONG).show(); // מקפיץ שגיאה
             }
         });
     }
 
-    private void loadItemData() { // פונקציה ששולפת את נתוני המוצר כדי להציג אותם במסך
-        databaseService.getItemById(itemId, new DataBaseService.DatabaseCallback<Item>() { // פנייה למסד לפי ה-ID
+    private void loadItemData() { // פונקציה שמושכת את נתוני המוצר כדי להציג אותם במסך
+        databaseService.getItemById(itemId, new DataBaseService.DatabaseCallback<Item>() { // פונה למסד ומבקש מוצר לפי ה-ID שלו
             @Override
-            public void onCompleted(Item item) { // אם נמצא המוצר
-                if (item != null) {
-                    currentItem = item; // שומרים את האובייקט המלא במשתנה המחלקה
-                    // מאכלסים את כל רכיבי הטקסט עם המידע שהגיע מהשרת
-                    tvName.setText(item.getName());
-                    tvDescription.setText(item.getDetails());
-                    tvPrice.setText(String.valueOf(item.getPrice()));
-                    tvBrand.setText("Brand: " + item.getBrand());
-                    tvType.setText("Type: " + item.getType());
-                    tvYear.setText("Year: " + item.getYear());
-                    // ממירים את התמונה מפורמט טקסטואלי (Base64) חזרה לתמונה ומציגים אותה
-                    if (item.getPic() != null) ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic()));
+            public void onCompleted(Item item) { // כשהמוצר מתקבל
+                if (item != null) { // אם המוצר נמצא במערכת
+                    currentItem = item; // שומר אותו במשתנה כדי שנוכל לעבוד איתו בשאר המסך
+                    tvName.setText(item.getName()); // מציב את השם בטקסט
+                    tvDescription.setText(item.getDetails()); // מציב את התיאור
+                    tvPrice.setText(String.valueOf(item.getPrice())); // מציב את המחיר
+                    tvBrand.setText("Brand: " + item.getBrand()); // מציב מותג
+                    tvType.setText("Type: " + item.getType()); // מציב סוג
+                    tvYear.setText("Year: " + item.getYear()); // מציב שנה
+                    if (item.getPic() != null) ivPic.setImageBitmap(ImageUtil.convertFrom64base(item.getPic())); // ממיר את התמונה ומציג אותה
 
-                    setupCompareLogic(); // קריאה לפונקציה שמגדירה את מצב תיבת הסימון (אם המוצר כבר בהשוואה או לא)
+                    setupCompareLogic(); // מפעיל פונקציה שבודקת האם המוצר הזה נמצא כרגע ברשימת ההשוואה של המשתמש (כדי לסמן V)
                 }
             }
             @Override
-            public void onFailed(Exception e) {} // התעלמות אם נכשל
+            public void onFailed(Exception e) {} // אם הייתה תקלה מתעלם
         });
     }
 
-    private void setupCompareLogic() { // פונקציה שמטפלת במנגנון ההשוואה (מופעלת לאחר טעינת המוצר)
-        // מבקשים מהמסד את רשימת ההשוואה של הקטגוריה הרלוונטית
-        databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() {
+    private void setupCompareLogic() { // פונקציה שמטפלת במנגנון הסימון של "הוסף להשוואה"
+        databaseService.getCompareByType(currentItem.getType(), new DataBaseService.DatabaseCallback<Compareitem>() { // מבקש מהמסד את רשימת ההשוואה של המשתמש
             @Override
-            public void onCompleted(Compareitem dbCompare) { // כשהרשימה חוזרת
-                if (dbCompare != null) { // אם כבר קיימת רשימת השוואה לקטגוריה הזו
-                    compareitem = dbCompare; // נשמור אותה במשתנה שלנו
+            public void onCompleted(Compareitem dbCompare) { // כשהרשימה מגיעה
+                if (dbCompare != null) { // אם למשתמש יש רשימת השוואה בענן
+                    compareitem = dbCompare; // שומר אותה במשתנה שלנו
 
-                    // --- מנגנון הריפוי: מנקה פריטי "רפאים" מ-Firebase לפני שהוא מאפשר למשתמש ללחוץ על הצ'קבוקס ---
-                    databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() { // מושכים את כל פריטי החנות
+                    databaseService.getAllItems(new DataBaseService.DatabaseCallback<List<Item>>() { // מבקש את כל מוצרי החנות (בשביל מנגנון הריפוי שדיברנו עליו)
                         @Override
-                        public void onCompleted(List<Item> storeItems) {
-                            if (storeItems != null && compareitem.getItemArrayList() != null) {
-                                List<Item> validItems = new ArrayList<>(); // רשימת פריטים שעדיין חוקיים (קיימים בחנות)
+                        public void onCompleted(List<Item> storeItems) { // כשהחנות מגיעה
+                            if (storeItems != null && compareitem.getItemArrayList() != null) { // אם הכל תקין
+                                List<Item> validItems = new ArrayList<>(); // רשימה זמנית למוצרים תקינים שעדיין קיימים
 
-                                // עוברים על פריטי ההשוואה ובודקים אם הם עדיין קיימים במאגר הכללי של החנות
-                                for (Item cItem : compareitem.getItemArrayList()) {
+                                for (Item cItem : compareitem.getItemArrayList()) { // עובר על המוצרים שברשימת ההשוואה
                                     boolean exists = false;
-                                    for (Item sItem : storeItems) {
-                                        if (cItem.getId() != null && sItem.getId() != null && cItem.getId().equals(sItem.getId())) {
-                                            exists = true;
+                                    for (Item sItem : storeItems) { // עובר על המוצרים שבחנות
+                                        if (cItem.getId() != null && sItem.getId() != null && cItem.getId().equals(sItem.getId())) { // בודק התאמה
+                                            exists = true; // סימן שהמוצר קיים בחנות ולא נמחק
                                             break;
                                         }
                                     }
-                                    if (exists) validItems.add(cItem); // רק מה שקיים נשמר
+                                    if (exists) validItems.add(cItem); // שומר רק את מה שקיים וזורק את "רוחות הרפאים"
                                 }
 
-                                // אם מצאנו שיש חוסר התאמה (יש מוצרים בהשוואה שכבר נמחקו מהחנות)
-                                if (validItems.size() != compareitem.getItemArrayList().size()) {
+                                if (validItems.size() != compareitem.getItemArrayList().size()) { // אם זרקנו משהו, מעדכנים את הרשימה בענן
                                     compareitem.getItemArrayList().clear();
-                                    compareitem.getItemArrayList().addAll(validItems); // מעדכנים לרשימה הנקייה
+                                    compareitem.getItemArrayList().addAll(validItems);
 
-                                    // שומרים את הניקוי ב-Firebase
                                     databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
                                         @Override public void onCompleted(Void o) {}
                                         @Override public void onFailed(Exception e) {}
@@ -280,112 +264,111 @@ public class Itemdetails extends AppCompatActivity {
                                 }
                             }
 
-                            checkIfItemInCompare(); // בודק האם לסמן וי בתיבת ההשוואה
-                            setCheckboxListener(); // מגדיר את מאזין הלחיצות לתיבה
+                            checkIfItemInCompare(); // בודק האם המוצר הספציפי שלנו ברשימה ומסמן V אם כן
+                            setCheckboxListener(); // מפעיל את מאזין הלחיצות של תיבת הסימון
+                            if (cbCompare != null) cbCompare.setEnabled(true); // פיירבייס סיים לעבוד! פותח את נעילת תיבת הסימון (עכשיו אפשר ללחוץ)
                         }
 
                         @Override
-                        public void onFailed(Exception e) { // אם נכשל המשיכה מהחנות, ממשיכים כרגיל עם מה שיש
+                        public void onFailed(Exception e) { // במקרה של שגיאה עם החנות מפעילים בלי ריפוי
                             checkIfItemInCompare();
                             setCheckboxListener();
+                            if (cbCompare != null) cbCompare.setEnabled(true);
                         }
                     });
 
-                } else { // אם לא קיימת בכלל רשימת השוואה לסוג הזה
-                    compareitem = new Compareitem(); // יוצרים אובייקט חדש
-                    compareitem.setId(databaseService.generateCompareId()); // מגרילים לו מזהה חדש למסד
-                    setCheckboxListener(); // מגדירים את התיבה
+                } else { // אם למשתמש עדיין אין רשימת השוואה בכלל ב-DB
+                    compareitem = new Compareitem(); // יוצר רשימה חדשה לגמרי
+                    compareitem.setId(databaseService.generateCompareId()); // מגריל לה מזהה ID
+                    setCheckboxListener(); // מפעיל את מאזין הלחיצות
+                    if (cbCompare != null) cbCompare.setEnabled(true); // פותח את הנעילה של תיבת הסימון למשתמש
                 }
             }
             @Override
-            public void onFailed(Exception e) {}
+            public void onFailed(Exception e) { // במקרה של תקלה כוללת פותח את הנעילה
+                if (cbCompare != null) cbCompare.setEnabled(true);
+            }
         });
     }
 
-    private void checkIfItemInCompare() { // פונקציה שבודקת האם המוצר הספציפי הזה כבר נמצא ברשימת ההשוואה
-        if (compareitem.getItemArrayList() != null) {
-            for (Item i : compareitem.getItemArrayList()) { // לולאה שעוברת על הרשימה
-                if (i.getId().equals(currentItem.getId())) { // אם יש התאמה ב-ID
-                    cbCompare.setOnCheckedChangeListener(null); // מכבה רגע את המאזין כדי שלא יופעל בטעות
-                    cbCompare.setChecked(true); // מסמן אוטומטית וי (V) בתיבה במסך
-                    break; // עוצר את הלולאה
+    private void checkIfItemInCompare() { // פונקציה שעוברת על הרשימה ובודקת אם המוצר שלנו כבר שם
+        if (compareitem.getItemArrayList() != null) { // אם הרשימה לא ריקה
+            for (Item i : compareitem.getItemArrayList()) { // עובר פריט-פריט
+                if (i.getId() != null && currentItem.getId() != null && i.getId().equals(currentItem.getId())) { // אם מצאנו התאמה ב-ID
+                    cbCompare.setOnCheckedChangeListener(null); // מנתק את המאזין לשנייה (כדי שלא ישמור בטעות בענן סתם סימון)
+                    cbCompare.setChecked(true); // שם 'V' ויזואלית על המסך
+                    break; // עוצר את הלולאה כי כבר מצאנו
                 }
             }
         }
     }
 
-    private void setCheckboxListener() { // פונקציה שמגדירה מה יקרה כאשר המשתמש לוחץ על תיבת הסימון של ההשוואה
-        cbCompare.setOnCheckedChangeListener((buttonView, isChecked) -> { // מאזין לשינוי מצב התיבה
-            if (currentItem == null) return; // הגנה: אם טרם נטען המוצר, אי אפשר להוסיף אותו
-            if (compareitem.getItemArrayList() == null) compareitem.setItemArrayList(new ArrayList<>()); // יוצר רשימה ריקה אם היא לא קיימת עדיין
+    private void setCheckboxListener() { // פונקציה שמגדירה מה יקרה כשמשתמש לוחץ על תיבת הסימון (מוסיף/מסיר השוואה)
+        cbCompare.setOnCheckedChangeListener((buttonView, isChecked) -> { // מתחיל להאזין ללחיצות על התיבה
+            if (currentItem == null) return; // הגנה: אם אין מוצר אי אפשר לעשות כלום
+            if (compareitem.getItemArrayList() == null) compareitem.setItemArrayList(new ArrayList<>()); // אם הרשימה ריקה, יוצר מערך חדש
 
-            if (isChecked) { // אם המשתמש סימן V (מעוניין להוסיף להשוואה)
-                if (compareitem.getItemArrayList().size() >= 3) { // בדיקה: יש הגבלה לעד 3 מוצרים בהשוואה
-                    Toast.makeText(Itemdetails.this, "ניתן להוסיף עד 3 פריטים להשוואה", Toast.LENGTH_SHORT).show(); // הודעת שגיאה
-                    cbCompare.setOnCheckedChangeListener(null); // ניתוק זמני של המאזין
-                    cbCompare.setChecked(false); // ביטול הסימון במסך בחזרה
-                    setCheckboxListener(); // חיבור המאזין מחדש
-                    return; // עצירת הפונקציה (לא נוסיף למסד)
+            if (isChecked) { // אם המשתמש לחץ וסימן V (רוצה להוסיף)
+                if (compareitem.getItemArrayList().size() >= 3) { // בודק האם כבר יש 3 מוצרים בהשוואה
+                    Toast.makeText(Itemdetails.this, "ניתן להוסיף עד 3 פריטים להשוואה", Toast.LENGTH_SHORT).show(); // אם כן, מודיע לו שאסור
+                    cbCompare.setOnCheckedChangeListener(null); // מנתק מאזין
+                    cbCompare.setChecked(false); // מוריד את ה-V חזרה כי ההוספה נכשלה
+                    setCheckboxListener(); // מחזיר מאזין
+                    return; // עוצר את ההוספה
                 }
 
-                compareitem.getItemArrayList().add(currentItem); // מוסיפים את המוצר לרשימת ההשוואה באובייקט שלנו
-                compareitem.setType(currentItem.getType()); // מוודאים שהסוג מעודכן
-                compareitem.setDate(formattedDate); // מעדכנים את תאריך ההשוואה
-            } else { // אם המשתמש הוריד את ה-V (ביטל השוואה)
-                // עובר על הרשימה ומסיר את המוצר שה-ID שלו שווה למוצר שאנחנו צופים בו כרגע
-                compareitem.getItemArrayList().removeIf(i -> i.getId().equals(currentItem.getId()));
+                compareitem.getItemArrayList().add(currentItem); // אם מותר להוסיף: מוסיף את המוצר הנוכחי לאובייקט ההשוואה
+                compareitem.setType(currentItem.getType()); // שומר את הקטגוריה
+                compareitem.setDate(formattedDate); // שומר תאריך עדכון
+            } else { // אם המשתמש לחץ כדי להוריד את ה-V (רוצה לבטל)
+                compareitem.getItemArrayList().removeIf(i -> i.getId().equals(currentItem.getId())); // מסיר מהרשימה באובייקט את הפריט עם ה-ID של המוצר הנוכחי
             }
-            // סיום השינוי: שומרים את האובייקט המעודכן בתוך מסד הנתונים בענן (Firebase)
-            databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() {
-                @Override public void onCompleted(Void o) {}
-                @Override public void onFailed(Exception e) {}
+
+            databaseService.updateCompareList(compareitem, new DataBaseService.DatabaseCallback<Void>() { // מעדכן את האובייקט החדש במסד הנתונים בענן
+                @Override public void onCompleted(Void o) {} // בסיום אין צורך לעשות משהו מיוחד
+                @Override public void onFailed(Exception e) {} // במקרה תקלה מתעלמים
             });
         });
     }
 
-    private void addToCart() { // פונקציה המוסיפה את המוצר לעגלת הקניות של המשתמש המחובר
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // משיכת פרטי המשתמש מהאימות
-        if (user == null) { // בדיקה האם יש בכלל משתמש שמחובר לאפליקציה
-            Toast.makeText(this, "עליך להתחבר קודם", Toast.LENGTH_SHORT).show(); // דרישת התחברות
-            return; // עצירת הפונקציה
+    private void addToCart() { // פונקציה להוספת המוצר לעגלת הקניות של המשתמש
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser(); // שולף את המשתמש
+        if (user == null) { // בודק אם הוא מחובר
+            Toast.makeText(this, "עליך להתחבר קודם", Toast.LENGTH_SHORT).show(); // דורש התחברות מאורחים
+            return; // עוצר
         }
 
-        if (currentItem != null) { // מוודא שפרטי המוצר נטענו בהצלחה למסך
-            // מושך את רשימת עגלת הקניות של המשתמש הנוכחי מתוך ה-DB
-            databaseService.getCartList(user.getUid(), new DataBaseService.DatabaseCallback<List<Cart>>() {
+        if (currentItem != null) { // מוודא שהמוצר נטען כראוי
+            databaseService.getCartList(user.getUid(), new DataBaseService.DatabaseCallback<List<Cart>>() { // מושך את העגלה של המשתמש
                 @Override
-                public void onCompleted(List<Cart> carts) { // כאשר רשימת העגלה התקבלה
-                    Cart existingCartItem = null; // משתנה שיבדוק האם המוצר הזה *כבר* קיים בעגלה
+                public void onCompleted(List<Cart> carts) { // כשהעגלה מגיעה
+                    Cart existingCartItem = null; // משתנה שישמור אם מצאנו את המוצר כבר בעגלה
 
-                    if (carts != null) { // אם העגלה לא ריקה
-                        for (Cart cart : carts) { // לולאה העוברת על כל מוצרי העגלה
-                            if (cart.getName() != null && cart.getName().equals(currentItem.getName())) { // בדיקת התאמה לפי שם המוצר
-                                existingCartItem = cart; // אם נמצא, נשמור את האובייקט שלו
-                                break; // עוצרים את הלולאה
+                    if (carts != null) { // אם יש דברים בעגלה
+                        for (Cart cart : carts) { // עובר על המוצרים בעגלה
+                            if (cart.getName() != null && cart.getName().equals(currentItem.getName())) { // אם יש מוצר בעגלה עם אותו שם
+                                existingCartItem = cart; // מסמן שמצאנו
+                                break;
                             }
                         }
                     }
 
-                    if (existingCartItem != null) { // תרחיש 1: המוצר *כבר נמצא* בעגלה
-                        // פשוט מגדילים את כמות הפריט ב-1 (במקום ליצור פריט כפול)
-                        existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
+                    if (existingCartItem != null) { // תרחיש 1: המוצר כבר קיים בעגלה!
+                        existingCartItem.setQuantity(existingCartItem.getQuantity() + 1); // במקום להוסיף פעמיים, אנחנו פשוט מוסיפים עוד 1 לכמות
 
-                        // מעדכנים את השינוי ב-Firebase
-                        databaseService.createNewCart(existingCartItem, new DataBaseService.DatabaseCallback<Void>() {
+                        databaseService.createNewCart(existingCartItem, new DataBaseService.DatabaseCallback<Void>() { // מעדכן את הרשומה במסד
                             @Override public void onCompleted(Void object) {
-                                Toast.makeText(Itemdetails.this, "הכמות עודכנה בעגלה!", Toast.LENGTH_SHORT).show(); // הודעה למשתמש
+                                Toast.makeText(Itemdetails.this, "הכמות עודכנה בעגלה!", Toast.LENGTH_SHORT).show(); // הודעת הצלחה
                             }
                             @Override public void onFailed(Exception e) {}
                         });
-                    } else { // תרחיש 2: המוצר *לא* נמצא כרגע בעגלה של המשתמש
-                        String cartId = databaseService.generateCartId(); // יצירת מזהה ID חדש וייחודי לעגלה
-                        // יצירת אובייקט "פריט בעגלה" חדש, עם כמות התחלתית של 1
-                        Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic());
+                    } else { // תרחיש 2: המוצר עדיין לא קיים בעגלה
+                        String cartId = databaseService.generateCartId(); // יצירת ID חדש לפריט בעגלה
+                        Cart cartItem = new Cart(currentItem.getName(), currentItem.getPrice(), 1, cartId, user.getUid(), currentItem.getPic()); // יוצר אובייקט עם כמות התחלתית 1
 
-                        // שמירת האובייקט החדש בתוך מסד הנתונים
-                        databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() {
+                        databaseService.createNewCart(cartItem, new DataBaseService.DatabaseCallback<Void>() { // שולח למסד
                             @Override public void onCompleted(Void object) {
-                                Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show(); // הודעה למשתמש
+                                Toast.makeText(Itemdetails.this, "נוסף לעגלה שלך!", Toast.LENGTH_SHORT).show(); // הודעת הצלחה
                             }
                             @Override public void onFailed(Exception e) {}
                         });
@@ -396,5 +379,16 @@ public class Itemdetails extends AppCompatActivity {
         }
     }
 
-    public void onBack(View view) { finish(); } // פונקציה פשוטה הסוגרת את המסך (finish) שמקושרת מה-XML
+    // פונקציה שכפתור ה"חזור לחנות" מפעיל בממשק
+    public void onBack(View view) {
+        // יצירת כוונה (Intent) לעבור במפורש לעמוד החנות (Items)
+        Intent intent = new Intent(Itemdetails.this, Items.class);
+
+        // הגדרה חשובה: אם עמוד החנות כבר פתוח אי שם ברקע במכשיר, במקום לפתוח מעליו עוד עמוד חנות חדש -
+        // אנדרואיד ינקה את כל המסכים שמעליו ויחזיר אותנו לחנות המקורית, כך שהאפליקציה לא "תתנפח".
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        startActivity(intent); // הפעלת המעבר לחנות
+        finish(); // סגירת עמוד פרטי המוצר הנוכחי ומחיקתו מהזיכרון
+    }
 }
